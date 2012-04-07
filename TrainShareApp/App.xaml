@@ -3,6 +3,13 @@
              xmlns:local="clr-namespace:TrainShareApp"
              x:Class="TrainShareApp.App">
     <Application.Resources>
-        <local:AppBootstrapper x:Key="bootstrapper" />
+    	<ResourceDictionary>
+    		<ResourceDictionary.MergedDictionaries>
+    			<ResourceDictionary Source="Resources/Templates.xaml"/>
+    			<ResourceDictionary Source="Resources/Brushes.xaml"/>
+    			<ResourceDictionary Source="Resources/Styles.xaml"/>
+    		</ResourceDictionary.MergedDictionaries>
+    		<local:AppBootstrapper x:Key="bootstrapper" />
+    	</ResourceDictionary>
     </Application.Resources>
 </Application>

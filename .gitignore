@@ -5,5 +5,7 @@
 packages/
 _ReSharper.TrainShareApp/
 
+TrainShareApp/Data/Credidentials.cs
+
 # mstest test results
 TestResults

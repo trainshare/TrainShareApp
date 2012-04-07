@@ -5,8 +5,8 @@
     xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
     xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:cal="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d" d:DesignWidth="480" d:DesignHeight="768"
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
     FontSize="{StaticResource PhoneFontSizeNormal}"
@@ -15,22 +15,41 @@
     shell:SystemTray.IsVisible="True">
 
     <!--LayoutRoot is the root grid where all page content is placed-->
-    <Grid x:Name="LayoutRoot" Background="Transparent">
+    <Grid x:Name="LayoutRoot">
+        <Grid.Background>
+            <ImageBrush ImageSource="background.jpg" />
+        </Grid.Background>
         <Grid.RowDefinitions>
+            <RowDefinition x:Name="Header" Height="Auto" />
+            <RowDefinition x:Name="Content" Height="*" />
+        </Grid.RowDefinitions>
+
+        <Image Grid.Row="0" Source="Logo.png" Stretch="Uniform" />
+
+        <StackPanel Grid.Row="1">
+            <TextBlock FontFamily="{StaticResource PhoneFontFamilySemiBold}"
+                       FontSize="{StaticResource PhoneFontSizeExtraExtraLarge}">
+                Please Sign In
+            </TextBlock>
+            <Button x:Name="SigninTwitter"  Margin="0 200 0 0" BorderThickness="0" Background="Aquamarine" Foreground="Black">Twitter</Button>
+            <Button x:Name="SigninFacebook" BorderThickness="0" Background="Blue">Facebook</Button>
+        </StackPanel>
+        <!--<Grid.Background>
+            <ImageBrush ImageSource="fast-train.jpg" Stretch="Uniform" AlignmentY="Top" />
+        </Grid.Background>-->
+        <!--<Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!--TitlePanel contains the name of the application and page title-->
         <StackPanel x:Name="TitlePanel" Grid.Row="0" Margin="12,17,0,28">
             <TextBlock x:Name="ApplicationTitle" Text="MY APPLICATION" Style="{StaticResource PhoneTextNormalStyle}"/>
             <TextBlock x:Name="PageTitle" Text="page name" Margin="9,-7,0,0" Style="{StaticResource PhoneTextTitle1Style}"/>
         </StackPanel>
 
-        <!--ContentPanel - place additional content here-->
-        <phone:WebBrowser x:Name="Browser" Grid.Row="1" />
+        <phone:WebBrowser x:Name="Browser" Grid.Row="1" />-->
     </Grid>
- 
+
     <!--Sample code showing usage of ApplicationBar-->
     <!--<phone:PhoneApplicationPage.ApplicationBar>
         <shell:ApplicationBar IsVisible="True" IsMenuEnabled="True">

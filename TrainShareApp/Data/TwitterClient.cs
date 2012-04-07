@@ -1,162 +1,115 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Reactive;
 using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using System.Security;
 using System.Text.RegularExpressions;
+using Caliburn.Micro;
 using Microsoft.Phone.Controls;
 using RestSharp;
 using RestSharp.Authenticators;
+using TrainShareApp.Extension;
+using TrainShareApp.Model;
 
 namespace TrainShareApp.Data
 {
-    class TwitterClient : ITwitterClient
+    public class TwitterClient : ITwitterClient
     {
+        private readonly Globals _globals;
         private readonly string _consumerKey;
         private readonly string _consumerSecret;
-        private readonly RestClient _client;
+        private readonly TwitterToken _token;
 
-        private WebBrowser _browser;
-        private IDisposable _subscription;
-
-        private string _authToken;
-        private string _authTokenSecret;
-
-        private string _accessToken;
-        private string _accessTokenSecret;
-
-        private string _verifyer;
-
-
-        public TwitterClient(string consumerKey, string consumerSecret)
+        public TwitterClient(Globals globals)
         {
-            _consumerKey = consumerKey;
-            _consumerSecret = consumerSecret;
-
-            _client = new RestClient("https://api.twitter.com")
-            {
-                Authenticator = OAuth1Authenticator.ForRequestToken(_consumerKey, _consumerSecret)
-            };
+            _globals = globals;
+            _consumerKey = Credentials.TwitterToken;
+            _consumerSecret = Credentials.TwitterTokenSecret;
+            _token = new TwitterToken();
         }
 
-        public bool HasToken
+        public IObservable<TwitterToken> Login(WebBrowser browser)
         {
-            get { return !string.IsNullOrEmpty(_accessToken) && !string.IsNullOrEmpty(_authTokenSecret); }
-        }
+            var subject = new AsyncSubject<TwitterToken>();
+            
+            var client = new RestClient("https://api.twitter.com/oauth/");
+            client.Authenticator = OAuth1Authenticator.ForRequestToken(_consumerKey, _consumerSecret);
 
-        public string AccessToken
-        {
-            get { return _accessToken; }
-        }
-
-        public string AccesTokenSecret
-        {
-            get { return _accessTokenSecret; }
-        }
-
-        public void Login(WebBrowser viewBrowser)
-        {
-            DisposeSubscription();
-
-            _subscription =
-                Observable
-                    .FromEventPattern<NavigatingEventArgs>(
-                        h => viewBrowser.Navigating += h,
-                        h => viewBrowser.Navigating -= h)
-                    .Subscribe(OnNavigating);
-            _browser = viewBrowser;
-
-            RequestAuth();
-        }
-
-        private void RequestAuth()
-        {
-            _client.ExecuteAsync(
-                new RestRequest("oauth/request_token"),
-                restResponse =>
+            client
+                .ExecuteObservable(new RestRequest("request_token"))
+                .Select(response => response.Content)
+                .ParseQueryString()
+                .Select( // Getting an request token
+                queryString =>
                     {
-                        var queryString = ParseQueryString(restResponse.Content);
+                        var token = queryString["oauth_token"];
+                        var tokenSecret = queryString["oauth_token_secret"];
 
-                        _authToken = queryString["oauth_token"];
-                        _authTokenSecret = queryString["oauth_token_secret"];
+                        if (string.IsNullOrEmpty(token) || string.IsNullOrEmpty(tokenSecret))
+                            throw new SecurityException("Did not get an request token from twitter.");
 
-                        if (!string.IsNullOrEmpty(_authToken) && !string.IsNullOrEmpty(_authTokenSecret))
+                        return _token.WithAuth(token, tokenSecret);
+                    })
+                .Subscribe(
+                    token => Verify(browser, subject),
+                    subject.OnError);
+
+            return subject;
+        }
+
+        private void Verify(WebBrowser browser, IObserver<TwitterToken> subject)
+        {
+            var client = new RestClient("https://api.twitter.com/oauth/");
+            client.FollowRedirects = true;
+            client.Authenticator = OAuth1Authenticator.ForRequestToken(_consumerKey, _consumerSecret);
+
+            Observable
+                .FromEventPattern<NavigatingEventArgs>(
+                    h => browser.Navigating += h,
+                    h => browser.Navigating -= h)
+                .Where(e => Regex.IsMatch(e.EventArgs.Uri.ToString(), @"http://(www|m).bing.com"))
+                .Do(e => e.EventArgs.Cancel = true)
+                .Take(1)
+                .Select(e => e.EventArgs.Uri.ToString())
+                .Select(address => address.Substring(address.IndexOf('?') + 1))
+                .ParseQueryString()
+                .Select(queryString => _token.WithVerifier(queryString["oauth_verifier"]))
+                .Subscribe(
+                verifier => RequestAccess(subject),
+                subject.OnError);
+
+            var request =
+                new RestRequest("authorize")
+                    .AddParameter("oauth_token", _token.AuthToken);
+
+            browser.Navigate(client.BuildUri(request));
+        }
+
+        private void RequestAccess(IObserver<TwitterToken> subject)
+        {
+            var client = new RestClient("https://api.twitter.com/oauth/");
+            client.Authenticator = OAuth1Authenticator.ForAccessToken(
+                _consumerKey, _consumerSecret,
+                _token.AuthToken, _token.AuthTokenSecret,
+                _token.Verifier);
+
+            client
+                .ExecuteObservable(new RestRequest("access_token"))
+                .Select(response => response.Content)
+                .ParseQueryString()
+                .Subscribe(
+                    queryString =>
                         {
-                            RequestVerifyer();
-                        }
-                    }
-                );
-        }
+                            _token.WithAccess(queryString["oauth_token"],
+                                              queryString["oauth_token_secret"]);
 
-        private void RequestVerifyer()
-        {
-            var rq =
-                new RestRequest("oauth/authorize")
-                    .AddParameter("oauth_token", _authToken);
+                            _globals.TwitterToken = _token.AccessToken;
+                            _globals.TwitterSecret = _token.AccessTokenSecret;
 
-            _browser.Navigate(_client.BuildUri(rq));
-        }
-
-        private void RequestAccess()
-        {
-            _client.Authenticator = OAuth1Authenticator.ForAccessToken(_consumerKey, _consumerSecret, _authToken,
-                                                                       _authTokenSecret, _verifyer);
-            _client.ExecuteAsync(
-                new RestRequest("oauth/access_token"),
-                restResponse =>
-                    {
-                        var queryString = ParseQueryString(restResponse.Content);
-
-                        _accessToken = queryString["oauth_token"];
-                        _accessTokenSecret = queryString["oauth_token_secret"];
-                    }
-                );
-        }
-
-        private void OnNavigating(EventPattern<NavigatingEventArgs> e)
-        {
-            var address = e.EventArgs.Uri.ToString();
-
-            if (Regex.IsMatch(address, @"http://(www|m).bing.com"))
-            {
-                var queryString = ParseQueryString(address.Substring(address.IndexOf('?') + 1));
-
-                _verifyer = queryString["oauth_verifier"];
-                if (queryString["oauth_token"] != _authToken)
-                {
-                    // Bad things happened!!!
-                    throw new SecurityException("The oauth token did not match!");
-                }
-
-                DisposeSubscription();
-
-                e.EventArgs.Cancel = true;
-
-                RequestAccess();
-            }
-        }
-
-        private void DisposeSubscription()
-        {
-            if (_subscription != null)
-            {
-                _subscription.Dispose();
-                _subscription = null;
-            }
-        }
-
-        private static Dictionary<string, string> ParseQueryString(string queryString)
-        {
-            var decoded = HttpUtility.UrlDecode(queryString);
-
-            return
-                Regex
-                    .Split(decoded, "&")
-                    .Select(vp => Regex.Split(vp, "="))
-                    .ToDictionary(singlePair => singlePair[0],
-                                  singlePair => singlePair.Length == 2 ? singlePair[1] : string.Empty);
+                            subject.OnNext(_token);
+                            subject.OnCompleted();
+                        },
+                    subject.OnError,
+                    subject.OnCompleted);
         }
     }
 }

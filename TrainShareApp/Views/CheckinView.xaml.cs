@@ -11,11 +11,11 @@ using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using Microsoft.Phone.Controls;
 
-namespace TrainShareApp
+namespace TrainShareApp.Views
 {
-    public partial class Page1 : PhoneApplicationPage
+    public partial class CheckinView : PhoneApplicationPage
     {
-        public Page1()
+        public CheckinView()
         {
             InitializeComponent();
         }

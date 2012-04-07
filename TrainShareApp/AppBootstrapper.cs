@@ -1,4 +1,9 @@
-﻿namespace TrainShareApp {
+﻿using System.Linq;
+using TrainShareApp.Data;
+using TrainShareApp.Model;
+using TrainShareApp.ViewModels;
+
+namespace TrainShareApp {
     using System;
     using System.Collections.Generic;
     using System.Windows.Controls;
@@ -14,7 +19,17 @@
             container = new PhoneContainer(RootFrame);
 
 			container.RegisterPhoneServices();
-            container.PerRequest<MainPageViewModel>();
+            
+            container
+                .Singleton<Globals>()
+                .Singleton<ITwitterClient, TwitterClient>()
+                .Singleton<MainPageViewModel>()
+                .Singleton<MainViewModel>()
+                .Singleton<LoginViewModel>()
+                .Singleton<SearchResultViewModel>()
+                .Singleton<ITimeTable, TimeTable>()
+                .Singleton<ITrainshareRepository, TrainshareRepository>()
+                .Singleton<ConnectionsCache>();
 
             AddCustomConventions();
         }
