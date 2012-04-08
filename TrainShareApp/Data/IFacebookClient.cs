@@ -6,7 +6,7 @@ namespace TrainShareApp.Data
 {
     public interface IFacebookClient
     {
-        Task<OAuthToken> Login(WebBrowser viewBrowser);
+        Task<FacebookToken> Login(WebBrowser viewBrowser);
         Task Logout();
     }
 }

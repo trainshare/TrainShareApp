@@ -40,7 +40,7 @@ namespace TrainShareApp
         {
             base.OnActivate();
 
-            if (_globals.TrainshareId == 0)
+            if (string.IsNullOrEmpty(_globals.TrainshareId))
             {
                 NeedsLogin = true;
             }

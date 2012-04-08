@@ -39,7 +39,7 @@ namespace TrainShareApp.ViewModels
 
         protected override async void OnViewReady(object view)
         {
-            int trainshareId = 0;
+            var trainshareId = string.Empty;
             var castedView = view as LoginView;
             Debug.Assert(castedView != null);
 
@@ -61,7 +61,7 @@ namespace TrainShareApp.ViewModels
                         MessageBox.Show("I am terribly sorry but your request could not be finished.");
                     }
 
-                    if (trainshareId != 0)
+                    if (!string.IsNullOrEmpty(trainshareId))
                         _globals.TrainshareId = trainshareId;
 
                     _navigationService.GoBack();
@@ -73,15 +73,17 @@ namespace TrainShareApp.ViewModels
                             await _facebookClient.Login(castedView.Browser);
                         trainshareId =
                             await
-                            _trainshareClient.SendAccessToken("facebook", facebookToken.AccessToken,
-                                                              facebookToken.AccessTokenSecret);
+                            _trainshareClient.SendAccessToken("facebook", facebookToken.AccessToken, string.Empty);
                     }
                     catch (Exception e)
                     {
                         _logger.Error(e);
                         MessageBox.Show("I am terribly sorry but your request could not be finished.");
                     }
-                    _globals.TrainshareId = trainshareId == 0 ? _globals.TrainshareId : trainshareId;
+
+                    if (!string.IsNullOrEmpty(trainshareId))
+                        _globals.TrainshareId = trainshareId;
+
                     _navigationService.GoBack();
                     break;
                 default:

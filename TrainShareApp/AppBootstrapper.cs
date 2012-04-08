@@ -25,6 +25,7 @@ namespace TrainShareApp {
                 .Singleton<ILog, DebugLogger>()
                 .Singleton<Globals>()
                 .Singleton<ITwitterClient, TwitterClient>()
+                .Singleton<IFacebookClient, FacebookClient>()
                 .Singleton<MainPageViewModel>()
                 .Singleton<MainViewModel>()
                 .Singleton<LoginViewModel>()

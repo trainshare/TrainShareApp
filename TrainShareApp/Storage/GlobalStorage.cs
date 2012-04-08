@@ -17,7 +17,6 @@ namespace TrainShareApp.Storage
             Property(globals => globals.FacebookId).InAppSettings();
             Property(globals => globals.FacebookName).InAppSettings();
             Property(globals => globals.FacebookToken).InAppSettings();
-            Property(globals => globals.FacebookSecret).InAppSettings();
         }
     }
 }

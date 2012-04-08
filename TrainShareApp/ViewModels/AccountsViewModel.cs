@@ -152,7 +152,7 @@ namespace TrainShareApp.ViewModels
 
         public async void FacebookButton()
         {
-            if (TwitterLoggedIn)
+            if (FacebookLoggedIn)
             {
                 await _facebookClient.Logout();
 
@@ -161,8 +161,6 @@ namespace TrainShareApp.ViewModels
             }
             else
             {
-                SetBusy(true);
-
                 _navigationService
                     .UriFor<LoginViewModel>()
                     .WithParam(vm => vm.Client, "facebook")

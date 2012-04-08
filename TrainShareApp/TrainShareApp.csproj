@@ -135,6 +135,7 @@
     </Compile>
     <Compile Include="AppBootstrapper.cs" />
     <Compile Include="Data\Credentials.cs" />
+    <Compile Include="Data\FacebookClient.cs" />
     <Compile Include="Data\ITimeTable.cs" />
     <Compile Include="Data\ITrainshareClient.cs" />
     <Compile Include="Data\ITwitterClient.cs" />
@@ -158,7 +159,7 @@
     <Compile Include="Model\TrainshareFriend.cs" />
     <Compile Include="Model\TrainshareRoute.cs" />
     <Compile Include="Model\TrainshareStation.cs" />
-    <Compile Include="Model\OAuthToken.cs" />
+    <Compile Include="Model\FacebookToken.cs" />
     <Compile Include="Model\TwitterToken.cs" />
     <Compile Include="Storage\GlobalStorage.cs" />
     <Compile Include="Storage\MainViewStorage.cs" />

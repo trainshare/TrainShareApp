@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Microsoft.Phone.Reactive;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestSharp;
 using TrainShareApp.Extension;
@@ -13,7 +12,7 @@ namespace TrainShareApp.Data
 {
     public class TrainshareClient : ITrainshareClient
     {
-        public Task<int> SendAccessToken(string network, string token, string tokenSecret)
+        public Task<string> SendAccessToken(string network, string token, string tokenSecret)
         {
             var client = new RestClient("http://trainsharing.herokuapp.com/v1/");
             var request =
@@ -31,7 +30,7 @@ namespace TrainShareApp.Data
                 client
                     .ExecuteObservable(request)
                     .Select(response => JObject.Parse(response.Content))
-                    .Select(json => json["number"].Value<int>())
+                    .Select(json => json["trainsharingID"].Value<string>())
                     .ToTask();
         }
 
