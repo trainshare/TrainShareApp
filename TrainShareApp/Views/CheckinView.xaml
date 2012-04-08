@@ -6,12 +6,16 @@
     xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="clr-namespace:TrainShareApp.ViewModels"
+    xmlns:cal="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro"
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
     FontSize="{StaticResource PhoneFontSizeNormal}"
     Foreground="{StaticResource PhoneForegroundBrush}"
     SupportedOrientations="Portrait" Orientation="Portrait"
     mc:Ignorable="d" d:DesignHeight="768" d:DesignWidth="480"
-    shell:SystemTray.IsVisible="True">
+    shell:SystemTray.IsVisible="True"
+    cal:Bind.AtDesignTime="True"
+    d:DataContext="{d:DesignInstance Type=vm:CheckinViewModel, IsDesignTimeCreatable=True}">
 
     <!--LayoutRoot is the root grid where all page content is placed-->
     <Grid x:Name="LayoutRoot" Background="{StaticResource MainBackground}">
@@ -26,10 +30,10 @@
         <!--ContentPanel - place additional content here-->
 		<Image Grid.Row="0" Stretch="Uniform" Source="/TrainShareApp;component/Logo.png" VerticalAlignment="Top" />
 		<TextBlock x:Name="Title" Text="Checkin" Style="{StaticResource PhoneTextTitle1Style}" Margin="12,0,24,0" d:LayoutOverrides="Height" Grid.Row="1"/>
-		<Grid Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Center">
-			<TextBlock TextWrapping="Wrap" Text="Front" FontSize="16" d:LayoutOverrides="Height" HorizontalAlignment="Left" Margin="20,15,0,0"/>
-			<TextBlock TextWrapping="Wrap" Text="Back" d:LayoutOverrides="Width, Height" HorizontalAlignment="Right" FontSize="16" Margin="0,15,19,0"/>
-			<Slider Maximum="1" LargeChange="0.2" Value="{Binding Position}" Style="{StaticResource TrainSliderStyle}" VerticalAlignment="Bottom"/>
+		<Grid Grid.Row="2" VerticalAlignment="Center">
+			<TextBlock TextWrapping="Wrap" Text="Front" FontSize="16" d:LayoutOverrides="Height" HorizontalAlignment="Left" Margin="30,15,0,0"/>
+			<TextBlock TextWrapping="Wrap" Text="Back" d:LayoutOverrides="Width, Height" HorizontalAlignment="Right" FontSize="16" Margin="0,15,30,0"/>
+			<Slider Maximum="1" LargeChange="0.2" Value="{Binding Position}" Style="{StaticResource TrainSliderStyle}" VerticalAlignment="Bottom" Foreground="White"/>
 		</Grid>
 		<StackPanel Orientation="Vertical" Grid.Row="3" Grid.RowSpan="2" d:LayoutOverrides="Height">
 			<TextBlock TextWrapping="Wrap" Text="Additional Message:" Padding="15,0,0,0" FontSize="24"/>

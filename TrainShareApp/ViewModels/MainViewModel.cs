@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Diagnostics;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Windows;
@@ -27,7 +27,7 @@ namespace TrainShareApp.ViewModels
 
         public MainViewModel()
         {
-            Debug.Assert(Execute.InDesignMode, "Default constructor can only be called to generate design data.");
+            Contract.Assert(Execute.InDesignMode, "Default constructor can only be called to generate design data.");
             Friends.AddRange(Enumerable.Range(0, 10).Select(i => new TrainshareFriend{Name = "Friend #" + i}));
         }
 

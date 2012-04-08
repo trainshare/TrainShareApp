@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Windows.Controls;
 using Caliburn.Micro;
-using TrainShareApp.Data;
 using TrainShareApp.Model;
 using TrainShareApp.Views;
 
@@ -71,6 +71,8 @@ namespace TrainShareApp.ViewModels
         protected override void OnViewReady(object view)
         {
             var castedView = view as SearchResultView;
+            Contract.Assume(castedView != null);
+
             _selectionSubscription =
                 Observable
                     .FromEventPattern<SelectionChangedEventHandler, SelectionChangedEventArgs>(
@@ -95,8 +97,7 @@ namespace TrainShareApp.ViewModels
         private void SelectionChanged(EventPattern<SelectionChangedEventArgs> e)
         {
             var listBox = e.Sender as ListBox;
-
-            Debug.Assert(listBox != null);
+            Contract.Assume(listBox != null);
 
             _globals.CheckinConnection = listBox.SelectedItem as Connection;
             listBox.SelectedItem = null;

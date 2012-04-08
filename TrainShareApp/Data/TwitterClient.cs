@@ -1,4 +1,6 @@
 using System;
+using System.Diagnostics.Contracts;
+using System.Reactive;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Security;
@@ -17,19 +19,19 @@ namespace TrainShareApp.Data
         private readonly Globals _globals;
         private readonly string _consumerKey;
         private readonly string _consumerSecret;
-        private readonly TwitterToken _token;
+        private readonly OAuthToken _token;
 
         public TwitterClient(Globals globals)
         {
             _globals = globals;
             _consumerKey = Credentials.TwitterToken;
             _consumerSecret = Credentials.TwitterTokenSecret;
-            _token = new TwitterToken();
+            _token = new OAuthToken();
         }
 
-        public IObservable<TwitterToken> Login(WebBrowser browser)
+        public IObservable<OAuthToken> Login(WebBrowser browser)
         {
-            var subject = new AsyncSubject<TwitterToken>();
+            var subject = new AsyncSubject<OAuthToken>();
             
             var client = new RestClient("https://api.twitter.com/oauth/");
             client.Authenticator = OAuth1Authenticator.ForRequestToken(_consumerKey, _consumerSecret);
@@ -56,7 +58,29 @@ namespace TrainShareApp.Data
             return subject;
         }
 
-        private void Verify(WebBrowser browser, IObserver<TwitterToken> subject)
+        public IObservable<Unit> Logout()
+        {
+            var subject = new AsyncSubject<Unit>();
+
+            _globals.TwitterToken = null;
+            _globals.TwitterSecret = null;
+
+            subject.OnCompleted();
+
+            return subject;
+        }
+
+        public bool IsLoggedIn
+        {
+            get
+            {
+                return
+                    !string.IsNullOrEmpty(_globals.TwitterToken) &&
+                    !string.IsNullOrEmpty(_globals.TwitterSecret);
+            }
+        }
+
+        private void Verify(WebBrowser browser, IObserver<OAuthToken> subject)
         {
             var client = new RestClient("https://api.twitter.com/oauth/");
             client.FollowRedirects = true;
@@ -67,8 +91,8 @@ namespace TrainShareApp.Data
                     h => browser.Navigating += h,
                     h => browser.Navigating -= h)
                 .Where(e => Regex.IsMatch(e.EventArgs.Uri.ToString(), @"http://(www|m).bing.com"))
-                .Do(e => e.EventArgs.Cancel = true)
                 .Take(1)
+                .Do(e => e.EventArgs.Cancel = true)
                 .Select(e => e.EventArgs.Uri.ToString())
                 .Select(address => address.Substring(address.IndexOf('?') + 1))
                 .ParseQueryString()
@@ -84,7 +108,7 @@ namespace TrainShareApp.Data
             browser.Navigate(client.BuildUri(request));
         }
 
-        private void RequestAccess(IObserver<TwitterToken> subject)
+        private void RequestAccess(IObserver<OAuthToken> subject)
         {
             var client = new RestClient("https://api.twitter.com/oauth/");
             client.Authenticator = OAuth1Authenticator.ForAccessToken(
@@ -104,6 +128,9 @@ namespace TrainShareApp.Data
 
                             _globals.TwitterToken = _token.AccessToken;
                             _globals.TwitterSecret = _token.AccessTokenSecret;
+
+                            Contract.Assert(!string.IsNullOrEmpty(_globals.TwitterToken));
+                            Contract.Assert(!string.IsNullOrEmpty(_globals.TwitterSecret));
 
                             subject.OnNext(_token);
                             subject.OnCompleted();

@@ -1,6 +1,6 @@
 ﻿namespace TrainShareApp.Model
 {
-    public class TwitterToken
+    public class OAuthToken
     {
         public string AuthToken { get; set; }
         public string AuthTokenSecret { get; set; }
@@ -8,7 +8,7 @@
         public string AccessToken { get; set; }
         public string AccessTokenSecret { get; set; }
 
-        public TwitterToken WithAuth(string token, string secret)
+        public OAuthToken WithAuth(string token, string secret)
         {
             AuthToken = token;
             AuthTokenSecret = secret;
@@ -16,14 +16,14 @@
             return this;
         }
 
-        public TwitterToken WithVerifier(string verifier)
+        public OAuthToken WithVerifier(string verifier)
         {
             Verifier = verifier;
 
             return this;
         }
 
-        public TwitterToken WithAccess(string token, string secret)
+        public OAuthToken WithAccess(string token, string secret)
         {
             AccessToken = token;
             AccessTokenSecret = secret;

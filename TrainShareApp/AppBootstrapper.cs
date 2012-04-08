@@ -26,10 +26,10 @@ namespace TrainShareApp {
                 .Singleton<MainPageViewModel>()
                 .Singleton<MainViewModel>()
                 .Singleton<LoginViewModel>()
+                .Singleton<AccountsViewModel>()
                 .Singleton<SearchResultViewModel>()
                 .Singleton<ITimeTable, TimeTable>()
-                .Singleton<ITrainshareRepository, TrainshareRepository>()
-                .Singleton<ConnectionsCache>();
+                .Singleton<ITrainshareRepository, TrainshareRepository>();
 
             AddCustomConventions();
         }

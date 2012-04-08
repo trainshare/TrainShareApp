@@ -1,45 +1,58 @@
-﻿using System;
-using Caliburn.Micro;
+﻿using Caliburn.Micro;
 using TrainShareApp.Data;
+using TrainShareApp.Model;
 using TrainShareApp.ViewModels;
 
-namespace TrainShareApp {
+namespace TrainShareApp
+{
     public class MainPageViewModel : Screen
     {
         private readonly INavigationService _navigationService;
         private readonly ITwitterClient _twitterClient;
-        private MainPage _view;
+        private readonly IFacebookClient _facebookClient;
+        private readonly Globals _globals;
 
         public MainPageViewModel(
             INavigationService navigationService,
-            ITwitterClient twitterClient)
+            ITwitterClient twitterClient,
+            IFacebookClient facebookClient,
+            Globals globals)
         {
             _navigationService = navigationService;
             _twitterClient = twitterClient;
+            _facebookClient = facebookClient;
+            _globals = globals;
         }
 
-        protected override void OnViewReady(object view)
+        protected override void OnActivate()
         {
-            _view = view as MainPage;
-            base.OnViewReady(view);
+            base.OnActivate();
 
-            //var routes = new TimeTable();
-            //routes.GetConnections("Geneva", "Lugano", DateTime.Now);
-
-            //var twitter = new TwitterClient(Credentials.TwitterToken, Credentials.TwitterTokenSecret);
-            //twitter.Login(_view.Browser);
+            if (string.IsNullOrEmpty(_globals.TrainshareId))
+                _navigationService
+                    .UriFor<AccountsViewModel>()
+                    .WithParam(vm => vm.SkipBack, true)
+                    .Navigate();
+            else
+                _navigationService
+                    .UriFor<MainViewModel>()
+                    .Navigate();
         }
 
         public void SigninTwitter()
         {
             _navigationService
                 .UriFor<LoginViewModel>()
-                .WithParam(m => m.Client, "twitter")
+                .WithParam(vm => vm.Client, "twitter")
                 .Navigate();
         }
+
         public void SigninFacebook()
         {
-            Console.WriteLine("Signin in Facebook");
+            _navigationService
+                .UriFor<LoginViewModel>()
+                .WithParam(vm => vm.Client, "facebook")
+                .Navigate();
         }
     }
 }
