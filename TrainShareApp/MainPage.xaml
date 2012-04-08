@@ -5,35 +5,36 @@
     xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
     xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:cal="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d" d:DesignWidth="480" d:DesignHeight="768"
+    xmlns:vm="clr-namespace:TrainShareApp"
+    xmlns:cal="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro"
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
     FontSize="{StaticResource PhoneFontSizeNormal}"
     Foreground="{StaticResource PhoneForegroundBrush}"
     SupportedOrientations="Portrait" Orientation="Portrait"
-    shell:SystemTray.IsVisible="True">
+    shell:SystemTray.IsVisible="True"
+    cal:Bind.AtDesignTime="True"
+    d:DataContext="{d:DesignInstance Type=vm:MainPageViewModel, IsDesignTimeCreatable=True}">
+	<phone:PhoneApplicationPage.Resources>
+		<cal:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+	</phone:PhoneApplicationPage.Resources>
 
     <!--LayoutRoot is the root grid where all page content is placed-->
     <Grid x:Name="LayoutRoot">
         <Grid.Background>
-            <ImageBrush ImageSource="background.jpg" />
+            <ImageBrush ImageSource="/SplashScreenImage.jpg" />
         </Grid.Background>
         <Grid.RowDefinitions>
-            <RowDefinition x:Name="Header" Height="Auto" />
-            <RowDefinition x:Name="Content" Height="*" />
+            <RowDefinition x:Name="Header" Height="300" />
+            <RowDefinition x:Name="Content" Height="Auto" />
+            <RowDefinition/>
         </Grid.RowDefinitions>
-
-        <Image Grid.Row="0" Source="Logo.png" Stretch="Uniform" />
-
-        <StackPanel Grid.Row="1">
-            <TextBlock FontFamily="{StaticResource PhoneFontFamilySemiBold}"
-                       FontSize="{StaticResource PhoneFontSizeExtraExtraLarge}">
-                Please Sign In
-            </TextBlock>
-            <Button x:Name="SigninTwitter"  Margin="0 200 0 0" BorderThickness="0" Background="Aquamarine" Foreground="Black">Twitter</Button>
-            <Button x:Name="SigninFacebook" BorderThickness="0" Background="Blue">Facebook</Button>
-        </StackPanel>
+    	<StackPanel Grid.Row="1" Margin="40,0" Background="#4CFFFFFF" Visibility="{Binding NeedsLogin, Converter={StaticResource BooleanToVisibilityConverter}}">
+    		<TextBlock TextWrapping="Wrap" Text="Hello Sir" HorizontalAlignment="Center" Margin="0,10,0,0" FontSize="{StaticResource PhoneFontSizeMedium}" FontWeight="Bold"/>
+    		<TextBlock TextWrapping="Wrap" Text="Thank you very much for trying out the Train Share App. To Continue please click the login button." HorizontalAlignment="Center" Margin="10,0" FontSize="{StaticResource PhoneFontSizeMedium}" Padding="0,0,0,11"/>
+    		<Button x:Name="Login" Content="Login" HorizontalAlignment="Center" Width="200"/>
+    	</StackPanel>
         <!--<Grid.Background>
             <ImageBrush ImageSource="fast-train.jpg" Stretch="Uniform" AlignmentY="Top" />
         </Grid.Background>-->

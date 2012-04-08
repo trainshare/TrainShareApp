@@ -1,5 +1,4 @@
-﻿using System;
-using System.Reactive;
+﻿using System.Threading.Tasks;
 using Microsoft.Phone.Controls;
 using TrainShareApp.Model;
 
@@ -7,8 +6,8 @@ namespace TrainShareApp.Data
 {
     public interface ITwitterClient
     {
-        IObservable<OAuthToken> Login(WebBrowser viewBrowser);
-        IObservable<Unit> Logout();
+        Task<TwitterToken> Login(WebBrowser viewBrowser);
+        Task Logout();
 
         bool IsLoggedIn { get; }
     }

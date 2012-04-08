@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using TrainShareApp.Data;
+using TrainShareApp.Logger;
 using TrainShareApp.Model;
 using TrainShareApp.ViewModels;
 
@@ -21,6 +22,7 @@ namespace TrainShareApp {
 			container.RegisterPhoneServices();
             
             container
+                .Singleton<ILog, DebugLogger>()
                 .Singleton<Globals>()
                 .Singleton<ITwitterClient, TwitterClient>()
                 .Singleton<MainPageViewModel>()
@@ -29,7 +31,7 @@ namespace TrainShareApp {
                 .Singleton<AccountsViewModel>()
                 .Singleton<SearchResultViewModel>()
                 .Singleton<ITimeTable, TimeTable>()
-                .Singleton<ITrainshareRepository, TrainshareRepository>();
+                .Singleton<ITrainshareClient, TrainshareClient>();
 
             AddCustomConventions();
         }

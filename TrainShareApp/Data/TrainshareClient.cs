@@ -1,32 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reactive;
 using System.Reactive.Linq;
+using System.Threading.Tasks;
+using Microsoft.Phone.Reactive;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using RestSharp;
-using TrainShareApp.Model;
 using TrainShareApp.Extension;
+using TrainShareApp.Model;
 
 namespace TrainShareApp.Data
 {
-    public class TrainshareRepository : ITrainshareRepository
+    public class TrainshareClient : ITrainshareClient
     {
-        public IObservable<string> SendAccessToken(string network, string token, string tokenSecret)
+        public Task<int> SendAccessToken(string network, string token, string tokenSecret)
         {
             var client = new RestClient("http://trainsharing.herokuapp.com/v1/");
             var request =
                 new RestRequest("login", Method.POST)
                     .WithFormat(DataFormat.Json)
                     .AddBody(
-                        new TrainshareCredentials {
-                                Network = "twitter",
-                                AccessToken = "krassesToken",
-                                AccessTokenSecret = "krassesTokenSecret"
+                        new TrainshareCredentials
+                            {
+                                network = "twitter",
+                                access_token = "krassesToken",
+                                access_token_secret = "krassesTokenSecret"
                             });
 
             return
                 client
                     .ExecuteObservable(request)
-                    .Select(response => response.Content);
+                    .Select(response => JObject.Parse(response.Content))
+                    .Select(json => json["number"].Value<int>())
+                    .ToTask();
         }
 
         public IObservable<TrainshareFriend> GetFriends()
@@ -37,11 +43,11 @@ namespace TrainShareApp.Data
                     .WithFormat(DataFormat.Json)
                     .AddBody(
                         new TrainshareCredentials
-                            {
-                                Network = "twitter",
-                                AccessToken = "krassesToken",
-                                AccessTokenSecret = "krassesTokenSecret"
-                            });
+                        {
+                            network = "twitter",
+                            access_token = "krassesToken",
+                            access_token_secret = "krassesTokenSecret"
+                        });
 
             return
                 client
@@ -49,7 +55,7 @@ namespace TrainShareApp.Data
                     .SelectMany(response => response.Data);
         }
 
-        public IObservable<Unit> Checkin(string trainshareId, Connection connection)
+        public Task Checkin(int trainshareId, Connection connection)
         {
             var client = new RestClient("http://trainsharing.herokuapp.com/v1/");
             var request =
@@ -59,14 +65,14 @@ namespace TrainShareApp.Data
                         new
                         {
                             TrainshareId = trainshareId,
-                            Departure = connection.From.Departure,
-                            Arrival = connection.To.Arrival
+                            connection.From.Departure,
+                            connection.To.Arrival
                         });
 
             return
                 client
                     .ExecuteObservable(request)
-                    .Select(response => new Unit());
+                    .ToTask();
         }
     }
 }

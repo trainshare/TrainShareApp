@@ -1,10 +1,11 @@
-﻿
 namespace TrainShareApp.Model
 {
     public class TrainshareCredentials
     {
-        public string Network { get; set; }
-        public string AccessToken { get; set; }
-        public string AccessTokenSecret { get; set; }
+// ReSharper disable InconsistentNaming
+        public string network { get; set; }
+        public string access_token { get; set; }
+        public string access_token_secret { get; set; }
+// ReSharper restore InconsistentNaming
     }
 }

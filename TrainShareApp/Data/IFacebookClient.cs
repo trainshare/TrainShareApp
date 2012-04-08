@@ -1,5 +1,4 @@
-using System;
-using System.Reactive;
+using System.Threading.Tasks;
 using Microsoft.Phone.Controls;
 using TrainShareApp.Model;
 
@@ -7,7 +6,7 @@ namespace TrainShareApp.Data
 {
     public interface IFacebookClient
     {
-        IObservable<OAuthToken> Login(WebBrowser viewBrowser);
-        IObservable<Unit> Logout();
+        Task<OAuthToken> Login(WebBrowser viewBrowser);
+        Task Logout();
     }
 }

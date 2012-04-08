@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Diagnostics.Contracts;
+using System.Diagnostics;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Windows;
@@ -18,7 +18,7 @@ namespace TrainShareApp.ViewModels
         private IDisposable _friendsSubscription;
 
         private readonly INavigationService _navigationService;
-        private readonly ITrainshareRepository _trainshareRepository;
+        private readonly ITrainshareClient _trainshareClient;
         private readonly ITimeTable _timeTable;
         private readonly Globals _globals;
 
@@ -27,18 +27,18 @@ namespace TrainShareApp.ViewModels
 
         public MainViewModel()
         {
-            Contract.Assert(Execute.InDesignMode, "Default constructor can only be called to generate design data.");
+            Debug.Assert(Execute.InDesignMode, "Default constructor can only be called to generate design data.");
             Friends.AddRange(Enumerable.Range(0, 10).Select(i => new TrainshareFriend{Name = "Friend #" + i}));
         }
 
         public MainViewModel(
             INavigationService navigationService,
-            ITrainshareRepository trainshareRepository,
+            ITrainshareClient trainshareClient,
             ITimeTable timeTable,
             Globals globals)
         {
             _navigationService = navigationService;
-            _trainshareRepository = trainshareRepository;
+            _trainshareClient = trainshareClient;
             _timeTable = timeTable;
             _globals = globals;
         }
@@ -90,7 +90,7 @@ namespace TrainShareApp.ViewModels
 
         protected override void OnViewReady(object view)
         {
-            _friendsSubscription = _trainshareRepository.GetFriends().Subscribe(_friends.Add);
+            _friendsSubscription = _trainshareClient.GetFriends().Subscribe(_friends.Add);
             base.OnViewReady(view);
         }
 

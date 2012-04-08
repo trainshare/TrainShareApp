@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using System.Diagnostics.Contracts;
 using Caliburn.Micro;
 using TrainShareApp.Model;
 
@@ -15,7 +14,7 @@ namespace TrainShareApp.ViewModels
 
         public CheckinViewModel()
         {
-            Contract.Requires(Execute.InDesignMode, "Default constructor can only be called to generate design data.");
+            Debug.Assert(Execute.InDesignMode, "Default constructor can only be called to generate design data.");
         }
 
         public CheckinViewModel(
