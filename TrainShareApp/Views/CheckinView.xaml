@@ -23,7 +23,7 @@
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="200"/>
-			<RowDefinition MinHeight="194"/>
+            <RowDefinition Height="*"/>
 			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
 
@@ -31,16 +31,15 @@
 		<Image Grid.Row="0" Stretch="Uniform" Source="/TrainShareApp;component/Logo.png" VerticalAlignment="Top" />
 		<TextBlock x:Name="Title" Text="Checkin" Style="{StaticResource PhoneTextTitle1Style}" Margin="12,0,24,0" d:LayoutOverrides="Height" Grid.Row="1"/>
 		<Grid Grid.Row="2" VerticalAlignment="Center">
-			<TextBlock TextWrapping="Wrap" Text="Front" FontSize="16" d:LayoutOverrides="Height" HorizontalAlignment="Left" Margin="30,15,0,0"/>
-			<TextBlock TextWrapping="Wrap" Text="Back" d:LayoutOverrides="Width, Height" HorizontalAlignment="Right" FontSize="16" Margin="0,15,30,0"/>
-			<Slider Maximum="1" LargeChange="0.2" Value="{Binding Position}" Style="{StaticResource TrainSliderStyle}" VerticalAlignment="Bottom" Foreground="White"/>
+			<TextBlock TextWrapping="Wrap" Text="Front" FontSize="16" HorizontalAlignment="Left" Margin="30,15,0,0"/>
+			<TextBlock TextWrapping="Wrap" Text="Back" HorizontalAlignment="Right" FontSize="16" Margin="0,15,30,0"/>
+			<Slider Maximum="1" LargeChange="0.2" Value="{Binding Position, Mode=TwoWay}" Style="{StaticResource TrainSliderStyle}" VerticalAlignment="Bottom" Foreground="White"/>
 		</Grid>
-		<StackPanel Orientation="Vertical" Grid.Row="3" Grid.RowSpan="2" d:LayoutOverrides="Height">
+		<StackPanel Orientation="Vertical" Grid.Row="3">
 			<TextBlock TextWrapping="Wrap" Text="Additional Message:" Padding="15,0,0,0" FontSize="24"/>
 			<TextBox TextWrapping="Wrap" Height="250" Text="{Binding Message, Mode=TwoWay}"/>
-
 		</StackPanel>
-		<Button x:Name="Confirm" Content="Check In" HorizontalAlignment="Right" d:LayoutOverrides="Height" Grid.Row="4" Margin="0,0,30,30" Width="200"/>
+		<Button x:Name="Confirm" Content="Check In" HorizontalAlignment="Right" Grid.Row="4" Margin="0,0,30,30" Width="200"/>
 
 	</Grid>
  

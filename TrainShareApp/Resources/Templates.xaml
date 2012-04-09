@@ -22,7 +22,7 @@
 	</DataTemplate>
 	<!-- Resource dictionary entries should be defined here. -->
 	<DataTemplate x:Key="FriendTemplate">
-		<Grid Margin="0,0,0,3" Background="{StaticResource ListItemBrush}" Width="460" Height="60">
+		<Grid Margin="0,0,0,3" Background="{StaticResource ListItemBrush}" Width="460" Height="100">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="10"/>
 				<ColumnDefinition Width="Auto"/>
@@ -30,7 +30,7 @@
 				<ColumnDefinition Width="Auto"/>
 				<ColumnDefinition Width="10"/>
 			</Grid.ColumnDefinitions>
-			<Image Grid.Column="1" Height="60" Width="60" Margin="0,0,10,0" Source="{Binding Image}"/>
+			<Image Grid.Column="1" Height="60" Width="60" Margin="0,0,10,0" Source="{Binding ImageUrl}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 			<TextBlock Text="{Binding Name}" FontSize="{StaticResource PhoneFontSizeLarge}" d:LayoutOverrides="Width, Height" Foreground="Black" Grid.Column="2" VerticalAlignment="Center" />
 		</Grid>
 	</DataTemplate>

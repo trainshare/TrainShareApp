@@ -4,10 +4,12 @@ using System.Diagnostics;
 using System.Reactive.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Caliburn.Micro;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Reactive;
 using RestSharp;
 using RestSharp.Authenticators;
+using TrainShareApp.Event;
 using TrainShareApp.Extension;
 using TrainShareApp.Model;
 
@@ -18,29 +20,26 @@ namespace TrainShareApp.Data
         private readonly string _consumerKey;
         private readonly string _consumerSecret;
         private readonly Globals _globals;
+        private readonly IEventAggregator _events;
 
-        public TwitterClient(Globals globals)
+        public TwitterClient(Globals globals, IEventAggregator events)
         {
             _globals = globals;
+            _events = events;
             _consumerKey = Credentials.TwitterToken;
             _consumerSecret = Credentials.TwitterTokenSecret;
         }
 
         #region ITwitterClient Members
 
-        public Task Logout()
+        public Task LogoutAsync()
         {
-            _globals.TwitterId = 0;
-            _globals.TwitterName = string.Empty;
-            _globals.TwitterToken = null;
-            _globals.TwitterSecret = null;
-
-            return TaskEx.Delay(0);
+            return TaskEx.Run(Logout);
         }
 
         public bool IsLoggedIn
         {
-            get { return _globals.TwitterId != 0; }
+            get { return _globals.TwitterToken != null; }
         }
 
         public async Task<TwitterToken> Login(WebBrowser browser)
@@ -65,19 +64,19 @@ namespace TrainShareApp.Data
 
             Debug.Assert(requestToken["oauth_token"] == verifier["oauth_token"]);
 
-            _globals.TwitterId = int.Parse(accessToken["user_id"]);
-            _globals.TwitterName = accessToken["screen_name"];
-            _globals.TwitterToken = accessToken["oauth_token"];
-            _globals.TwitterSecret = accessToken["oauth_token_secret"];
-
-            return
+            var token =
                 new TwitterToken
                     {
-                        Id = _globals.TwitterId,
-                        ScreenName = _globals.TwitterName,
-                        AccessToken = _globals.TwitterToken,
-                        AccessTokenSecret = _globals.TwitterSecret
+                        Id = int.Parse(accessToken["user_id"]),
+                        ScreenName = accessToken["screen_name"],
+                        AccessToken = accessToken["oauth_token"],
+                        AccessTokenSecret = accessToken["oauth_token_secret"]
                     };
+
+            _globals.TwitterToken = token;
+            _events.Publish(token);
+
+            return token;
         }
 
         #endregion
@@ -99,7 +98,7 @@ namespace TrainShareApp.Data
                     .FromEventPattern<NavigatingEventArgs>(
                         h => browser.Navigating += h,
                         h => browser.Navigating -= h)
-                    .Where(e => Regex.IsMatch(e.EventArgs.Uri.ToString(), @"http://(www|m).bing.com"))
+                    .Where(e => Regex.IsMatch(e.EventArgs.Uri.ToString(), @"http://trainshare.ch"))
                     .Take(1)
                     .Do(e => e.EventArgs.Cancel = true)
                     .Select(e => e.EventArgs.Uri.ToString())
@@ -123,6 +122,12 @@ namespace TrainShareApp.Data
                     .Select(response => response.Content)
                     .ParseQueryString()
                     .ToTask();
+        }
+
+        private void Logout()
+        {
+            _globals.TwitterToken = null;
+            _events.Publish(new LogoutTwitter());
         }
     }
 }

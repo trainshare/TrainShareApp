@@ -1,14 +1,19 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
+using System.Windows;
 using Caliburn.Micro;
+using TrainShareApp.Data;
 using TrainShareApp.Model;
 
 namespace TrainShareApp.ViewModels
 {
-    public class CheckinViewModel :Screen
+    public class CheckinViewModel : Screen
     {
+        private readonly ILog _logger;
         private readonly Globals _globals;
         private readonly INavigationService _navigationService;
-        private float _position = 0.5f;
+        private readonly ITrainshareClient _trainshareClient;
+        private float _position = .5f;
         private string _message = string.Empty;
         private Connection _connection;
 
@@ -18,11 +23,15 @@ namespace TrainShareApp.ViewModels
         }
 
         public CheckinViewModel(
+            ILog logger,
             Globals globals,
-            INavigationService navigationService)
+            INavigationService navigationService,
+            ITrainshareClient trainshareClient)
         {
+            _logger = logger;
             _globals = globals;
             _navigationService = navigationService;
+            _trainshareClient = trainshareClient;
         }
 
         public Connection Connection
@@ -57,12 +66,29 @@ namespace TrainShareApp.ViewModels
         protected override void OnActivate()
         {
             Connection = _globals.CheckinConnection;
+
             base.OnActivate();
         }
 
-        public void Confirm()
+        public async void Confirm()
         {
-            
+            try
+            {
+                var position = (int)Position*10;
+                position = Math.Min(position, 10);
+                position = Math.Max(position, 0);
+
+                await _trainshareClient.Checkin(_globals.TrainshareId, Connection, position);
+            }
+            catch(Exception e)
+            {
+                _logger.Error(e);
+                MessageBox.Show("Sorry, there was an unexpected error while checking in. Please try again later.");
+            }
+
+            _navigationService
+                .UriFor<MainViewModel>()
+                .Navigate();
         }
     }
 }

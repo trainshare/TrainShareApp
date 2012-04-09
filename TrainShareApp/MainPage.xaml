@@ -32,7 +32,7 @@
         </Grid.RowDefinitions>
     	<StackPanel Grid.Row="1" Margin="40,0" Background="#4CFFFFFF" Visibility="{Binding NeedsLogin, Converter={StaticResource BooleanToVisibilityConverter}}">
     		<TextBlock TextWrapping="Wrap" Text="Hello Sir" HorizontalAlignment="Center" Margin="0,10,0,0" FontSize="{StaticResource PhoneFontSizeMedium}" FontWeight="Bold"/>
-    		<TextBlock TextWrapping="Wrap" Text="Thank you very much for trying out the Train Share App. To Continue please click the login button." HorizontalAlignment="Center" Margin="10,0" FontSize="{StaticResource PhoneFontSizeMedium}" Padding="0,0,0,11"/>
+    		<TextBlock TextWrapping="Wrap" HorizontalAlignment="Center" Margin="10,0" FontSize="{StaticResource PhoneFontSizeMedium}" Padding="0,0,0,11" Text="Thank you very much for using the Train Share App. To Continue please click the login button." />
     		<Button x:Name="Login" Content="Login" HorizontalAlignment="Center" Width="200"/>
     	</StackPanel>
         <!--<Grid.Background>

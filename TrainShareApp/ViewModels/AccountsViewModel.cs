@@ -1,21 +1,24 @@
 ﻿using System.Diagnostics;
 using Caliburn.Micro;
 using TrainShareApp.Data;
+using TrainShareApp.Event;
 using TrainShareApp.Model;
 
 namespace TrainShareApp.ViewModels
 {
-    public class AccountsViewModel : Screen
+    public class AccountsViewModel : Screen, IHandle<FacebookToken>, IHandle<TwitterToken>, IHandle<LogoutFacebook>, IHandle<LogoutTwitter>
     {
         private readonly Globals _globals;
         private readonly INavigationService _navigationService;
         private readonly ITwitterClient _twitterClient;
         private readonly IFacebookClient _facebookClient;
+        private readonly IEventAggregator _events;
 
         private string _twitterName;
         private string _facebookName;
         private string _twitterText;
         private string _facebookText;
+        private bool _canSave;
 
         public AccountsViewModel()
         {
@@ -29,23 +32,15 @@ namespace TrainShareApp.ViewModels
             Globals globals,
             INavigationService navigationService,
             ITwitterClient twitterClient,
-            IFacebookClient facebookClient)
+            IFacebookClient facebookClient,
+            IEventAggregator events)
         {
             _globals = globals;
             _navigationService = navigationService;
             _twitterClient = twitterClient;
             _facebookClient = facebookClient;
+            _events = events;
         }
-
-        /// <summary>
-        /// Set this to true if coming back from login to twitter or facebook
-        /// </summary>
-        public bool BackFromLogin { get; set; }
-
-        /// <summary>
-        /// Get or set if the view model is busy
-        /// </summary>
-        public bool Busy { get; set; }
 
         /// <summary>
         /// Get or Set the Twitter name of the logged in user
@@ -82,14 +77,6 @@ namespace TrainShareApp.ViewModels
         }
 
         /// <summary>
-        /// Get if the twitter button is enabled
-        /// </summary>
-        public bool CanTwitterButton
-        {
-            get { return !Busy; }
-        }
-
-        /// <summary>
         /// Get or Set the Facebook name of the logged in user
         /// </summary>
         public string FacebookName
@@ -120,26 +107,24 @@ namespace TrainShareApp.ViewModels
         /// </summary>
         public bool FacebookLoggedIn
         {
-            get { return _globals.FacebookId != 0; }
+            get { return _facebookClient.IsLoggedIn; }
         }
 
-        /// <summary>
-        /// Get if the facebook button is enabled
-        /// </summary>
-        public bool CanFacebookButton
+        public bool CanSave
         {
-            get { return !Busy; }
+            get { return _canSave; }
+            set
+            {
+                _canSave = value;
+                NotifyOfPropertyChange(() => CanSave);
+            }
         }
 
         public async void TwitterButton()
         {
             if (TwitterLoggedIn)
             {
-                await _twitterClient.Logout();
-
-                TwitterName = _globals.TwitterName;
-                TwitterText = TwitterLoggedIn ? "Logout" : "Login";
-
+                await _twitterClient.LogoutAsync();
             }
             else
             {
@@ -154,10 +139,7 @@ namespace TrainShareApp.ViewModels
         {
             if (FacebookLoggedIn)
             {
-                await _facebookClient.Logout();
-
-                FacebookName = _globals.FacebookName;
-                FacebookText = FacebookLoggedIn ? "Logout" : "Login";
+                await _facebookClient.LogoutAsync();
             }
             else
             {
@@ -168,39 +150,71 @@ namespace TrainShareApp.ViewModels
             }
         }
 
-        protected override void OnActivate()
+        private void UpdateFacebook(string name)
         {
-            if (BackFromLogin)
-            {
-                BackFromLogin = false;
-                SetBusy(false);
-            }
+            FacebookName = name;
+            FacebookText = FacebookLoggedIn ? "Logout" : "Login";
 
-            TwitterName = _globals.TwitterName;
+            CanSave = !string.IsNullOrEmpty(_globals.TrainshareId);
+        }
+
+        private void UpdateTwitter(string name)
+        {
+            TwitterName = name;
             TwitterText = TwitterLoggedIn ? "Logout" : "Login";
 
-            FacebookName = _globals.FacebookName;
-            FacebookText = FacebookLoggedIn ? "Logout" : "Login";
+            CanSave = !string.IsNullOrEmpty(_globals.TrainshareId);
+        }
+
+        public void Save()
+        {
+            _navigationService
+                .UriFor<MainViewModel>()
+                .Navigate();
+        }
+
+        protected override void OnInitialize()
+        {
+            _events.Subscribe(this);
+
+            base.OnInitialize();
+        }
+
+        protected override void OnActivate()
+        {
+            if (_globals.FacebookToken != null)
+                UpdateFacebook(_globals.FacebookToken.ScreenName);
+            else
+                UpdateFacebook(string.Empty);
+
+            if (_globals.TwitterToken != null)
+                UpdateTwitter(_globals.TwitterToken.ScreenName);
+            else
+                UpdateTwitter(string.Empty);
+
+            CanSave = !string.IsNullOrEmpty(_globals.TrainshareId);
 
             base.OnActivate();
         }
 
-        private void SetBusy(bool enable)
+        public void Handle(FacebookToken message)
         {
-            if (enable)
-            {
-                Busy = true;
-                NotifyOfPropertyChange(() => Busy);
-                NotifyOfPropertyChange(() => CanTwitterButton);
-                NotifyOfPropertyChange(() => CanFacebookButton);
-            }
-            else
-            {
-                Busy = false;
-                NotifyOfPropertyChange(() => Busy);
-                NotifyOfPropertyChange(() => CanTwitterButton);
-                NotifyOfPropertyChange(() => CanFacebookButton);
-            }
+            UpdateFacebook(message.ScreenName);
+        }
+
+        public void Handle(LogoutFacebook message)
+        {
+            UpdateFacebook(string.Empty);
+        }
+
+        public void Handle(TwitterToken message)
+        {
+            UpdateTwitter(message.ScreenName);
+        }
+
+        public void Handle(LogoutTwitter message)
+        {
+            UpdateTwitter(string.Empty);
         }
     }
 }

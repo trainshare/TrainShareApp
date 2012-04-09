@@ -1,4 +1,6 @@
-﻿namespace TrainShareApp.Model
+﻿using System;
+
+namespace TrainShareApp.Model
 {
     public class FacebookToken
     {
@@ -16,5 +18,10 @@
         /// Get or Set the facebook access token
         /// </summary>
         public string AccessToken { get; set; }
+
+        /// <summary>
+        /// Get or Set the date and time when this token expires
+        /// </summary>
+        public DateTime Expires { get; set; }
     }
 }

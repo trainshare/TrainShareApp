@@ -1,4 +1,8 @@
 ﻿using System.Diagnostics;
+using System.Reactive;
+using System.Reactive.Linq;
+using System;
+using System.Windows.Navigation;
 using Caliburn.Micro;
 using TrainShareApp.Model;
 using TrainShareApp.ViewModels;
@@ -10,6 +14,7 @@ namespace TrainShareApp
         private readonly INavigationService _navigationService;
         private readonly Globals _globals;
         private bool _needsLogin;
+        private IDisposable _removeSubscription;
 
         public MainPageViewModel()
         {
@@ -36,21 +41,31 @@ namespace TrainShareApp
             }
         }
 
-        protected override void OnActivate()
+        protected override void OnInitialize()
         {
-            base.OnActivate();
+            NeedsLogin = string.IsNullOrEmpty(_globals.TrainshareId);
 
-            if (string.IsNullOrEmpty(_globals.TrainshareId))
+            if (!NeedsLogin)
             {
-                NeedsLogin = true;
+                _removeSubscription =
+                    Observable
+                        .FromEventPattern<NavigatedEventHandler, NavigationEventArgs>(
+                            h => _navigationService.Navigated += h,
+                            h => _navigationService.Navigated -= h)
+                        .Subscribe(HandleNavigation);
             }
-            else
-            {
-                NeedsLogin = false;
+
+            base.OnInitialize();
+        }
+
+        protected override void OnViewReady(object view)
+        {
+            if (!NeedsLogin)
                 _navigationService
                     .UriFor<MainViewModel>()
                     .Navigate();
-            }
+
+            base.OnViewReady(view);
         }
 
         public void Login()
@@ -58,6 +73,19 @@ namespace TrainShareApp
             _navigationService
                 .UriFor<AccountsViewModel>()
                 .Navigate();
+        }
+
+        private void HandleNavigation(EventPattern<NavigationEventArgs> e)
+        {
+            var source = e.Sender as NavigationService;
+
+            if (_removeSubscription != null &&
+                source != null &&
+                source.Source.OriginalString.Contains("MainView.xaml"))
+            {
+                _removeSubscription.Dispose();
+                _navigationService.RemoveBackEntry();
+            }
         }
     }
 }

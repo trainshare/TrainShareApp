@@ -33,20 +33,20 @@ namespace TrainShareApp.Data
                     .ToTask();
         }
 
-        public IObservable<TrainshareFriend> GetFriends(string trainshareId)
+        public async Task<IEnumerable<TrainshareFriend>> GetFriends(string trainshareId)
         {
             var client = new RestClient("http://trainsharing.herokuapp.com/v1/");
             var request =
                 new RestRequest("read", Method.GET)
                     .WithFormat(DataFormat.Json)
-                    .AddBody(
-                        new JObject(
-                            new JProperty("trainshare_id", trainshareId)));
+                    .AddParameter("trainshare_id", trainshareId);
 
             return
+                await
                 client
                     .ExecuteObservable<List<TrainshareFriend>>(request)
-                    .SelectMany(response => response.Data);
+                    .Select(response => response.Data)
+                    .ToTask();
         }
 
         /*
@@ -56,7 +56,7 @@ namespace TrainShareApp.Data
          *     arrival_time: "17:29",
          *     train_id: "IC 1080"
          */
-        public IObservable<TrainshareFriend> Checkin(string trainshareId, Connection connection)
+        public async Task Checkin(string trainshareId, Connection connection, int position)
         {
             var client = new RestClient("http://trainsharing.herokuapp.com/v1/");
             var request =
@@ -74,12 +74,15 @@ namespace TrainShareApp.Data
                                         new JProperty("departure_time", section.Departure.Departure.ToString("HH:mm")),
                                         new JProperty("arrival_station", section.Arrival.Station.Name),
                                         new JProperty("arrival_time", section.Arrival.Arrival.ToString("HH:mm")),
-                                        new JProperty("train_id", section.Journey.Name)))));
+                                        new JProperty("train_id", section.Journey.Name),
+                                        new JProperty("position", position)))));
 
-            return
+
+            //Skipping the result on purpouse
+            await
                 client
-                    .ExecuteObservable<List<TrainshareFriend>>(request)
-                    .SelectMany(response => response.Data);
+                    .ExecuteObservable(request)
+                    .ToTask();
         }
     }
 }

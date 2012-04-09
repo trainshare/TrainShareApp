@@ -29,6 +29,7 @@ namespace TrainShareApp {
                 .Singleton<MainPageViewModel>()
                 .Singleton<MainViewModel>()
                 .Singleton<LoginViewModel>()
+                .Singleton<CheckinViewModel>()
                 .Singleton<AccountsViewModel>()
                 .Singleton<SearchResultViewModel>()
                 .Singleton<ITimeTable, TimeTable>()

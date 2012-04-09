@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Reactive.Linq;
 using System.Security;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Caliburn.Micro;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Reactive;
 using Newtonsoft.Json.Linq;
 using RestSharp;
-using RestSharp.Authenticators;
+using TrainShareApp.Event;
 using TrainShareApp.Extension;
 using TrainShareApp.Model;
 
@@ -17,31 +17,40 @@ namespace TrainShareApp.Data
 {
     public class FacebookClient : IFacebookClient
     {
-        private static readonly string Redirect = "https://www.facebook.com/connect/login_success.html";
+        private const string Redirect = "https://www.facebook.com/connect/login_success.html";
         private readonly string _consumerKey;
         private readonly string _consumerSecret;
         private readonly Globals _globals;
+        private readonly IEventAggregator _events;
 
-        public FacebookClient(Globals globals)
+        public FacebookClient(Globals globals, IEventAggregator events)
         {
             _globals = globals;
+            _events = events;
             _consumerKey = Credentials.FacebookToken;
             _consumerSecret = Credentials.FacebookTokenSecret;
         }
 
-        public Task Logout()
+        public Task LogoutAsync()
         {
-            _globals.FacebookId = 0;
-            _globals.FacebookName = string.Empty;
-            _globals.FacebookToken = null;
+            return TaskEx.Run(Logout);
+        }
 
-            return TaskEx.Delay(0);
+        private void Logout()
+        {
+            _globals.FacebookToken = null;
+            _events.Publish(new LogoutFacebook());
+        }
+
+        public bool IsLoggedIn
+        {
+            get { return _globals.FacebookToken != null; }
         }
 
         public async Task<FacebookToken> Login(WebBrowser browser)
         {
             var guid = Guid.NewGuid().ToString();
-            var client = new RestClient("https://www.facebook.com/dialog/oauth/");
+            var client = new RestClient("https://m.facebook.com/dialog/oauth/");
             var request =
                 new RestRequest()
                     .AddParameter("client_id", _consumerKey)
@@ -53,26 +62,27 @@ namespace TrainShareApp.Data
             browser.IsScriptEnabled = true;
 
             var uri = client.BuildUri(request);
-            var token = await GetRequestToken(browser, uri);
+            var jsonToken = await GetRequestToken(browser, uri);
 
-            if (token.ContainsKey("error_reason"))
+            if (jsonToken.ContainsKey("error_reason"))
                 return null;
-            if (token["state"] != guid)
+            if (jsonToken["state"] != guid)
                 throw new SecurityException("Cross site forgery happend, the state did not equal the guid");
 
-            var user = await GetUserInfo(token["access_token"]);
-
-            _globals.FacebookId = user["id"].Value<int>();
-            _globals.FacebookName = user["name"].Value<string>();
-            _globals.FacebookToken = token["access_token"];
-
-            return
+            var user = await GetUserInfo(jsonToken["access_token"]);
+            var token =
                 new FacebookToken
                 {
-                    Id = _globals.FacebookId,
-                    ScreenName = _globals.FacebookName,
-                    AccessToken = _globals.FacebookToken,
+                    Id = user["id"].Value<int>(),
+                    ScreenName = user["name"].Value<string>(),
+                    AccessToken = jsonToken["access_token"],
+                    Expires = DateTime.Now + TimeSpan.FromSeconds(int.Parse(jsonToken["expires_in"]))
                 };
+
+            _globals.FacebookToken = token;
+            _events.Publish(token);
+
+            return token;
         }
 
         private static async Task<IDictionary<string, string>> GetRequestToken(WebBrowser browser, Uri uri)

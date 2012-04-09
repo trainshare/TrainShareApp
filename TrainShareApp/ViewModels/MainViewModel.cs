@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Linq;
 using Caliburn.Micro;
+using TrainShareApp.Data;
 using TrainShareApp.Model;
 
 namespace TrainShareApp.ViewModels
@@ -13,10 +14,15 @@ namespace TrainShareApp.ViewModels
         private string _via = string.Empty;
         private DateTime _time = DateTime.Now;
 
+        private readonly ILog _logger;
+        private readonly Globals _globals;
         private readonly INavigationService _navigationService;
+        private readonly ITrainshareClient _trainshareClient;
 
         private readonly IObservableCollection<TrainshareFriend> _friends =
             new BindableCollection<TrainshareFriend>();
+
+        private Connection _currentCheckin;
 
         public MainViewModel()
         {
@@ -25,9 +31,15 @@ namespace TrainShareApp.ViewModels
         }
 
         public MainViewModel(
-            INavigationService navigationService)
+            ILog logger,
+            Globals globals,
+            INavigationService navigationService,
+            ITrainshareClient trainshareClient)
         {
+            _logger = logger;
+            _globals = globals;
             _navigationService = navigationService;
+            _trainshareClient = trainshareClient;
         }
 
         public IObservableCollection<TrainshareFriend> Friends
@@ -75,10 +87,44 @@ namespace TrainShareApp.ViewModels
             }
         }
 
-        protected override void OnViewReady(object view)
+        public bool HasCheckedIn { get { return CurrentCheckin != null; } }
+
+        public Connection CurrentCheckin
         {
-            //_friendsSubscription = _trainshareClient.GetFriends(_globals.TrainshareId).Subscribe(_friends.Add);
+            get { return _currentCheckin; }
+            set
+            {
+                _currentCheckin = value;
+                NotifyOfPropertyChange(() => CurrentCheckin);
+                NotifyOfPropertyChange(() => HasCheckedIn);
+            }
+        }
+
+        protected override void OnActivate()
+        {
+            base.OnActivate();
+        
+            if (_globals.CheckinConnection != null)
+            {
+                CurrentCheckin = _globals.CheckinConnection;
+            }
+        }
+
+        protected async override void OnViewReady(object view)
+        {
             base.OnViewReady(view);
+
+            try
+            {
+                var friends = await _trainshareClient.GetFriends(_globals.TrainshareId);
+
+                Friends.Clear();
+                Friends.AddRange(friends);
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e);
+            }
         }
 
         public void SubmitSearch()
@@ -90,5 +136,13 @@ namespace TrainShareApp.ViewModels
                 .WithParam(vm => vm.Time, Time)
                 .Navigate();
         }
+
+        public void Settings()
+        {
+            _navigationService
+                .UriFor<AccountsViewModel>()
+                .Navigate();
+        }
+
     }
 }

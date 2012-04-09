@@ -7,7 +7,7 @@ namespace TrainShareApp.Data
     public interface ITwitterClient
     {
         Task<TwitterToken> Login(WebBrowser viewBrowser);
-        Task Logout();
+        Task LogoutAsync();
 
         bool IsLoggedIn { get; }
     }

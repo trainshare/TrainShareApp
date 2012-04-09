@@ -105,6 +105,10 @@ namespace TrainShareApp.ViewModels
             var listBox = e.Sender as ListBox;
             Debug.Assert(listBox != null);
 
+
+            if (listBox.SelectedItem == null)
+                return; // We did a manual reset
+
             _globals.CheckinConnection = listBox.SelectedItem as Connection;
             listBox.SelectedItem = null;
 

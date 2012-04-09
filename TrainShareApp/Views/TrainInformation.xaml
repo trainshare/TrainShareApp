@@ -1,0 +1,32 @@
+﻿<UserControl
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="clr-namespace:TrainShareApp.Model"
+	mc:Ignorable="d"
+	x:Class="TrainShareApp.TrainInformation" Width="460"
+    d:DataContext="{d:DesignInstance IsDesignTimeCreatable=False, Type=vm:Connection}"
+	>
+
+	<Grid x:Name="LayoutRoot" Background="Transparent">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+		</Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition/>
+			<ColumnDefinition/>
+		</Grid.ColumnDefinitions>
+		<TextBlock x:Name="From" HorizontalAlignment="Center" TextWrapping="Wrap" Text="From" d:LayoutOverrides="Height" FontSize="13.333" VerticalAlignment="Bottom"/>
+		<TextBlock x:Name="To" HorizontalAlignment="Center" TextWrapping="Wrap" Text="To" d:LayoutOverrides="Height" Grid.Column="1" VerticalAlignment="Bottom" FontSize="13.333"/>
+		<TextBlock HorizontalAlignment="Center" Grid.Row="1" TextWrapping="Wrap" Text="{Binding From.Station.Name}" d:LayoutOverrides="Height"/>
+		<TextBlock HorizontalAlignment="Center" Grid.Row="1" TextWrapping="Wrap" Text="{Binding To.Station.Name}" d:LayoutOverrides="Height" Grid.Column="1"/>
+		<TextBlock x:Name="FromAt" HorizontalAlignment="Center" TextWrapping="Wrap" Text="At" d:LayoutOverrides="Height" Grid.Row="2" VerticalAlignment="Bottom" FontSize="13.333"/>
+		<TextBlock x:Name="ToAt" HorizontalAlignment="Center" TextWrapping="Wrap" Text="At" d:LayoutOverrides="Height" Grid.Row="2" Grid.Column="2" VerticalAlignment="Bottom" FontSize="13.333"/>
+		<TextBlock HorizontalAlignment="Center" TextWrapping="Wrap" Text="{Binding From.Departure, StringFormat='HH:mm'}" d:LayoutOverrides="Height" Grid.Row="4"/>
+		<TextBlock HorizontalAlignment="Center" TextWrapping="Wrap" Text="{Binding To.Arrival, StringFormat='HH:mm'}" d:LayoutOverrides="Height" Grid.Row="3" Grid.Column="1"/>
+	</Grid>
+</UserControl>
