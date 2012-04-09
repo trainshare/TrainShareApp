@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq;
-using System.Reactive.Linq;
-using System.Windows;
 using Caliburn.Micro;
-using TrainShareApp.Data;
 using TrainShareApp.Model;
 
 namespace TrainShareApp.ViewModels
@@ -15,12 +12,8 @@ namespace TrainShareApp.ViewModels
         private string _to = "Basel";
         private string _via = string.Empty;
         private DateTime _time = DateTime.Now;
-        private IDisposable _friendsSubscription;
 
         private readonly INavigationService _navigationService;
-        private readonly ITrainshareClient _trainshareClient;
-        private readonly ITimeTable _timeTable;
-        private readonly Globals _globals;
 
         private readonly IObservableCollection<TrainshareFriend> _friends =
             new BindableCollection<TrainshareFriend>();
@@ -32,15 +25,9 @@ namespace TrainShareApp.ViewModels
         }
 
         public MainViewModel(
-            INavigationService navigationService,
-            ITrainshareClient trainshareClient,
-            ITimeTable timeTable,
-            Globals globals)
+            INavigationService navigationService)
         {
             _navigationService = navigationService;
-            _trainshareClient = trainshareClient;
-            _timeTable = timeTable;
-            _globals = globals;
         }
 
         public IObservableCollection<TrainshareFriend> Friends
@@ -90,36 +77,18 @@ namespace TrainShareApp.ViewModels
 
         protected override void OnViewReady(object view)
         {
-            _friendsSubscription = _trainshareClient.GetFriends().Subscribe(_friends.Add);
+            //_friendsSubscription = _trainshareClient.GetFriends(_globals.TrainshareId).Subscribe(_friends.Add);
             base.OnViewReady(view);
-        }
-
-        protected override void OnDeactivate(bool close)
-        {
-            if (close)
-            {
-                if (_friendsSubscription != null)
-                    _friendsSubscription.Dispose();
-            }
-
-            base.OnDeactivate(close);
         }
 
         public void SubmitSearch()
         {
-            _timeTable
-                .GetConnections(From, To, Time)
-                .ToList()
-                .Subscribe(
-                    connections =>
-                        {
-                            _globals.SearchResults = connections;
-                            _navigationService
-                                .UriFor<SearchResultViewModel>()
-                                .Navigate();
-                        },
-                    exception =>
-                    MessageBox.Show("Sorry, there was an unexpected error for your request. Please try again later."));
+            _navigationService
+                .UriFor<SearchResultViewModel>()
+                .WithParam(vm => vm.From, From)
+                .WithParam(vm => vm.To, To)
+                .WithParam(vm => vm.Time, Time)
+                .Navigate();
         }
     }
 }

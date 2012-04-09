@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Threading.Tasks;
 using TrainShareApp.Model;
 
 namespace TrainShareApp.Data
 {
     public interface ITimeTable
     {
-        IObservable<Location> GetLocations(string locationName);
-        IObservable<Connection> GetConnections(string from, string to, DateTime departure);
+        IObservable<Station> GetLocations(string locationName);
+        Task<SearchResult> GetConnections(string from, string to, DateTime departure);
     }
 }

@@ -7,7 +7,7 @@ namespace TrainShareApp.Data
     public interface ITrainshareClient
     {
         Task<string> SendAccessToken(string network, string token, string tokenSecret);
-        IObservable<TrainshareFriend> GetFriends();
-        Task Checkin(int trainshareId, Connection connection);
+        IObservable<TrainshareFriend> GetFriends(string trainshareId);
+        IObservable<TrainshareFriend> Checkin(string trainshareId, Connection connection);
     }
 }

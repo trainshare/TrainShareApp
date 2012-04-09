@@ -141,7 +141,9 @@
     <Compile Include="Data\ITwitterClient.cs" />
     <Compile Include="Data\TimeTable.cs" />
     <Compile Include="Data\TrainshareClient.cs" />
-    <Compile Include="Model\TrainshareCredentials.cs" />
+    <Compile Include="Model\Journey.cs" />
+    <Compile Include="Model\SearchResult.cs" />
+    <Compile Include="Model\Section.cs" />
     <Compile Include="Data\TwitterClient.cs" />
     <Compile Include="Extension\RestClientExtensions.cs" />
     <Compile Include="Logger\DebugLogger.cs" />
@@ -153,13 +155,11 @@
     <Compile Include="Model\Coordinate.cs" />
     <Compile Include="Model\Connection.cs" />
     <Compile Include="Model\Globals.cs" />
-    <Compile Include="Model\Location.cs" />
+    <Compile Include="Model\Station.cs" />
     <Compile Include="Model\Prognosis.cs" />
-    <Compile Include="Model\Stop.cs" />
     <Compile Include="Model\TrainshareFriend.cs" />
-    <Compile Include="Model\TrainshareRoute.cs" />
-    <Compile Include="Model\TrainshareStation.cs" />
     <Compile Include="Model\FacebookToken.cs" />
+    <Compile Include="Model\TrainshareOverlap.cs" />
     <Compile Include="Model\TwitterToken.cs" />
     <Compile Include="Storage\GlobalStorage.cs" />
     <Compile Include="Storage\MainViewStorage.cs" />

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Microsoft.Phone.Reactive;
@@ -19,34 +20,28 @@ namespace TrainShareApp.Data
                 new RestRequest("login", Method.POST)
                     .WithFormat(DataFormat.Json)
                     .AddBody(
-                        new TrainshareCredentials
-                            {
-                                network = "twitter",
-                                access_token = "krassesToken",
-                                access_token_secret = "krassesTokenSecret"
-                            });
+                        new JObject(
+                            new JProperty("network", network),
+                            new JProperty("access_token", token),
+                            new JProperty("access_token_secret", tokenSecret)));
 
             return
                 client
                     .ExecuteObservable(request)
                     .Select(response => JObject.Parse(response.Content))
-                    .Select(json => json["trainsharingID"].Value<string>())
+                    .Select(json => json["trainshare_id"].Value<string>())
                     .ToTask();
         }
 
-        public IObservable<TrainshareFriend> GetFriends()
+        public IObservable<TrainshareFriend> GetFriends(string trainshareId)
         {
             var client = new RestClient("http://trainsharing.herokuapp.com/v1/");
             var request =
-                new RestRequest("checkin", Method.POST)
+                new RestRequest("read", Method.GET)
                     .WithFormat(DataFormat.Json)
                     .AddBody(
-                        new TrainshareCredentials
-                        {
-                            network = "twitter",
-                            access_token = "krassesToken",
-                            access_token_secret = "krassesTokenSecret"
-                        });
+                        new JObject(
+                            new JProperty("trainshare_id", trainshareId)));
 
             return
                 client
@@ -54,24 +49,37 @@ namespace TrainShareApp.Data
                     .SelectMany(response => response.Data);
         }
 
-        public Task Checkin(int trainshareId, Connection connection)
+        /*
+         *     departure_station: "Bern",
+         *     departure_time: "16:34",
+         *     arrival_station: "Basel SBB",
+         *     arrival_time: "17:29",
+         *     train_id: "IC 1080"
+         */
+        public IObservable<TrainshareFriend> Checkin(string trainshareId, Connection connection)
         {
             var client = new RestClient("http://trainsharing.herokuapp.com/v1/");
             var request =
                 new RestRequest("checkin", Method.POST)
                     .WithFormat(DataFormat.Json)
+                    .AddParameter("trainshare_id", trainshareId)
                     .AddBody(
-                        new
-                        {
-                            TrainshareId = trainshareId,
-                            connection.From.Departure,
-                            connection.To.Arrival
-                        });
+                        new JArray(
+                            connection
+                                .Sections
+                                .Select(
+                                    section =>
+                                    new JObject(
+                                        new JProperty("departure_station", section.Departure.Station.Name),
+                                        new JProperty("departure_time", section.Departure.Departure.ToString("HH:mm")),
+                                        new JProperty("arrival_station", section.Arrival.Station.Name),
+                                        new JProperty("arrival_time", section.Arrival.Arrival.ToString("HH:mm")),
+                                        new JProperty("train_id", section.Journey.Name)))));
 
             return
                 client
-                    .ExecuteObservable(request)
-                    .ToTask();
+                    .ExecuteObservable<List<TrainshareFriend>>(request)
+                    .SelectMany(response => response.Data);
         }
     }
 }

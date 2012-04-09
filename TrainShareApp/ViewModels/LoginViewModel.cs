@@ -73,7 +73,7 @@ namespace TrainShareApp.ViewModels
                             await _facebookClient.Login(castedView.Browser);
                         trainshareId =
                             await
-                            _trainshareClient.SendAccessToken("facebook", facebookToken.AccessToken, string.Empty);
+                            _trainshareClient.SendAccessToken("facebook", facebookToken.AccessToken, null);
                     }
                     catch (Exception e)
                     {
