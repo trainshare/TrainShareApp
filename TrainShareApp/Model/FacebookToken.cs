@@ -23,5 +23,13 @@ namespace TrainShareApp.Model
         /// Get or Set the date and time when this token expires
         /// </summary>
         public DateTime Expires { get; set; }
+
+        public void Clear()
+        {
+            Id = 0;
+            ScreenName = string.Empty;
+            AccessToken = string.Empty;
+            Expires = DateTime.Now;
+        }
     }
 }

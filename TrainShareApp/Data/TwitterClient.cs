@@ -19,18 +19,20 @@ namespace TrainShareApp.Data
     {
         private readonly string _consumerKey;
         private readonly string _consumerSecret;
-        private readonly Globals _globals;
         private readonly IEventAggregator _events;
 
-        public TwitterClient(Globals globals, IEventAggregator events)
+        public TwitterClient(TwitterToken token, IEventAggregator events)
         {
-            _globals = globals;
             _events = events;
             _consumerKey = Credentials.TwitterToken;
             _consumerSecret = Credentials.TwitterTokenSecret;
+
+            Token = token;
         }
 
         #region ITwitterClient Members
+
+        public TwitterToken Token { get; private set; }
 
         public Task LogoutAsync()
         {
@@ -39,7 +41,7 @@ namespace TrainShareApp.Data
 
         public bool IsLoggedIn
         {
-            get { return _globals.TwitterToken != null; }
+            get { return Token.Id != 0; }
         }
 
         public async Task<TwitterToken> Login(WebBrowser browser)
@@ -64,19 +66,14 @@ namespace TrainShareApp.Data
 
             Debug.Assert(requestToken["oauth_token"] == verifier["oauth_token"]);
 
-            var token =
-                new TwitterToken
-                    {
-                        Id = int.Parse(accessToken["user_id"]),
-                        ScreenName = accessToken["screen_name"],
-                        AccessToken = accessToken["oauth_token"],
-                        AccessTokenSecret = accessToken["oauth_token_secret"]
-                    };
+            Token.Id = int.Parse(accessToken["user_id"]);
+            Token.ScreenName = '@' + accessToken["screen_name"];
+            Token.AccessToken = accessToken["oauth_token"];
+            Token.AccessTokenSecret = accessToken["oauth_token_secret"];
 
-            _globals.TwitterToken = token;
-            _events.Publish(token);
+            _events.Publish(Token);
 
-            return token;
+            return Token;
         }
 
         #endregion
@@ -126,7 +123,7 @@ namespace TrainShareApp.Data
 
         private void Logout()
         {
-            _globals.TwitterToken = null;
+            Token.Clear();
             _events.Publish(new LogoutTwitter());
         }
     }

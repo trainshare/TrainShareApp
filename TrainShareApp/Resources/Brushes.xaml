@@ -5,9 +5,6 @@
 		<GradientStop Color="#FFEDEDED" Offset="1"/>
 		<GradientStop Color="White"/>
 	</LinearGradientBrush>
-	<LinearGradientBrush x:Key="MainBackground" StartPoint="0,0" EndPoint="0,1">
-		<GradientStop Color="#E52323" Offset="0.0" />
-		<GradientStop Color="#A81213" Offset="1.0" />
-	</LinearGradientBrush>
+	<SolidColorBrush x:Key="MainBackground" Color="#FFCC0000"/>
 	<!-- Resource dictionary entries should be defined here. -->
 </ResourceDictionary>

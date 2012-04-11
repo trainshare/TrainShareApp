@@ -3,26 +3,23 @@ using System.Diagnostics;
 using System.Linq;
 using Caliburn.Micro;
 using TrainShareApp.Data;
+using TrainShareApp.Event;
 using TrainShareApp.Model;
 
 namespace TrainShareApp.ViewModels
 {
-    public class MainViewModel : Screen
+    public class MainViewModel : Screen, IHandle<Checkin>
     {
+        private readonly ILog _logger;
+        private readonly INavigationService _navigationService;
+        private readonly IObservableCollection<TrainshareFriend> _friends =
+            new BindableCollection<TrainshareFriend>();
+
         private string _from = "Bern";
         private string _to = "Basel";
         private string _via = string.Empty;
         private DateTime _time = DateTime.Now;
-
-        private readonly ILog _logger;
-        private readonly Globals _globals;
-        private readonly INavigationService _navigationService;
-        private readonly ITrainshareClient _trainshareClient;
-
-        private readonly IObservableCollection<TrainshareFriend> _friends =
-            new BindableCollection<TrainshareFriend>();
-
-        private Connection _currentCheckin;
+        private Checkin _currentCheckin;
 
         public MainViewModel()
         {
@@ -32,12 +29,10 @@ namespace TrainShareApp.ViewModels
 
         public MainViewModel(
             ILog logger,
-            Globals globals,
             INavigationService navigationService,
             ITrainshareClient trainshareClient)
         {
             _logger = logger;
-            _globals = globals;
             _navigationService = navigationService;
             _trainshareClient = trainshareClient;
         }
@@ -87,9 +82,9 @@ namespace TrainShareApp.ViewModels
             }
         }
 
-        public bool HasCheckedIn { get { return CurrentCheckin != null; } }
+        public bool HasCheckedIn { get { return CurrentCheckin.Connection != null; } }
 
-        public Connection CurrentCheckin
+        public Checkin CurrentCheckin
         {
             get { return _currentCheckin; }
             set
@@ -103,11 +98,8 @@ namespace TrainShareApp.ViewModels
         protected override void OnActivate()
         {
             base.OnActivate();
-        
-            if (_globals.CheckinConnection != null)
-            {
-                CurrentCheckin = _globals.CheckinConnection;
-            }
+
+            _events.Publish(Republish.Checkin);
         }
 
         protected async override void OnViewReady(object view)
@@ -116,7 +108,7 @@ namespace TrainShareApp.ViewModels
 
             try
             {
-                var friends = await _trainshareClient.GetFriends(_globals.TrainshareId);
+                var friends = await _trainshareClient.GetFriends();
 
                 Friends.Clear();
                 Friends.AddRange(friends);
@@ -144,5 +136,9 @@ namespace TrainShareApp.ViewModels
                 .Navigate();
         }
 
+        public void Handle(Checkin message)
+        {
+            CurrentCheckin = message;
+        }
     }
 }

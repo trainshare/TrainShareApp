@@ -6,8 +6,27 @@ namespace TrainShareApp.Data
 {
     public interface IFacebookClient
     {
+        /// <summary>
+        /// Login and authorize the app
+        /// </summary>
+        /// <param name="viewBrowser">The browser where the user logs in</param>
+        /// <returns>The new FacebookToken</returns>
         Task<FacebookToken> Login(WebBrowser viewBrowser);
+
+        /// <summary>
+        /// Dismiss the current FacebookToken
+        /// </summary>
+        /// <returns>A task that signals completion</returns>
         Task LogoutAsync();
+
+        /// <summary>
+        /// Get if the user is logged in
+        /// </summary>
         bool IsLoggedIn { get; }
+
+        /// <summary>
+        /// Get the current FacebookToken
+        /// </summary>
+        FacebookToken Token { get; }
     }
 }

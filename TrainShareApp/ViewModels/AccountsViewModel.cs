@@ -6,39 +6,33 @@ using TrainShareApp.Model;
 
 namespace TrainShareApp.ViewModels
 {
-    public class AccountsViewModel : Screen, IHandle<FacebookToken>, IHandle<TwitterToken>, IHandle<LogoutFacebook>, IHandle<LogoutTwitter>
+    public class AccountsViewModel : Screen,
+        IHandle<FacebookToken>, IHandle<TwitterToken>,
+        IHandle<LogoutFacebook>, IHandle<LogoutTwitter>,
+        IHandle<TrainshareToken>
     {
-        private readonly Globals _globals;
-        private readonly INavigationService _navigationService;
-        private readonly ITwitterClient _twitterClient;
+        private readonly ITrainshareClient _trainshareClient;
         private readonly IFacebookClient _facebookClient;
+        private readonly ITwitterClient _twitterClient;
+        private readonly INavigationService _navigationService;
         private readonly IEventAggregator _events;
-
-        private string _twitterName;
-        private string _facebookName;
-        private string _twitterText;
-        private string _facebookText;
-        private bool _canSave;
 
         public AccountsViewModel()
         {
             Debug.Assert(Execute.InDesignMode, "Default constructor can only be called to generate design data.");
-
-            TwitterName = "AdrianKuendig";
-            FacebookName = "Adrian Kündig";
         }
 
         public AccountsViewModel(
-            Globals globals,
-            INavigationService navigationService,
-            ITwitterClient twitterClient,
+            ITrainshareClient trainshareClient,
             IFacebookClient facebookClient,
+            ITwitterClient twitterClient,
+            INavigationService navigationService,
             IEventAggregator events)
         {
-            _globals = globals;
-            _navigationService = navigationService;
-            _twitterClient = twitterClient;
+            _trainshareClient = trainshareClient;
             _facebookClient = facebookClient;
+            _twitterClient = twitterClient;
+            _navigationService = navigationService;
             _events = events;
         }
 
@@ -47,12 +41,7 @@ namespace TrainShareApp.ViewModels
         /// </summary>
         public string TwitterName
         {
-            get { return _twitterName; }
-            set
-            {
-                _twitterName = value;
-                NotifyOfPropertyChange(() => TwitterName);
-            }
+            get { return _twitterClient.IsLoggedIn ? _twitterClient.Token.ScreenName : string.Empty; }
         }
 
         /// <summary>
@@ -60,12 +49,7 @@ namespace TrainShareApp.ViewModels
         /// </summary>
         public string TwitterText
         {
-            get { return _twitterText; }
-            set
-            {
-                _twitterText = value;
-                NotifyOfPropertyChange(() => TwitterText);
-            }
+            get { return _twitterClient.IsLoggedIn ? "Logout" : "Login"; }
         }
 
         /// <summary>
@@ -77,29 +61,19 @@ namespace TrainShareApp.ViewModels
         }
 
         /// <summary>
-        /// Get or Set the Facebook name of the logged in user
+        /// Get the Facebook name of the logged in user
         /// </summary>
         public string FacebookName
         {
-            get { return _facebookName; }
-            set
-            {
-                _facebookName = value;
-                NotifyOfPropertyChange(() => FacebookName);
-            }
+            get { return _facebookClient.IsLoggedIn ? _facebookClient.Token.ScreenName : string.Empty; }
         }
 
         /// <summary>
-        /// Get or Set the text of the login/logout button
+        /// Get the text of the login/logout button
         /// </summary>
         public string FacebookText
         {
-            get { return _facebookText; }
-            set
-            {
-                _facebookText = value;
-                NotifyOfPropertyChange(() => FacebookText);
-            }
+            get { return _facebookClient.IsLoggedIn ? "Logout" : "Login"; }
         }
 
         /// <summary>
@@ -112,19 +86,14 @@ namespace TrainShareApp.ViewModels
 
         public bool CanSave
         {
-            get { return _canSave; }
-            set
-            {
-                _canSave = value;
-                NotifyOfPropertyChange(() => CanSave);
-            }
+            get { return !string.IsNullOrEmpty(_trainshareClient.Token.Id); }
         }
 
-        public async void TwitterButton()
+        public void TwitterButton()
         {
             if (TwitterLoggedIn)
             {
-                await _twitterClient.LogoutAsync();
+                _twitterClient.LogoutAsync();
             }
             else
             {
@@ -135,11 +104,11 @@ namespace TrainShareApp.ViewModels
             }
         }
 
-        public async void FacebookButton()
+        public void FacebookButton()
         {
             if (FacebookLoggedIn)
             {
-                await _facebookClient.LogoutAsync();
+                _facebookClient.LogoutAsync();
             }
             else
             {
@@ -148,22 +117,6 @@ namespace TrainShareApp.ViewModels
                     .WithParam(vm => vm.Client, "facebook")
                     .Navigate();
             }
-        }
-
-        private void UpdateFacebook(string name)
-        {
-            FacebookName = name;
-            FacebookText = FacebookLoggedIn ? "Logout" : "Login";
-
-            CanSave = !string.IsNullOrEmpty(_globals.TrainshareId);
-        }
-
-        private void UpdateTwitter(string name)
-        {
-            TwitterName = name;
-            TwitterText = TwitterLoggedIn ? "Logout" : "Login";
-
-            CanSave = !string.IsNullOrEmpty(_globals.TrainshareId);
         }
 
         public void Save()
@@ -182,39 +135,49 @@ namespace TrainShareApp.ViewModels
 
         protected override void OnActivate()
         {
-            if (_globals.FacebookToken != null)
-                UpdateFacebook(_globals.FacebookToken.ScreenName);
-            else
-                UpdateFacebook(string.Empty);
-
-            if (_globals.TwitterToken != null)
-                UpdateTwitter(_globals.TwitterToken.ScreenName);
-            else
-                UpdateTwitter(string.Empty);
-
-            CanSave = !string.IsNullOrEmpty(_globals.TrainshareId);
+            UpdateFacebook();
+            UpdateTwitter();
 
             base.OnActivate();
         }
 
         public void Handle(FacebookToken message)
         {
-            UpdateFacebook(message.ScreenName);
+            UpdateFacebook();
         }
 
         public void Handle(LogoutFacebook message)
         {
-            UpdateFacebook(string.Empty);
+            UpdateFacebook();
         }
 
         public void Handle(TwitterToken message)
         {
-            UpdateTwitter(message.ScreenName);
+            UpdateTwitter();
         }
 
         public void Handle(LogoutTwitter message)
         {
-            UpdateTwitter(string.Empty);
+            UpdateTwitter();
+        }
+
+        public void Handle(TrainshareToken message)
+        {
+            NotifyOfPropertyChange(() => CanSave);
+        }
+
+        private void UpdateFacebook()
+        {
+            NotifyOfPropertyChange(() => FacebookName);
+            NotifyOfPropertyChange(() => FacebookText);
+            NotifyOfPropertyChange(() => CanSave);
+        }
+
+        private void UpdateTwitter()
+        {
+            NotifyOfPropertyChange(() => TwitterName);
+            NotifyOfPropertyChange(() => TwitterText);
+            NotifyOfPropertyChange(() => CanSave);
         }
     }
 }

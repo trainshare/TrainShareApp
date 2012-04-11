@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
+using Caliburn.Micro;
 using Microsoft.Phone.Reactive;
 using Newtonsoft.Json.Linq;
 using RestSharp;
@@ -13,7 +13,21 @@ namespace TrainShareApp.Data
 {
     public class TrainshareClient : ITrainshareClient
     {
-        public Task<string> SendAccessToken(string network, string token, string tokenSecret)
+        private readonly IEventAggregator _events;
+
+        public TrainshareClient(TrainshareToken token, Checkin currentCheckin, IEventAggregator events)
+        {
+            _events = events;
+
+            Token = token;
+            CurrentCheckin = currentCheckin;
+        }
+
+        public TrainshareToken Token { get; private set; }
+
+        public Checkin CurrentCheckin { get; private set; }
+
+        public async Task<TrainshareToken> SendAccessToken(string network, string token, string tokenSecret)
         {
             var client = new RestClient("http://trainsharing.herokuapp.com/v1/");
             var request =
@@ -25,21 +39,28 @@ namespace TrainShareApp.Data
                             new JProperty("access_token", token),
                             new JProperty("access_token_secret", tokenSecret)));
 
-            return
+            var id =
+                await
                 client
                     .ExecuteObservable(request)
                     .Select(response => JObject.Parse(response.Content))
                     .Select(json => json["trainshare_id"].Value<string>())
                     .ToTask();
+
+            Token.Id = id;
+
+            _events.Publish(Token);
+
+            return Token;
         }
 
-        public async Task<IEnumerable<TrainshareFriend>> GetFriends(string trainshareId)
+        public async Task<IEnumerable<TrainshareFriend>> GetFriends()
         {
             var client = new RestClient("http://trainsharing.herokuapp.com/v1/");
             var request =
                 new RestRequest("read", Method.GET)
                     .WithFormat(DataFormat.Json)
-                    .AddParameter("trainshare_id", trainshareId);
+                    .AddParameter("trainshare_id", Token.Id);
 
             return
                 await
@@ -56,13 +77,13 @@ namespace TrainShareApp.Data
          *     arrival_time: "17:29",
          *     train_id: "IC 1080"
          */
-        public async Task Checkin(string trainshareId, Connection connection, int position)
+        public async Task Checkin(Connection connection, int position)
         {
             var client = new RestClient("http://trainsharing.herokuapp.com/v1/");
             var request =
                 new RestRequest("checkin", Method.POST)
                     .WithFormat(DataFormat.Json)
-                    .AddParameter("trainshare_id", trainshareId)
+                    .AddParameter("trainshare_id", Token.Id)
                     .AddBody(
                         new JArray(
                             connection
@@ -77,12 +98,16 @@ namespace TrainShareApp.Data
                                         new JProperty("train_id", section.Journey.Name),
                                         new JProperty("position", position)))));
 
-
             //Skipping the result on purpouse
             await
                 client
                     .ExecuteObservable(request)
                     .ToTask();
+
+            CurrentCheckin.Position = position;
+            CurrentCheckin.Connection = connection;
+
+            _events.Publish(CurrentCheckin);
         }
     }
 }

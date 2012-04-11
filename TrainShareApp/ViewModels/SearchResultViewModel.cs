@@ -14,10 +14,10 @@ namespace TrainShareApp.ViewModels
 {
     public class SearchResultViewModel : Screen
     {
-        private readonly Globals _globals;
         private readonly ILog _logger;
         private readonly INavigationService _navigationService;
         private readonly ITimeTable _timeTable;
+        private readonly IEventAggregator _events;
         private IDisposable _selectionSubscription;
 
         private readonly IObservableCollection<Connection> _results =
@@ -54,13 +54,13 @@ namespace TrainShareApp.ViewModels
         public SearchResultViewModel(
             INavigationService navigationService,
             ITimeTable timeTable,
-            Globals globals,
+            IEventAggregator events,
             ILog logger)
         {
-            _globals = globals;
             _logger = logger;
             _navigationService = navigationService;
             _timeTable = timeTable;
+            _events = events;
         }
 
         public string From { get; set; }
@@ -95,7 +95,10 @@ namespace TrainShareApp.ViewModels
         protected override void OnDeactivate(bool close)
         {
             if (_selectionSubscription != null)
+            {
                 _selectionSubscription.Dispose();
+                _selectionSubscription = null;
+            }
 
             base.OnDeactivate(close);
         }
@@ -105,16 +108,15 @@ namespace TrainShareApp.ViewModels
             var listBox = e.Sender as ListBox;
             Debug.Assert(listBox != null);
 
-
             if (listBox.SelectedItem == null)
                 return; // We did a manual reset
-
-            _globals.CheckinConnection = listBox.SelectedItem as Connection;
-            listBox.SelectedItem = null;
 
             _navigationService
                 .UriFor<CheckinViewModel>()
                 .Navigate();
+
+            _events.Publish(listBox.SelectedItem as Connection);
+            listBox.SelectedItem = null;
         }
 
         private async void SubmitSearch()

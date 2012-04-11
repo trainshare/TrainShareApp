@@ -4,15 +4,16 @@ using System.Reactive.Linq;
 using System;
 using System.Windows.Navigation;
 using Caliburn.Micro;
+using TrainShareApp.Data;
 using TrainShareApp.Model;
 using TrainShareApp.ViewModels;
 
 namespace TrainShareApp
 {
-    public class MainPageViewModel : Screen
+    public class MainPageViewModel : Screen, IHandle<TrainshareToken>
     {
         private readonly INavigationService _navigationService;
-        private readonly Globals _globals;
+        private readonly ITrainshareClient _trainshareClient;
         private bool _needsLogin;
         private IDisposable _removeSubscription;
 
@@ -23,12 +24,10 @@ namespace TrainShareApp
             NeedsLogin = true;
         }
 
-        public MainPageViewModel(
-            INavigationService navigationService,
-            Globals globals)
+        public MainPageViewModel(INavigationService navigationService, ITrainshareClient trainshareClient)
         {
             _navigationService = navigationService;
-            _globals = globals;
+            _trainshareClient = trainshareClient;
         }
 
         public bool NeedsLogin
@@ -43,7 +42,7 @@ namespace TrainShareApp
 
         protected override void OnInitialize()
         {
-            NeedsLogin = string.IsNullOrEmpty(_globals.TrainshareId);
+            NeedsLogin = string.IsNullOrEmpty(_trainshareClient.Token.Id);
 
             if (!NeedsLogin)
             {
@@ -86,6 +85,11 @@ namespace TrainShareApp
                 _removeSubscription.Dispose();
                 _navigationService.RemoveBackEntry();
             }
+        }
+
+        public void Handle(TrainshareToken message)
+        {
+            NeedsLogin = false;
         }
     }
 }

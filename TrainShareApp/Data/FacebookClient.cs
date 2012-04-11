@@ -20,31 +20,27 @@ namespace TrainShareApp.Data
         private const string Redirect = "https://www.facebook.com/connect/login_success.html";
         private readonly string _consumerKey;
         private readonly string _consumerSecret;
-        private readonly Globals _globals;
         private readonly IEventAggregator _events;
 
-        public FacebookClient(Globals globals, IEventAggregator events)
+        public FacebookClient(FacebookToken facebookToken, IEventAggregator events)
         {
-            _globals = globals;
             _events = events;
             _consumerKey = Credentials.FacebookToken;
             _consumerSecret = Credentials.FacebookTokenSecret;
+
+            Token = facebookToken;
         }
+
+        public FacebookToken Token { get; private set; }
 
         public Task LogoutAsync()
         {
             return TaskEx.Run(Logout);
         }
 
-        private void Logout()
-        {
-            _globals.FacebookToken = null;
-            _events.Publish(new LogoutFacebook());
-        }
-
         public bool IsLoggedIn
         {
-            get { return _globals.FacebookToken != null; }
+            get { return Token.Id != 0; }
         }
 
         public async Task<FacebookToken> Login(WebBrowser browser)
@@ -70,19 +66,15 @@ namespace TrainShareApp.Data
                 throw new SecurityException("Cross site forgery happend, the state did not equal the guid");
 
             var user = await GetUserInfo(jsonToken["access_token"]);
-            var token =
-                new FacebookToken
-                {
-                    Id = user["id"].Value<int>(),
-                    ScreenName = user["name"].Value<string>(),
-                    AccessToken = jsonToken["access_token"],
-                    Expires = DateTime.Now + TimeSpan.FromSeconds(int.Parse(jsonToken["expires_in"]))
-                };
 
-            _globals.FacebookToken = token;
-            _events.Publish(token);
+            Token.Id = user["id"].Value<int>();
+            Token.ScreenName = user["name"].Value<string>();
+            Token.AccessToken = jsonToken["access_token"];
+            Token.Expires = DateTime.Now + TimeSpan.FromSeconds(int.Parse(jsonToken["expires_in"]));
 
-            return token;
+            _events.Publish(Token);
+
+            return Token;
         }
 
         private static async Task<IDictionary<string, string>> GetRequestToken(WebBrowser browser, Uri uri)
@@ -104,7 +96,7 @@ namespace TrainShareApp.Data
             return await task;
         }
 
-        private async Task<JObject> GetUserInfo(string accessToken)
+        private static async Task<JObject> GetUserInfo(string accessToken)
         {
             var client = new RestClient("https://graph.facebook.com/me");
             var request =
@@ -117,6 +109,12 @@ namespace TrainShareApp.Data
                     .ExecuteObservable(request)
                     .Select(response => JObject.Parse(response.Content))
                     .ToTask();
+        }
+
+        private void Logout()
+        {
+            Token.Clear();
+            _events.Publish(new LogoutFacebook());
         }
     }
 }

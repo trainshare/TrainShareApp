@@ -3,11 +3,11 @@ using TrainShareApp.Model;
 
 namespace TrainShareApp.Storage
 {
-    public class GlobalStorage : JsonStorageHandler<Globals>
+    public class TrainshareStorage : JsonStorageHandler<TrainshareToken>
     {
         public override void Configure()
         {
-            BuildInstruction("Globals").InAppSettings();
+            BuildInstruction("Trainshare").InAppSettings();
         }
     }
 }

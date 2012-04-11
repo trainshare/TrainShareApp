@@ -74,7 +74,7 @@
 	                		<RowDefinition Height="Auto"/>
 	                		<RowDefinition/>
 	                	</Grid.RowDefinitions>
-                        <TrainShareApp:TrainInformation DataContext="{Binding CurrentCheckin}"/>
+                        <TrainShareApp:TrainInformation DataContext="{Binding CurrentCheckin.Connection}"/>
 	            		<TextBlock Text="Friends on same train" FontSize="{StaticResource PhoneFontSizeExtraLarge}" VerticalAlignment="Top" Grid.Row="1" />
 	            		<ListBox x:Name="Friends" ItemsSource="{Binding Friends}" ItemTemplate="{StaticResource FriendTemplate}" Style="{StaticResource FriendsListStyle}" d:LayoutOverrides="Height" Grid.Row="2"/>
                     </Grid>

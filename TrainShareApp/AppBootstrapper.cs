@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using TrainShareApp.Data;
+﻿using TrainShareApp.Data;
 using TrainShareApp.Logger;
 using TrainShareApp.Model;
 using TrainShareApp.ViewModels;
@@ -20,20 +19,39 @@ namespace TrainShareApp {
             container = new PhoneContainer(RootFrame);
 
 			container.RegisterPhoneServices();
-            
+
+            // Loggers
+            container.Singleton<ILog, DebugLogger>();
+
+            //Tokens and state
             container
-                .Singleton<ILog, DebugLogger>()
-                .Singleton<Globals>()
+                .Singleton<Checkin>()
+                .Singleton<TwitterToken>()
+                .Singleton<FacebookToken>()
+                .Singleton<TrainshareToken>();
+
+            // Clients
+            container
                 .Singleton<ITwitterClient, TwitterClient>()
                 .Singleton<IFacebookClient, FacebookClient>()
+                .Singleton<ITrainshareClient, TrainshareClient>()
+                .Singleton<ITimeTable, TimeTable>();
+
+            // ViewModels
+            container
                 .Singleton<MainPageViewModel>()
                 .Singleton<MainViewModel>()
                 .Singleton<LoginViewModel>()
                 .Singleton<CheckinViewModel>()
                 .Singleton<AccountsViewModel>()
-                .Singleton<SearchResultViewModel>()
-                .Singleton<ITimeTable, TimeTable>()
-                .Singleton<ITrainshareClient, TrainshareClient>();
+                .Singleton<SearchResultViewModel>();
+
+            // This is important to force the container to build up all viewmodel at the beginning
+            Console.WriteLine(container.GetInstance(typeof (MainViewModel), null));
+            Console.WriteLine(container.GetInstance(typeof (LoginViewModel), null));
+            Console.WriteLine(container.GetInstance(typeof (CheckinViewModel), null));
+            Console.WriteLine(container.GetInstance(typeof (AccountsViewModel), null));
+            Console.WriteLine(container.GetInstance(typeof (SearchResultViewModel), null));
 
             AddCustomConventions();
         }

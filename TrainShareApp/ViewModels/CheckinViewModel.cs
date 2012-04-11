@@ -7,12 +7,13 @@ using TrainShareApp.Model;
 
 namespace TrainShareApp.ViewModels
 {
-    public class CheckinViewModel : Screen
+    public class CheckinViewModel : Screen, IHandle<Connection>
     {
         private readonly ILog _logger;
-        private readonly Globals _globals;
+        private readonly IEventAggregator _events;
         private readonly INavigationService _navigationService;
         private readonly ITrainshareClient _trainshareClient;
+
         private float _position = .5f;
         private string _message = string.Empty;
         private Connection _connection;
@@ -24,14 +25,16 @@ namespace TrainShareApp.ViewModels
 
         public CheckinViewModel(
             ILog logger,
-            Globals globals,
+            IEventAggregator events,
             INavigationService navigationService,
             ITrainshareClient trainshareClient)
         {
             _logger = logger;
-            _globals = globals;
+            _events = events;
             _navigationService = navigationService;
             _trainshareClient = trainshareClient;
+
+            _events.Subscribe(this);
         }
 
         public Connection Connection
@@ -63,13 +66,6 @@ namespace TrainShareApp.ViewModels
             }
         }
 
-        protected override void OnActivate()
-        {
-            Connection = _globals.CheckinConnection;
-
-            base.OnActivate();
-        }
-
         public async void Confirm()
         {
             try
@@ -78,7 +74,7 @@ namespace TrainShareApp.ViewModels
                 position = Math.Min(position, 10);
                 position = Math.Max(position, 0);
 
-                await _trainshareClient.Checkin(_globals.TrainshareId, Connection, position);
+                await _trainshareClient.Checkin(Connection, position);
             }
             catch(Exception e)
             {
@@ -89,6 +85,11 @@ namespace TrainShareApp.ViewModels
             _navigationService
                 .UriFor<MainViewModel>()
                 .Navigate();
+        }
+
+        public void Handle(Connection message)
+        {
+            Connection = message;
         }
     }
 }
