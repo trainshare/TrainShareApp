@@ -11,7 +11,9 @@ namespace TrainShareApp.ViewModels
     public class MainViewModel : Screen, IHandle<Checkin>
     {
         private readonly ILog _logger;
+        private readonly IEventAggregator _events;
         private readonly INavigationService _navigationService;
+        private readonly ITrainshareClient _trainshareClient;
         private readonly IObservableCollection<TrainshareFriend> _friends =
             new BindableCollection<TrainshareFriend>();
 
@@ -29,12 +31,16 @@ namespace TrainShareApp.ViewModels
 
         public MainViewModel(
             ILog logger,
+            IEventAggregator events,
             INavigationService navigationService,
             ITrainshareClient trainshareClient)
         {
             _logger = logger;
+            _events = events;
             _navigationService = navigationService;
             _trainshareClient = trainshareClient;
+
+            _events.Subscribe(this);
         }
 
         public IObservableCollection<TrainshareFriend> Friends

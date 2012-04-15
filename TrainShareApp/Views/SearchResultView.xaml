@@ -29,7 +29,7 @@
         <!--TitlePanel contains the name of the application and page title-->
         <StackPanel x:Name="TitlePanel" Grid.Row="1" Margin="12,17,0,28">
             <TextBlock Text="Connections" Style="{StaticResource PhoneTextTitle1Style}"/>
-            <ListBox Name="Results" ItemsSource="{Binding Path=Results}" ItemTemplate="{StaticResource ConnectionTemplate}" Margin="0,0,15,0">
+            <ListBox Name="Results" ItemsSource="{Binding Results}" SelectedItem="{Binding SelectedConnection}" ItemTemplate="{StaticResource ConnectionTemplate}" Margin="0,0,15,0">
                 <ListBox.ItemContainerStyle>
                     <Style TargetType="ListBoxItem">
                         <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>

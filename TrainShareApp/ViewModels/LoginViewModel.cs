@@ -12,6 +12,7 @@ namespace TrainShareApp.ViewModels
     {
         private readonly IFacebookClient _facebookClient;
         private readonly ILog _logger;
+        private readonly IEventAggregator _events;
         private readonly INavigationService _navigationService;
         private readonly ITrainshareClient _trainshareClient;
         private readonly ITwitterClient _twitterClient;
@@ -21,15 +22,20 @@ namespace TrainShareApp.ViewModels
             Debug.Assert(Execute.InDesignMode, "Default constructor can only be called to generate design data.");
         }
 
-        public LoginViewModel(INavigationService navigationService, ITwitterClient twitterClient,
-                              IFacebookClient facebookClient, ITrainshareClient trainshareClient,
-                              ILog logger)
+        public LoginViewModel(
+            ILog logger,
+            IEventAggregator events,
+            INavigationService navigationService,
+            ITwitterClient twitterClient,
+            IFacebookClient facebookClient,
+            ITrainshareClient trainshareClient)
         {
             _navigationService = navigationService;
             _twitterClient = twitterClient;
             _facebookClient = facebookClient;
             _trainshareClient = trainshareClient;
             _logger = logger;
+            _events = events;
         }
 
         public string Client { get; set; }

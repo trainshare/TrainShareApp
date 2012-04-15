@@ -1,95 +1,142 @@
 ﻿using System.Diagnostics;
-using System.Reactive;
 using System.Reactive.Linq;
-using System;
 using System.Windows.Navigation;
 using Caliburn.Micro;
+using System;
 using TrainShareApp.Data;
 using TrainShareApp.Model;
 using TrainShareApp.ViewModels;
 
 namespace TrainShareApp
 {
-    public class MainPageViewModel : Screen, IHandle<TrainshareToken>
+    public class MainPageViewModel : Screen, IHandle<FacebookToken>, IHandle<TwitterToken>, IHandle<TrainshareToken>
     {
+        private readonly ILog _logger;
+        private readonly IEventAggregator _events;
         private readonly INavigationService _navigationService;
         private readonly ITrainshareClient _trainshareClient;
-        private bool _needsLogin;
-        private IDisposable _removeSubscription;
+        private readonly IFacebookClient _facebookClient;
+        private readonly ITwitterClient _twitterClient;
 
         public MainPageViewModel()
         {
             Debug.Assert(Execute.InDesignMode, "Default constructor can only be called to generate design data.");
-
-            NeedsLogin = true;
         }
 
-        public MainPageViewModel(INavigationService navigationService, ITrainshareClient trainshareClient)
+        public MainPageViewModel(
+            ILog logger,
+            IEventAggregator events,
+            INavigationService navigationService,
+            ITrainshareClient trainshareClient,
+            IFacebookClient facebookClient,
+            ITwitterClient twitterClient)
         {
+            _logger = logger;
+            _events = events;
             _navigationService = navigationService;
             _trainshareClient = trainshareClient;
+            _facebookClient = facebookClient;
+            _twitterClient = twitterClient;
+
+            _events.Subscribe(this);
         }
 
-        public bool NeedsLogin
+        public bool CanTwitter
         {
-            get { return _needsLogin; }
-            set
-            {
-                _needsLogin = value;
-                NotifyOfPropertyChange(() => NeedsLogin);
-            }
+            get { return !_twitterClient.IsLoggedIn; }
+        }
+
+        public void Twitter()
+        {
+            _navigationService
+                .UriFor<LoginViewModel>()
+                .WithParam(vm => vm.Client, "twitter")
+                .Navigate();
+        }
+
+
+        public bool CanFacebook
+        {
+            get { return !_facebookClient.IsLoggedIn; }
+        }
+
+
+        public void Facebook()
+        {
+            _navigationService
+                .UriFor<LoginViewModel>()
+                .WithParam(vm => vm.Client, "facebook")
+                .Navigate();
+        }
+
+        public bool CanContinue
+        {
+            get { return !CannotContinue; }
+        }
+
+        public bool CannotContinue
+        {
+            get { return string.IsNullOrEmpty(_trainshareClient.Token.Id); }
+        }
+
+        public void Continue()
+        {
+            _navigationService
+                .UriFor<MainViewModel>()
+                .Navigate();
+        }
+
+        public void Handle(FacebookToken message)
+        {
+            NotifyOfPropertyChange(() => CanFacebook);
+        }
+
+        public void Handle(TwitterToken message)
+        {
+            NotifyOfPropertyChange(() => CanTwitter);
+        }
+
+        public void Handle(TrainshareToken message)
+        {
+            NotifyOfPropertyChange(() => CanContinue);
         }
 
         protected override void OnInitialize()
         {
-            NeedsLogin = string.IsNullOrEmpty(_trainshareClient.Token.Id);
-
-            if (!NeedsLogin)
+            if (CanContinue)
             {
-                _removeSubscription =
-                    Observable
-                        .FromEventPattern<NavigatedEventHandler, NavigationEventArgs>(
-                            h => _navigationService.Navigated += h,
-                            h => _navigationService.Navigated -= h)
-                        .Subscribe(HandleNavigation);
+                Continue();
             }
 
             base.OnInitialize();
         }
 
-        protected override void OnViewReady(object view)
+        protected override void OnActivate()
         {
-            if (!NeedsLogin)
-                _navigationService
-                    .UriFor<MainViewModel>()
-                    .Navigate();
+            Observable
+                .FromEventPattern<NavigatedEventHandler, NavigationEventArgs>(
+                    h => _navigationService.Navigated += h,
+                    h => _navigationService.Navigated -= h)
+                .Where(e => e.EventArgs.NavigationMode != NavigationMode.Back)
+                .Take(1)
+                .Subscribe(
+                    e =>
+                    {
+                        var service = e.Sender as NavigationService;
+                        Debug.Assert(service != null);
 
-            base.OnViewReady(view);
+                        service.RemoveBackEntry();
+                    });
+
+            base.OnActivate();
         }
 
-        public void Login()
+        protected override void OnDeactivate(bool close)
         {
-            _navigationService
-                .UriFor<AccountsViewModel>()
-                .Navigate();
-        }
+            // Do this to make the first login dialog disappear
+            NotifyOfPropertyChange(() => CannotContinue);
 
-        private void HandleNavigation(EventPattern<NavigationEventArgs> e)
-        {
-            var source = e.Sender as NavigationService;
-
-            if (_removeSubscription != null &&
-                source != null &&
-                source.Source.OriginalString.Contains("MainView.xaml"))
-            {
-                _removeSubscription.Dispose();
-                _navigationService.RemoveBackEntry();
-            }
-        }
-
-        public void Handle(TrainshareToken message)
-        {
-            NeedsLogin = false;
+            base.OnDeactivate(close);
         }
     }
 }

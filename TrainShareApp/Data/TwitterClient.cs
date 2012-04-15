@@ -15,7 +15,7 @@ using TrainShareApp.Model;
 
 namespace TrainShareApp.Data
 {
-    public class TwitterClient : ITwitterClient
+    public class TwitterClient : ITwitterClient, IHandle<Republish>
     {
         private readonly string _consumerKey;
         private readonly string _consumerSecret;
@@ -28,6 +28,8 @@ namespace TrainShareApp.Data
             _consumerSecret = Credentials.TwitterTokenSecret;
 
             Token = token;
+
+            _events.Subscribe(this);
         }
 
         #region ITwitterClient Members
@@ -124,7 +126,15 @@ namespace TrainShareApp.Data
         private void Logout()
         {
             Token.Clear();
-            _events.Publish(new LogoutTwitter());
+            _events.Publish(Event.Logout.Twitter);
+        }
+
+        public void Handle(Republish message)
+        {
+            if (message == Republish.TwitterToken)
+            {
+                _events.Publish(Token);
+            }
         }
     }
 }

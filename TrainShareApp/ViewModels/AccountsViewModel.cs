@@ -8,7 +8,7 @@ namespace TrainShareApp.ViewModels
 {
     public class AccountsViewModel : Screen,
         IHandle<FacebookToken>, IHandle<TwitterToken>,
-        IHandle<LogoutFacebook>, IHandle<LogoutTwitter>,
+        IHandle<Logout>,
         IHandle<TrainshareToken>
     {
         private readonly ITrainshareClient _trainshareClient;
@@ -23,17 +23,20 @@ namespace TrainShareApp.ViewModels
         }
 
         public AccountsViewModel(
+            ILog logger,
+            IEventAggregator events,
+            INavigationService navigationService,
             ITrainshareClient trainshareClient,
             IFacebookClient facebookClient,
-            ITwitterClient twitterClient,
-            INavigationService navigationService,
-            IEventAggregator events)
+            ITwitterClient twitterClient)
         {
             _trainshareClient = trainshareClient;
             _facebookClient = facebookClient;
             _twitterClient = twitterClient;
             _navigationService = navigationService;
             _events = events;
+
+            _events.Subscribe(this);
         }
 
         /// <summary>
@@ -126,13 +129,6 @@ namespace TrainShareApp.ViewModels
                 .Navigate();
         }
 
-        protected override void OnInitialize()
-        {
-            _events.Subscribe(this);
-
-            base.OnInitialize();
-        }
-
         protected override void OnActivate()
         {
             UpdateFacebook();
@@ -146,17 +142,7 @@ namespace TrainShareApp.ViewModels
             UpdateFacebook();
         }
 
-        public void Handle(LogoutFacebook message)
-        {
-            UpdateFacebook();
-        }
-
         public void Handle(TwitterToken message)
-        {
-            UpdateTwitter();
-        }
-
-        public void Handle(LogoutTwitter message)
         {
             UpdateTwitter();
         }
@@ -164,6 +150,18 @@ namespace TrainShareApp.ViewModels
         public void Handle(TrainshareToken message)
         {
             NotifyOfPropertyChange(() => CanSave);
+        }
+
+
+        public void Handle(Logout message)
+        {
+            if (message == Logout.Facebook)
+            {
+                UpdateFacebook();
+            } else if (message == Logout.Twitter)
+            {
+                UpdateTwitter();
+            }
         }
 
         private void UpdateFacebook()

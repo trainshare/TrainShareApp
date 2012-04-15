@@ -8,10 +8,11 @@ using Newtonsoft.Json.Linq;
 using RestSharp;
 using TrainShareApp.Extension;
 using TrainShareApp.Model;
+using TrainShareApp.Event;
 
 namespace TrainShareApp.Data
 {
-    public class TrainshareClient : ITrainshareClient
+    public class TrainshareClient : ITrainshareClient, IHandle<Republish>
     {
         private readonly IEventAggregator _events;
 
@@ -21,6 +22,8 @@ namespace TrainShareApp.Data
 
             Token = token;
             CurrentCheckin = currentCheckin;
+
+            _events.Subscribe(this);
         }
 
         public TrainshareToken Token { get; private set; }
@@ -108,6 +111,17 @@ namespace TrainShareApp.Data
             CurrentCheckin.Connection = connection;
 
             _events.Publish(CurrentCheckin);
+        }
+
+        public void Handle(Republish message)
+        {
+            if (message == Republish.TrainshareToken)
+            {
+                _events.Publish(Token);
+            } else if (message == Republish.Checkin)
+            {
+                _events.Publish(CurrentCheckin);
+            }
         }
     }
 }

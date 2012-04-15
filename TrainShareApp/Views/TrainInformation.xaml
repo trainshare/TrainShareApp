@@ -5,7 +5,7 @@
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="clr-namespace:TrainShareApp.Model"
 	mc:Ignorable="d"
-	x:Class="TrainShareApp.TrainInformation" Width="460"
+	x:Class="TrainShareApp.Views.TrainInformation" Width="460"
     d:DataContext="{d:DesignInstance IsDesignTimeCreatable=False, Type=vm:Connection}"
 	>
 

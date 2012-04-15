@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Microsoft.Phone.Reactive;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestSharp;
 using TrainShareApp.Extension;
@@ -35,14 +32,10 @@ namespace TrainShareApp.Data
             var client = new RestClient("http://transport.opendata.ch/v1/");
             var request =
                 new RestRequest("connections")
-                    .WithRootElement("connections")
-                    .WithFormat(DataFormat.Json)
                     .AddParameter("from", from)
                     .AddParameter("to", to)
                     .AddParameter("date", departure.ToString("yyyy-MM-dd"))
                     .AddParameter("time", departure.ToString("HH:mm"));
-
-            Debug.WriteLine(request.ToString());
 
             return
                 client

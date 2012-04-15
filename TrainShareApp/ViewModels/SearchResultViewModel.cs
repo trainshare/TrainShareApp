@@ -1,27 +1,25 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq;
-using System.Reactive;
-using System.Reactive.Linq;
 using System.Windows;
-using System.Windows.Controls;
 using Caliburn.Micro;
 using TrainShareApp.Data;
+using TrainShareApp.Event;
 using TrainShareApp.Model;
-using TrainShareApp.Views;
 
 namespace TrainShareApp.ViewModels
 {
-    public class SearchResultViewModel : Screen
+    public class SearchResultViewModel : Screen, IHandle<Republish>
     {
         private readonly ILog _logger;
         private readonly INavigationService _navigationService;
         private readonly ITimeTable _timeTable;
         private readonly IEventAggregator _events;
-        private IDisposable _selectionSubscription;
 
         private readonly IObservableCollection<Connection> _results =
             new BindableCollection<Connection>();
+
+        private Connection _selectedConnection;
 
         public SearchResultViewModel()
         {
@@ -52,15 +50,17 @@ namespace TrainShareApp.ViewModels
         }
 
         public SearchResultViewModel(
-            INavigationService navigationService,
-            ITimeTable timeTable,
+            ILog logger,
             IEventAggregator events,
-            ILog logger)
+            INavigationService navigationService,
+            ITimeTable timeTable)
         {
             _logger = logger;
             _navigationService = navigationService;
             _timeTable = timeTable;
             _events = events;
+
+            _events.Subscribe(this);
         }
 
         public string From { get; set; }
@@ -70,6 +70,28 @@ namespace TrainShareApp.ViewModels
 
         public IObservableCollection<Connection> Results { get { return _results; } }
 
+        public Connection SelectedConnection
+        {
+            get { return _selectedConnection; }
+            set
+            {
+                _selectedConnection = value;
+                NotifyOfPropertyChange(() => SelectedConnection);
+
+                // Handle selection
+                SelectionChanged();
+            }
+        }
+
+        public void Handle(Republish message)
+        {
+            if (message == Republish.Connection &&
+                SelectedConnection != null)
+            {
+                _events.Publish(SelectedConnection);
+            }
+        }
+
         protected override void OnActivate()
         {
             SubmitSearch();
@@ -77,46 +99,17 @@ namespace TrainShareApp.ViewModels
             base.OnActivate();
         }
 
-        protected override void OnViewReady(object view)
+        private void SelectionChanged()
         {
-            var castedView = view as SearchResultView;
-            Debug.Assert(castedView != null);
-
-            _selectionSubscription =
-                Observable
-                    .FromEventPattern<SelectionChangedEventHandler, SelectionChangedEventArgs>(
-                        t => castedView.Results.SelectionChanged += t,
-                        t => castedView.Results.SelectionChanged -= t)
-                    .Subscribe(SelectionChanged);
-
-            base.OnViewReady(view);
-        }
-
-        protected override void OnDeactivate(bool close)
-        {
-            if (_selectionSubscription != null)
-            {
-                _selectionSubscription.Dispose();
-                _selectionSubscription = null;
-            }
-
-            base.OnDeactivate(close);
-        }
-
-        private void SelectionChanged(EventPattern<SelectionChangedEventArgs> e)
-        {
-            var listBox = e.Sender as ListBox;
-            Debug.Assert(listBox != null);
-
-            if (listBox.SelectedItem == null)
+            if (SelectedConnection == null)
                 return; // We did a manual reset
 
             _navigationService
                 .UriFor<CheckinViewModel>()
                 .Navigate();
 
-            _events.Publish(listBox.SelectedItem as Connection);
-            listBox.SelectedItem = null;
+            // Needs to occur after navigation because otherwise the viewmodel could not be instantiated
+            _events.Publish(SelectedConnection);
         }
 
         private async void SubmitSearch()

@@ -15,7 +15,7 @@ using TrainShareApp.Model;
 
 namespace TrainShareApp.Data
 {
-    public class FacebookClient : IFacebookClient
+    public class FacebookClient : IFacebookClient, IHandle<Republish>
     {
         private const string Redirect = "https://www.facebook.com/connect/login_success.html";
         private readonly string _consumerKey;
@@ -29,6 +29,8 @@ namespace TrainShareApp.Data
             _consumerSecret = Credentials.FacebookTokenSecret;
 
             Token = facebookToken;
+
+            _events.Subscribe(this);
         }
 
         public FacebookToken Token { get; private set; }
@@ -46,7 +48,7 @@ namespace TrainShareApp.Data
         public async Task<FacebookToken> Login(WebBrowser browser)
         {
             var guid = Guid.NewGuid().ToString();
-            var client = new RestClient("https://m.facebook.com/dialog/oauth/");
+            var client = new RestClient("https://www.facebook.com/dialog/oauth/");
             var request =
                 new RestRequest()
                     .AddParameter("client_id", _consumerKey)
@@ -114,7 +116,15 @@ namespace TrainShareApp.Data
         private void Logout()
         {
             Token.Clear();
-            _events.Publish(new LogoutFacebook());
+            _events.Publish(Event.Logout.Facebook);
+        }
+
+        public void Handle(Republish message)
+        {
+            if (message == Republish.FacebookToken)
+            {
+                _events.Publish(Token);
+            }
         }
     }
 }
