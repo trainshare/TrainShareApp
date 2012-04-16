@@ -36,7 +36,7 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <Image Grid.Row="0" Stretch="Uniform" Source="/Logo.png" />
+        <Image Grid.Row="0" Stretch="Uniform" Source="/TrainShareApp;component/Logo.png" />
         <!--Pivot Control-->
         <controls:Pivot Grid.Row="1">
             <!--Pivot item one-->
@@ -74,8 +74,8 @@
 	                		<RowDefinition Height="Auto"/>
 	                		<RowDefinition/>
 	                	</Grid.RowDefinitions>
-                        <Views:TrainInformation DataContext="{Binding CurrentCheckin.Connection}"/>
-	            		<TextBlock Text="Friends on same train" FontSize="{StaticResource PhoneFontSizeExtraLarge}" VerticalAlignment="Top" Grid.Row="1" />
+                        <Views:TrainInformation DataContext="{Binding CurrentCheckin.Connection}" Margin="0,0,0,30"/>
+	            		<TextBlock Text="Friends on same train" FontSize="{StaticResource PhoneFontSizeExtraLarge}" VerticalAlignment="Top" Grid.Row="1" Margin="0,0,0,20" />
 	            		<ListBox x:Name="Friends" ItemsSource="{Binding Friends}" ItemTemplate="{StaticResource FriendTemplate}" Style="{StaticResource FriendsListStyle}" d:LayoutOverrides="Height" Grid.Row="2"/>
                     </Grid>
             	</Grid>

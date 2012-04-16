@@ -14,10 +14,6 @@ namespace TrainShareApp.ViewModels
         private readonly INavigationService _navigationService;
         private readonly ITrainshareClient _trainshareClient;
 
-        private float _position = .5f;
-        private string _message = string.Empty;
-        private Connection _connection;
-
         public CheckinViewModel()
         {
             Debug.Assert(Execute.InDesignMode, "Default constructor can only be called to generate design data.");
@@ -37,34 +33,11 @@ namespace TrainShareApp.ViewModels
             _events.Subscribe(this);
         }
 
-        public Connection Connection
-        {
-            get { return _connection; }
-            set
-            {
-                _connection = value;
-                NotifyOfPropertyChange(() => Connection);
-            }
-        }
+        public Connection Connection { get; set; }
 
-        public float Position { 
-            get { return _position; }
-            set
-            {
-                _position = value;
-                NotifyOfPropertyChange(() => Position);
-            }
-        }
+        public float Position { get; set; }
 
-        public string Message
-        {
-            get { return _message; }
-            set
-            {
-                _message = value;
-                NotifyOfPropertyChange(() => Message);
-            }
-        }
+        public string Message { get; set; }
 
         public async void Confirm()
         {
@@ -90,6 +63,13 @@ namespace TrainShareApp.ViewModels
         public void Handle(Connection message)
         {
             Connection = message;
+        }
+
+        protected override void OnActivate()
+        {
+            Position = 0.5f;
+
+            base.OnActivate();
         }
     }
 }

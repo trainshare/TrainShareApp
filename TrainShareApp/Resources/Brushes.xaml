@@ -1,10 +1,7 @@
 ﻿<ResourceDictionary
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-	<LinearGradientBrush x:Key="ListItemBrush" EndPoint="0.5,1" StartPoint="0.5,0">
-		<GradientStop Color="#FFEDEDED" Offset="1"/>
-		<GradientStop Color="White"/>
-	</LinearGradientBrush>
+	<SolidColorBrush x:Key="ListItemBrush" Color="#C0FFFFFF"/>
 	<SolidColorBrush x:Key="MainBackground" Color="#FFCC0000"/>
 	<!-- Resource dictionary entries should be defined here. -->
 </ResourceDictionary>

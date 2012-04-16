@@ -17,8 +17,8 @@ namespace TrainShareApp.ViewModels
         private readonly IObservableCollection<TrainshareFriend> _friends =
             new BindableCollection<TrainshareFriend>();
 
-        private string _from = "Bern";
-        private string _to = "Basel";
+        private string _from = "Lausanne";
+        private string _to = "Genf";
         private string _via = string.Empty;
         private DateTime _time = DateTime.Now;
         private Checkin _currentCheckin;

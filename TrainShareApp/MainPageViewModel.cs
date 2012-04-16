@@ -113,20 +113,23 @@ namespace TrainShareApp
 
         protected override void OnActivate()
         {
-            Observable
-                .FromEventPattern<NavigatedEventHandler, NavigationEventArgs>(
-                    h => _navigationService.Navigated += h,
-                    h => _navigationService.Navigated -= h)
-                .Where(e => e.EventArgs.NavigationMode != NavigationMode.Back)
-                .Take(1)
-                .Subscribe(
-                    e =>
-                    {
-                        var service = e.Sender as NavigationService;
-                        Debug.Assert(service != null);
+            if (CanContinue)
+            {
+                Observable
+                    .FromEventPattern<NavigatedEventHandler, NavigationEventArgs>(
+                        h => _navigationService.Navigated += h,
+                        h => _navigationService.Navigated -= h)
+                    .Where(e => e.EventArgs.NavigationMode != NavigationMode.Back)
+                    .Take(1)
+                    .Subscribe(
+                        e =>
+                        {
+                            var service = e.Sender as NavigationService;
+                            Debug.Assert(service != null);
 
-                        service.RemoveBackEntry();
-                    });
+                            service.RemoveBackEntry();
+                        });
+            }
 
             base.OnActivate();
         }

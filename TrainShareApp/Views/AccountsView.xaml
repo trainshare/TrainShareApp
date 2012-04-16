@@ -1,73 +1,78 @@
-﻿<phone:PhoneApplicationPage
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
-    xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:vm="clr-namespace:TrainShareApp.ViewModels"
-    xmlns:cal="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro"
-    x:Class="TrainShareApp.Views.AccountsView"
-    FontFamily="{StaticResource PhoneFontFamilyNormal}"
-    FontSize="{StaticResource PhoneFontSizeNormal}"
-    Foreground="{StaticResource PhoneForegroundBrush}"
-    SupportedOrientations="Portrait" Orientation="Portrait"
-    mc:Ignorable="d"
-    shell:SystemTray.IsVisible="True"
-    cal:Bind.AtDesignTime="True"
-    d:DataContext="{d:DesignInstance IsDesignTimeCreatable=True, Type=vm:AccountsViewModel}">
+﻿<phone:PhoneApplicationPage xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                            xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                            xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
+                            xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
+                            xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                            xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                            xmlns:vm="clr-namespace:TrainShareApp.ViewModels" xmlns:cal="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro"
+                            x:Class="TrainShareApp.Views.AccountsView" FontFamily="{StaticResource PhoneFontFamilyNormal}"
+                            FontSize="{StaticResource PhoneFontSizeNormal}" Foreground="{StaticResource PhoneForegroundBrush}"
+                            SupportedOrientations="Portrait" Orientation="Portrait" mc:Ignorable="d" shell:SystemTray.IsVisible="True"
+                            cal:Bind.AtDesignTime="True" d:DataContext="{d:DesignInstance IsDesignTimeCreatable=True, Type=vm:AccountsViewModel}"
+                            d:DesignHeight="696" d:DesignWidth="480">
 
-    <!--LayoutRoot is the root grid where all page content is placed-->
-    <Grid x:Name="LayoutRoot" Background="Transparent">
+  <!--LayoutRoot is the root grid where all page content is placed-->
+  <Grid x:Name="LayoutRoot" Background="Transparent">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="*" />
+    </Grid.RowDefinitions>
+
+    <!--TitlePanel contains the name of the application and page title-->
+    <StackPanel x:Name="TitlePanel" Grid.Row="0" Margin="12,17,0,30">
+      <TextBlock x:Name="ApplicationTitle" Text="Trainshare" Style="{StaticResource PhoneTextNormalStyle}" />
+      <TextBlock x:Name="PageTitle" Text="Accounts" Margin="9,-7,0,0"
+                 Style="{StaticResource PhoneTextTitle1Style}" />
+    </StackPanel>
+    <Grid x:Name="ContentPanel" Margin="12,0,12,0" Grid.Row="1">
+      <Grid.RowDefinitions>
+        <RowDefinition />
+        <RowDefinition />
+      </Grid.RowDefinitions>
+      <Grid VerticalAlignment="Bottom" Margin="0,0,0,60">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
+          <RowDefinition Height="Auto" />
+          <RowDefinition Height="Auto" />
+          <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-
-        <!--TitlePanel contains the name of the application and page title-->
-        <StackPanel x:Name="TitlePanel" Grid.Row="0" Margin="12,17,0,28">
-            <TextBlock x:Name="ApplicationTitle" Text="Trainshare" Style="{StaticResource PhoneTextNormalStyle}"/>
-            <TextBlock x:Name="PageTitle" Text="Accounts" Margin="9,-7,0,0" Style="{StaticResource PhoneTextTitle1Style}"/>
-        </StackPanel>
-        <Grid x:Name="ContentPanel" Margin="12,0,12,0" Grid.Row="1" >
-        	<Grid.RowDefinitions>
-        		<RowDefinition/>
-        		<RowDefinition/>
-        	</Grid.RowDefinitions>
-        	<Grid VerticalAlignment="Bottom" Margin="0,0,0,60">
-        		<Grid.RowDefinitions>
-        			<RowDefinition Height="Auto"/>
-        			<RowDefinition Height="Auto"/>
-        		</Grid.RowDefinitions>
-        		<Grid.ColumnDefinitions>
-        			<ColumnDefinition Width="180"/>
-        			<ColumnDefinition />
-        		</Grid.ColumnDefinitions>
-        		<TextBlock TextWrapping="Wrap" Text="Twitter:" FontSize="{StaticResource PhoneFontSizeLarge}"/>
-        		<TextBlock x:Name="TwitterName" TextWrapping="Wrap" Text="{Binding TwitterName}" Grid.Column="1" FontSize="{StaticResource PhoneFontSizeLarge}"/>
-        		<Button x:Name="TwitterButton" Content="{Binding TwitterText}" Grid.Row="1" Grid.ColumnSpan="2"/>
-        	</Grid>
-        	<Grid Grid.Row="1" VerticalAlignment="Top" >
-        		<Grid.RowDefinitions>
-        			<RowDefinition Height="Auto"/>
-        			<RowDefinition Height="Auto"/>
-        		</Grid.RowDefinitions>
-        		<Grid.ColumnDefinitions>
-        			<ColumnDefinition Width="180"/>
-        			<ColumnDefinition />
-        		</Grid.ColumnDefinitions>
-        		<TextBlock TextWrapping="Wrap" Text="Facebook:" FontSize="{StaticResource PhoneFontSizeLarge}"/>
-        		<TextBlock TextWrapping="Wrap" Text="{Binding FacebookName}" Grid.Column="1" FontSize="{StaticResource PhoneFontSizeLarge}"/>
-        		<Button x:Name="FacebookButton" Content="{Binding FacebookText}" Grid.ColumnSpan="2" Grid.Row="1"/>
-        	</Grid>
-        </Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition />
+          <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <TextBlock TextWrapping="Wrap" Text="Twitter" FontSize="{StaticResource PhoneFontSizeLarge}"
+                   HorizontalAlignment="Center" Grid.ColumnSpan="2" />
+        <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap"
+                   Text="{Binding TwitterName, Mode=OneWay}" Grid.Row="1" Grid.ColumnSpan="2" />
+        <Button x:Name="ConnectTw" Content="Connect" Grid.Row="2" />
+        <Button x:Name="DisconnectTw" Content="Disconnect" d:LayoutOverrides="Width, Height, GridBox" Grid.Row="2"
+                Grid.Column="1" />
+      </Grid>
+      <Grid Grid.Row="1" VerticalAlignment="Top">
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto" />
+          <RowDefinition Height="Auto" />
+          <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition />
+          <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <TextBlock TextWrapping="Wrap" Text="Facebook" FontSize="{StaticResource PhoneFontSizeLarge}"
+                   HorizontalAlignment="Center" Grid.ColumnSpan="2" />
+        <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap"
+                   Text="{Binding FacebookName, Mode=OneWay}" Grid.Row="1" Grid.ColumnSpan="2" />
+        <Button x:Name="ConnectFb" Content="Connect" Grid.Row="2" />
+        <Button x:Name="DisconnectFb" Content="Disconnect" d:LayoutOverrides="Width, Height" Grid.Row="3"
+                Grid.Column="1" />
+      </Grid>
     </Grid>
- 
- 	<phone:PhoneApplicationPage.ApplicationBar>
-        <shell:ApplicationBar IsVisible="True" IsMenuEnabled="True">
-            <shell:ApplicationBar.Buttons>
-                <cal:AppBarButton Message="Save" IconUri="/Toolkit.Content/ApplicationBar.Check.png" Text="Save" />
-            </shell:ApplicationBar.Buttons>
- 		</shell:ApplicationBar>
- 	</phone:PhoneApplicationPage.ApplicationBar>
+  </Grid>
+
+  <phone:PhoneApplicationPage.ApplicationBar>
+    <shell:ApplicationBar IsVisible="True" IsMenuEnabled="True">
+      <shell:ApplicationBar.Buttons>
+        <cal:AppBarButton Message="Save" IconUri="/Toolkit.Content/ApplicationBar.Check.png" Text="Save" />
+      </shell:ApplicationBar.Buttons>
+    </shell:ApplicationBar>
+  </phone:PhoneApplicationPage.ApplicationBar>
 </phone:PhoneApplicationPage>

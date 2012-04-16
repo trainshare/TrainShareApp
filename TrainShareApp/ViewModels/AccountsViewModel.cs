@@ -44,23 +44,12 @@ namespace TrainShareApp.ViewModels
         /// </summary>
         public string TwitterName
         {
-            get { return _twitterClient.IsLoggedIn ? _twitterClient.Token.ScreenName : string.Empty; }
-        }
-
-        /// <summary>
-        /// Get or Set the text of the login/logout button
-        /// </summary>
-        public string TwitterText
-        {
-            get { return _twitterClient.IsLoggedIn ? "Logout" : "Login"; }
-        }
-
-        /// <summary>
-        /// Get if the user is logged in to Twitter
-        /// </summary>
-        public bool TwitterLoggedIn
-        {
-            get { return _twitterClient.IsLoggedIn; }
+            get
+            {
+                return _twitterClient.IsLoggedIn
+                           ? "Currently logged in as @" + _twitterClient.Token.ScreenName
+                           : "Currently not logged in";
+            }
         }
 
         /// <summary>
@@ -68,23 +57,9 @@ namespace TrainShareApp.ViewModels
         /// </summary>
         public string FacebookName
         {
-            get { return _facebookClient.IsLoggedIn ? _facebookClient.Token.ScreenName : string.Empty; }
-        }
-
-        /// <summary>
-        /// Get the text of the login/logout button
-        /// </summary>
-        public string FacebookText
-        {
-            get { return _facebookClient.IsLoggedIn ? "Logout" : "Login"; }
-        }
-
-        /// <summary>
-        /// Get if the user is logged in to Facebook
-        /// </summary>
-        public bool FacebookLoggedIn
-        {
-            get { return _facebookClient.IsLoggedIn; }
+            get { return _facebookClient.IsLoggedIn
+                           ? "Currently logged in as " + _facebookClient.Token.ScreenName
+                           : "Currently not logged in"; }
         }
 
         public bool CanSave
@@ -92,34 +67,36 @@ namespace TrainShareApp.ViewModels
             get { return !string.IsNullOrEmpty(_trainshareClient.Token.Id); }
         }
 
-        public void TwitterButton()
+        public bool CanConnectFb { get { return !_facebookClient.IsLoggedIn; } }
+        public bool CanDisconnectFb { get { return _facebookClient.IsLoggedIn; } }
+
+        public bool CanConnectTw { get { return !_twitterClient.IsLoggedIn; } }
+        public bool CanDisconnectTw { get { return _twitterClient.IsLoggedIn; } }
+
+        public void ConnectFb()
         {
-            if (TwitterLoggedIn)
-            {
-                _twitterClient.LogoutAsync();
-            }
-            else
-            {
-                _navigationService
-                    .UriFor<LoginViewModel>()
-                    .WithParam(vm => vm.Client, "twitter")
-                    .Navigate();
-            }
+            _navigationService
+                .UriFor<LoginViewModel>()
+                .WithParam(vm => vm.Client, "facebook")
+                .Navigate();
         }
 
-        public void FacebookButton()
+        public void DisconnectFb()
         {
-            if (FacebookLoggedIn)
-            {
-                _facebookClient.LogoutAsync();
-            }
-            else
-            {
-                _navigationService
-                    .UriFor<LoginViewModel>()
-                    .WithParam(vm => vm.Client, "facebook")
-                    .Navigate();
-            }
+            _facebookClient.LogoutAsync();
+        }
+
+        public void ConnectTw()
+        {
+            _navigationService
+                .UriFor<LoginViewModel>()
+                .WithParam(vm => vm.Client, "twitter")
+                .Navigate();
+        }
+
+        public void DisconnectTw()
+        {
+                _twitterClient.LogoutAsync();
         }
 
         public void Save()
@@ -155,27 +132,31 @@ namespace TrainShareApp.ViewModels
 
         public void Handle(Logout message)
         {
-            if (message == Logout.Facebook)
+            switch (message)
             {
-                UpdateFacebook();
-            } else if (message == Logout.Twitter)
-            {
-                UpdateTwitter();
+                case Logout.Facebook:
+                    UpdateFacebook();
+                    break;
+                case Logout.Twitter:
+                    UpdateTwitter();
+                    break;
             }
         }
 
         private void UpdateFacebook()
         {
             NotifyOfPropertyChange(() => FacebookName);
-            NotifyOfPropertyChange(() => FacebookText);
             NotifyOfPropertyChange(() => CanSave);
+            NotifyOfPropertyChange(() => CanConnectFb);
+            NotifyOfPropertyChange(() => CanDisconnectFb);
         }
 
         private void UpdateTwitter()
         {
             NotifyOfPropertyChange(() => TwitterName);
-            NotifyOfPropertyChange(() => TwitterText);
             NotifyOfPropertyChange(() => CanSave);
+            NotifyOfPropertyChange(() => CanConnectTw);
+            NotifyOfPropertyChange(() => CanDisconnectTw);
         }
     }
 }

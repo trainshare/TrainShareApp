@@ -28,21 +28,21 @@
         <RowDefinition />
         <RowDefinition Height="100" />
         <RowDefinition Height="100" />
-        <RowDefinition Height="300" />
+        <RowDefinition Height="250" />
       </Grid.RowDefinitions>
 
-      <StackPanel Margin="10 0 10 0">
-        <TextBlock TextWrapping="Wrap" Text="Welcome" Margin="0 0 0 30"
-                   FontSize="{StaticResource PhoneFontSizeExtraExtraLarge}" FontWeight="Bold" />
-        <TextBlock TextWrapping="Wrap" FontSize="{StaticResource PhoneFontSizeMedium}"
-                   Text="Thank you very much for using the Train Share App." />
-        <TextBlock TextWrapping="Wrap" FontSize="{StaticResource PhoneFontSizeMedium}"
-                   Text="To Continue please login to either Facebook or Twitter or both." />
+      <StackPanel x:Name="TitlePanel" Grid.Row="0" Margin="12,17,12,0" VerticalAlignment="Top">
+      	<TextBlock x:Name="ApplicationTitle" Text="Trainshare" Style="{StaticResource PhoneTextNormalStyle}"/>
+      	<TextBlock x:Name="PageTitle" Text="Welcome" Margin="9,-7,0,30" Style="{StaticResource PhoneTextTitle1Style}"/>
+      	<TextBlock TextWrapping="Wrap" FontSize="{StaticResource PhoneFontSizeMedium}"
+      		Text="Thank you very much for using the Train Share App." />
+      	<TextBlock TextWrapping="Wrap" FontSize="{StaticResource PhoneFontSizeMedium}"
+      		Text="To Continue please login to either Facebook or Twitter or both." />
       </StackPanel>
-      <Button Name="Facebook" Grid.Row="1" Width="300" VerticalAlignment="Center" HorizontalAlignment="Center">Facebook</Button>
-      <Button Name="Twitter" Grid.Row="2" Width="300" VerticalAlignment="Center" HorizontalAlignment="Center">Twitter</Button>
-      <Button Name="Continue" Grid.Row="3" Width="200" Margin="0 0 20 20" VerticalAlignment="Bottom"
-              HorizontalAlignment="Right">Continue</Button>
+      <Button x:Name="Facebook" Grid.Row="1" Width="300" VerticalAlignment="Center" HorizontalAlignment="Center" Content="Facebook"/>
+      <Button x:Name="Twitter" Grid.Row="2" Width="300" VerticalAlignment="Center" HorizontalAlignment="Center" Content="Twitter"/>
+      <Button x:Name="Continue" Grid.Row="3" Width="200" Margin="0 0 20 20" VerticalAlignment="Bottom"
+              HorizontalAlignment="Right" Content="Continue"/>
     </Grid>
   </Grid>
 

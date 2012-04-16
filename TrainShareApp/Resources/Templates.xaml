@@ -14,15 +14,16 @@
 				<RowDefinition Height="Auto" />
 				<RowDefinition Height="40" />
 			</Grid.RowDefinitions>
-			<TextBlock Foreground="Black" Grid.Column="1" Text="{Binding From.Departure, StringFormat=HH:mm}" />
-			<TextBlock Foreground="Black" Grid.Column="3" Text="{Binding To.Arrival, StringFormat=HH:mm}" />
-			<TextBlock Foreground="Black" Grid.Row="1" Grid.Column="1" Text="{Binding From.Station.Name}" />
-			<TextBlock Foreground="Black" Grid.Row="1" Grid.Column="3" Text="{Binding To.Station.Name}" />
+			<TextBlock x:Name="DepTime" Foreground="Black" Grid.Column="1" Text="{Binding From.Departure, StringFormat=HH:mm}" Grid.Row="1" />
+			<TextBlock x:Name="ArrTime" Foreground="Black" Grid.Column="3" Text="{Binding To.Arrival, StringFormat=HH:mm}" Grid.Row="1" />
+			<TextBlock x:Name="DepStation" Foreground="Black" Grid.Column="1" Text="{Binding From.Station.Name}" />
+			<TextBlock x:Name="ArrStation" Foreground="Black" Grid.Column="3" Text="{Binding To.Station.Name}" />
+			<TextBlock TextWrapping="Wrap" Text="{Binding Sections.Count, StringFormat='Changes: {0}'}" d:LayoutOverrides="Width, Height" Grid.RowSpan="2" Grid.Column="2" Foreground="Black" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 		</Grid>
 	</DataTemplate>
 	<!-- Resource dictionary entries should be defined here. -->
 	<DataTemplate x:Key="FriendTemplate">
-		<Grid Margin="0,0,0,3" Background="{StaticResource ListItemBrush}" Width="460" Height="100">
+		<Grid Margin="0,0,0,3" Background="{StaticResource ListItemBrush}" Width="460" Height="90">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="10"/>
 				<ColumnDefinition Width="Auto"/>

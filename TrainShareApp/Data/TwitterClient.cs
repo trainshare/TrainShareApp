@@ -69,7 +69,7 @@ namespace TrainShareApp.Data
             Debug.Assert(requestToken["oauth_token"] == verifier["oauth_token"]);
 
             Token.Id = int.Parse(accessToken["user_id"]);
-            Token.ScreenName = '@' + accessToken["screen_name"];
+            Token.ScreenName = accessToken["screen_name"];
             Token.AccessToken = accessToken["oauth_token"];
             Token.AccessTokenSecret = accessToken["oauth_token_secret"];
 

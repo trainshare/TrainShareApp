@@ -4,8 +4,10 @@
 
 packages/
 _ReSharper.TrainShareApp/
+PerformanceLogs/
 
-TrainShareApp/Data/Credidentials.cs
+Credentials.cs
+TrainShareApp.suo
 
 # mstest test results
 TestResults

@@ -21,15 +21,32 @@
     <Grid x:Name="LayoutRoot" Background="{StaticResource MainBackground}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
+            <RowDefinition/>
         </Grid.RowDefinitions>
 
-        <Image Grid.Row="0" Stretch="Uniform" Source="../Logo.png" />
+        <Image Grid.Row="0" Stretch="Uniform" Source="/TrainShareApp;component/Logo.png" />
 
         <!--TitlePanel contains the name of the application and page title-->
-        <StackPanel x:Name="TitlePanel" Grid.Row="1" Margin="12,17,0,28">
-            <TextBlock Text="Connections" Style="{StaticResource PhoneTextTitle1Style}"/>
-            <ListBox Name="Results" ItemsSource="{Binding Results}" SelectedItem="{Binding SelectedConnection}" ItemTemplate="{StaticResource ConnectionTemplate}" Margin="0,0,15,0">
+        <StackPanel x:Name="TitlePanel" Grid.Row="1" Margin="12,0">
+            <TextBlock Text="Connections" Style="{StaticResource PhoneTextTitle1Style}" Margin="12,0"/>
+            <Grid x:Name="Information" Background="Transparent" Margin="0,30">
+            	<Grid.RowDefinitions>
+            		<RowDefinition Height="Auto"/>
+            		<RowDefinition Height="Auto"/>
+            		<RowDefinition Height="Auto"/>
+            		<RowDefinition Height="Auto"/>
+            	</Grid.RowDefinitions>
+            	<Grid.ColumnDefinitions>
+            		<ColumnDefinition/>
+            		<ColumnDefinition/>
+            	</Grid.ColumnDefinitions>
+            	<TextBlock HorizontalAlignment="Center" TextWrapping="Wrap" Text="From" d:LayoutOverrides="Height" FontSize="13.333" VerticalAlignment="Bottom"/>
+            	<TextBlock HorizontalAlignment="Center" TextWrapping="Wrap" Text="To" d:LayoutOverrides="Height" Grid.Column="1" VerticalAlignment="Bottom" FontSize="13.333"/>
+            	<TextBlock HorizontalAlignment="Center" Grid.Row="1" TextWrapping="Wrap" Text="{Binding From}" d:LayoutOverrides="Height" FontSize="{StaticResource PhoneFontSizeLarge}"/>
+            	<TextBlock HorizontalAlignment="Center" Grid.Row="1" TextWrapping="Wrap" Text="{Binding To}" d:LayoutOverrides="Height" Grid.Column="1" FontSize="{StaticResource PhoneFontSizeLarge}"/>
+            	<TextBlock HorizontalAlignment="Center" TextWrapping="Wrap" Text="{Binding Time, Mode=OneWay, StringFormat='HH:mm'}" d:LayoutOverrides="Height" Grid.Row="2" FontSize="{StaticResource PhoneFontSizeLarge}" Grid.ColumnSpan="2"/>
+            </Grid>
+            <ListBox Name="Results" ItemsSource="{Binding Results}" SelectedItem="{Binding SelectedConnection, Mode=TwoWay}" ItemTemplate="{StaticResource ConnectionTemplate}">
                 <ListBox.ItemContainerStyle>
                     <Style TargetType="ListBoxItem">
                         <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>

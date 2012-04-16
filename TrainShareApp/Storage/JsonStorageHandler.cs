@@ -5,36 +5,69 @@ namespace TrainShareApp.Storage
 {
     public abstract class JsonStorageHandler<T> : StorageHandler<T>
     {
-        protected StorageInstructionBuilder<T> BuildInstruction(string name)
+        protected StorageInstructionBuilder<T> BuildInstruction(string name, bool deleteAfterResurrect = false)
         {
-            return
-                AddInstruction()
-                    .Configure(
-                        x =>
-                        {
-                            x.Key = name;
+            StorageInstructionBuilder<T> instruction;
 
-                            x.Save =
-                                (instance, getKey, mode) =>
-                                {
-                                    var value = JsonConvert.SerializeObject(instance);
+            if (deleteAfterResurrect)
+                instruction =
+                    AddInstruction()
+                        .Configure(
+                            x =>
+                            {
+                                x.Key = name;
 
-                                    x.StorageMechanism.Store(getKey(), value);
-                                };
-
-                            x.Restore =
-                                (instance, getKey, mode) =>
-                                {
-                                    object value;
-                                    var key = getKey();
-
-                                    if (x.StorageMechanism.TryGet(key, out value) && value is string)
+                                x.Save =
+                                    (instance, getKey, mode) =>
                                     {
-                                        JsonConvert.PopulateObject(value as string, instance);
-                                        x.StorageMechanism.Delete(key);
-                                    }
-                                };
-                        });
+                                        var value = JsonConvert.SerializeObject(instance);
+
+                                        x.StorageMechanism.Store(getKey(), value);
+                                    };
+
+                                x.Restore =
+                                    (instance, getKey, mode) =>
+                                    {
+                                        object value;
+                                        var key = getKey();
+
+                                        if (x.StorageMechanism.TryGet(key, out value) && value is string)
+                                        {
+                                            JsonConvert.PopulateObject(value as string, instance);
+                                            x.StorageMechanism.Delete(key);
+                                        }
+                                    };
+                            });
+            else
+                instruction =
+                    AddInstruction()
+                        .Configure(
+                            x =>
+                            {
+                                x.Key = name;
+
+                                x.Save =
+                                    (instance, getKey, mode) =>
+                                    {
+                                        var value = JsonConvert.SerializeObject(instance);
+
+                                        x.StorageMechanism.Store(getKey(), value);
+                                    };
+
+                                x.Restore =
+                                    (instance, getKey, mode) =>
+                                    {
+                                        object value;
+                                        var key = getKey();
+
+                                        if (x.StorageMechanism.TryGet(key, out value) && value is string)
+                                        {
+                                            JsonConvert.PopulateObject(value as string, instance);
+                                        }
+                                    };
+                            });
+
+            return instruction;
         }
     }
 }
