@@ -53,7 +53,7 @@ namespace TrainShareApp.ViewModels
                         var twitterToken =
                             await _twitterClient.Login(castedView.Browser);
 
-                        _trainshareClient.SendAccessToken(
+                        await _trainshareClient.SendAccessToken(
                             "twitter",
                             twitterToken.AccessToken,
                             twitterToken.AccessTokenSecret);
@@ -72,7 +72,7 @@ namespace TrainShareApp.ViewModels
                         var facebookToken =
                             await _facebookClient.Login(castedView.Browser);
                         
-                        _trainshareClient.SendAccessToken(
+                        await _trainshareClient.SendAccessToken(
                             "facebook",
                             facebookToken.AccessToken,
                             null);

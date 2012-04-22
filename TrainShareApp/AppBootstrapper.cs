@@ -26,6 +26,7 @@ namespace TrainShareApp {
             //Tokens and state
             container
                 .Singleton<Checkin>()
+                .Singleton<CheckinHistory>()
                 .Singleton<TwitterToken>()
                 .Singleton<FacebookToken>()
                 .Singleton<TrainshareToken>();
@@ -41,17 +42,18 @@ namespace TrainShareApp {
             container
                 .Singleton<MainPageViewModel>()
                 .Singleton<MainViewModel>()
-                .Singleton<LoginViewModel>()
-                .Singleton<CheckinViewModel>()
+                .PerRequest<LoginViewModel>()
+                .PerRequest<CheckinViewModel>()
                 .Singleton<AccountsViewModel>()
+                .Singleton<SearchViewModel>()
                 .Singleton<SearchResultViewModel>();
 
             // This is important to force the container to build up all viewmodel at the beginning
-            Console.WriteLine(container.GetInstance(typeof (MainViewModel), null));
-            Console.WriteLine(container.GetInstance(typeof (LoginViewModel), null));
-            Console.WriteLine(container.GetInstance(typeof (CheckinViewModel), null));
-            Console.WriteLine(container.GetInstance(typeof (AccountsViewModel), null));
-            Console.WriteLine(container.GetInstance(typeof (SearchResultViewModel), null));
+            ////Console.WriteLine(container.GetInstance(typeof (MainViewModel), null));
+            ////Console.WriteLine(container.GetInstance(typeof (LoginViewModel), null));
+            ////Console.WriteLine(container.GetInstance(typeof (CheckinViewModel), null));
+            ////Console.WriteLine(container.GetInstance(typeof (AccountsViewModel), null));
+            ////Console.WriteLine(container.GetInstance(typeof (SearchResultViewModel), null));
 
             AddCustomConventions();
         }

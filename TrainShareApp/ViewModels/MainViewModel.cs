@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Caliburn.Micro;
@@ -14,99 +15,59 @@ namespace TrainShareApp.ViewModels
         private readonly IEventAggregator _events;
         private readonly INavigationService _navigationService;
         private readonly ITrainshareClient _trainshareClient;
-        private readonly IObservableCollection<TrainshareFriend> _friends =
-            new BindableCollection<TrainshareFriend>();
-
-        private string _from = "Lausanne";
-        private string _to = "Genf";
-        private string _via = string.Empty;
-        private DateTime _time = DateTime.Now;
-        private Checkin _currentCheckin;
+        private readonly CheckinHistory _history;
 
         public MainViewModel()
         {
             Debug.Assert(Execute.InDesignMode, "Default constructor can only be called to generate design data.");
-            Friends.AddRange(Enumerable.Range(0, 10).Select(i => new TrainshareFriend{Name = "Friend #" + i}));
+            Friends = Enumerable.Range(0, 10).Select(i => new TrainshareFriend { Name = "Friend #" + i }).ToList();
+
+            CurrentCheckin =
+                new Checkin
+                    {
+                        DepartureStation = "Maienfeld",
+                        DepartureTime = DateTime.Now,
+                        ArrivalStation = "Chur",
+                        ArrivalTime = DateTime.Now,
+                        Position = 0.5f,
+                        Sections = new List<CheckinSection>(),
+                        CheckinTime = DateTime.Now.AddDays(1)
+                    };
         }
 
         public MainViewModel(
             ILog logger,
             IEventAggregator events,
             INavigationService navigationService,
-            ITrainshareClient trainshareClient)
+            ITrainshareClient trainshareClient,
+            CheckinHistory history)
         {
             _logger = logger;
             _events = events;
             _navigationService = navigationService;
             _trainshareClient = trainshareClient;
+            _history = history;
 
             _events.Subscribe(this);
+
+            CurrentCheckin = trainshareClient.CurrentCheckin;
+            History = history.Get().ToList();
         }
 
-        public IObservableCollection<TrainshareFriend> Friends
-        {
-            get { return _friends; }
-        }
+        public Checkin CurrentCheckin { get; set; }
 
-        public string From
-        {
-            get { return _from; }
-            set
-            {
-                _from = value;
-                NotifyOfPropertyChange(() => From);
-            }
-        }
+        public bool HasNotCheckedIn { get { return CurrentCheckin.ArrivalTime < DateTime.Now; } }
+        public bool HasCheckedIn { get { return !HasNotCheckedIn; } }
 
-        public string To
-        {
-            get { return _to; }
-            set
-            {
-                _to = value;
-                NotifyOfPropertyChange(() => To);
-            }
-        }
+        public IList<Checkin> History { get; private set; } 
 
-        public string Via
-        {
-            get { return _via; }
-            set
-            {
-                _via = value;
-                NotifyOfPropertyChange(() => Via);
-            }
-        }
+        public bool HasNoHistory { get { return History == null || History.Count == 0; } }
+        public bool HasHistory { get { return !HasNoHistory; } }
 
-        public DateTime Time
-        {
-            get { return _time; }
-            set
-            {
-                _time = value;
-                NotifyOfPropertyChange(() => Time);
-            }
-        }
+        public IList<TrainshareFriend> Friends { get; private set; }
 
-        public bool HasCheckedIn { get { return CurrentCheckin.Connection != null; } }
-
-        public Checkin CurrentCheckin
-        {
-            get { return _currentCheckin; }
-            set
-            {
-                _currentCheckin = value;
-                NotifyOfPropertyChange(() => CurrentCheckin);
-                NotifyOfPropertyChange(() => HasCheckedIn);
-            }
-        }
-
-        protected override void OnActivate()
-        {
-            base.OnActivate();
-
-            _events.Publish(Republish.Checkin);
-        }
+        public bool HasNoFriends { get { return Friends == null || Friends.Count == 0; } }
+        public bool HasFriends { get { return !HasNoFriends; } }
 
         protected async override void OnViewReady(object view)
         {
@@ -114,10 +75,7 @@ namespace TrainShareApp.ViewModels
 
             try
             {
-                var friends = await _trainshareClient.GetFriends();
-
-                Friends.Clear();
-                Friends.AddRange(friends);
+                //Friends = (await _trainshareClient.GetFriends()).ToList();
             }
             catch (Exception e)
             {
@@ -125,14 +83,16 @@ namespace TrainShareApp.ViewModels
             }
         }
 
-        public void SubmitSearch()
+        public void Checkin()
         {
             _navigationService
-                .UriFor<SearchResultViewModel>()
-                .WithParam(vm => vm.From, From)
-                .WithParam(vm => vm.To, To)
-                .WithParam(vm => vm.Time, Time)
+                .UriFor<SearchViewModel>()
                 .Navigate();
+        }
+
+        public void Checkout()
+        {
+            
         }
 
         public void Settings()
@@ -145,6 +105,8 @@ namespace TrainShareApp.ViewModels
         public void Handle(Checkin message)
         {
             CurrentCheckin = message;
+
+            History = _history.Get().ToList();
         }
     }
 }

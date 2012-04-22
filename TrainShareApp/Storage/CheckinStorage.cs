@@ -3,7 +3,7 @@ using TrainShareApp.Model;
 
 namespace TrainShareApp.Storage
 {
-    public class ConnectionStorage : JsonStorageHandler<Checkin>
+    public class CheckinStorage : JsonStorageHandler<Checkin>
     {
         public override void Configure()
         {

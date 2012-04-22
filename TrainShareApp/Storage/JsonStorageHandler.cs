@@ -1,5 +1,7 @@
-﻿using Caliburn.Micro;
+﻿using System.Reflection;
+using Caliburn.Micro;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace TrainShareApp.Storage
 {

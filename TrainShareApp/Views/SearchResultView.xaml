@@ -1,5 +1,4 @@
-﻿<phone:PhoneApplicationPage 
-    x:Class="TrainShareApp.Views.SearchResultView"
+﻿<phone:PhoneApplicationPage
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
@@ -8,6 +7,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:cal="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro"
     xmlns:vm="clr-namespace:TrainShareApp.ViewModels"
+    xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit" 
+    x:Class="TrainShareApp.Views.SearchResultView"
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
     FontSize="{StaticResource PhoneFontSizeNormal}"
     Foreground="{StaticResource PhoneForegroundBrush}"
@@ -15,20 +16,24 @@
     mc:Ignorable="d" d:DesignHeight="768" d:DesignWidth="480"
     shell:SystemTray.IsVisible="True"
     cal:Bind.AtDesignTime="True"
-    d:DataContext="{d:DesignInstance Type=vm:SearchResultViewModel, IsDesignTimeCreatable=True}">
+    d:DataContext="{d:DesignInstance IsDesignTimeCreatable=True, Type=vm:SearchResultViewModel}">
+	<phone:PhoneApplicationPage.Resources>
+		<cal:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+	</phone:PhoneApplicationPage.Resources>
 
     <!--LayoutRoot is the root grid where all page content is placed-->
     <Grid x:Name="LayoutRoot" Background="{StaticResource MainBackground}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
 
         <Image Grid.Row="0" Stretch="Uniform" Source="/TrainShareApp;component/Logo.png" />
 
         <!--TitlePanel contains the name of the application and page title-->
-        <StackPanel x:Name="TitlePanel" Grid.Row="1" Margin="12,0">
-            <TextBlock Text="Connections" Style="{StaticResource PhoneTextTitle1Style}" Margin="12,0"/>
+        <StackPanel x:Name="TitlePanel" Grid.Row="1">
+            <TextBlock Text="Connections" Style="{StaticResource PhoneTextTitle1Style}" />
             <Grid x:Name="Information" Background="Transparent" Margin="0,30">
             	<Grid.RowDefinitions>
             		<RowDefinition Height="Auto"/>
@@ -40,32 +45,22 @@
             		<ColumnDefinition/>
             		<ColumnDefinition/>
             	</Grid.ColumnDefinitions>
-            	<TextBlock HorizontalAlignment="Center" TextWrapping="Wrap" Text="From" d:LayoutOverrides="Height" FontSize="13.333" VerticalAlignment="Bottom"/>
-            	<TextBlock HorizontalAlignment="Center" TextWrapping="Wrap" Text="To" d:LayoutOverrides="Height" Grid.Column="1" VerticalAlignment="Bottom" FontSize="13.333"/>
-            	<TextBlock HorizontalAlignment="Center" Grid.Row="1" TextWrapping="Wrap" Text="{Binding From}" d:LayoutOverrides="Height" FontSize="{StaticResource PhoneFontSizeLarge}"/>
-            	<TextBlock HorizontalAlignment="Center" Grid.Row="1" TextWrapping="Wrap" Text="{Binding To}" d:LayoutOverrides="Height" Grid.Column="1" FontSize="{StaticResource PhoneFontSizeLarge}"/>
-            	<TextBlock HorizontalAlignment="Center" TextWrapping="Wrap" Text="{Binding Time, Mode=OneWay, StringFormat='HH:mm'}" d:LayoutOverrides="Height" Grid.Row="2" FontSize="{StaticResource PhoneFontSizeLarge}" Grid.ColumnSpan="2"/>
+            	<TextBlock HorizontalAlignment="Center" TextWrapping="Wrap" Text="From" Style="{StaticResource PhoneTextSmallStyle}"/>
+            	<TextBlock HorizontalAlignment="Center" TextWrapping="Wrap" Text="To" Grid.Column="1" Style="{StaticResource PhoneTextSmallStyle}"/>
+            	<TextBlock HorizontalAlignment="Center" TextWrapping="Wrap" Text="{Binding From}" Grid.Row="1" Style="{StaticResource PhoneTextLargeStyle}"/>
+            	<TextBlock HorizontalAlignment="Center" TextWrapping="Wrap" Text="{Binding To}" Grid.Row="1" Grid.Column="1" Style="{StaticResource PhoneTextLargeStyle}"/>
+            	<TextBlock HorizontalAlignment="Center" TextWrapping="Wrap" Text="Departure" Grid.Row="2" Grid.ColumnSpan="2" Style="{StaticResource PhoneTextSmallStyle}"/>
+            	<TextBlock HorizontalAlignment="Center" TextWrapping="Wrap" Text="{Binding Time, Mode=OneWay, StringFormat=HH:mm}" Grid.Row="3" Grid.ColumnSpan="2" Style="{StaticResource PhoneTextLargeStyle}"/>
             </Grid>
-            <ListBox Name="Results" ItemsSource="{Binding Results}" SelectedItem="{Binding SelectedConnection, Mode=TwoWay}" ItemTemplate="{StaticResource ConnectionTemplate}">
-                <ListBox.ItemContainerStyle>
-                    <Style TargetType="ListBoxItem">
-                        <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
-                    </Style>
-                </ListBox.ItemContainerStyle>
-            </ListBox>
         </StackPanel>
+        <ListBox x:Name="Results" ItemsSource="{Binding Results}" SelectedItem="{Binding SelectedConnection, Mode=TwoWay}" ItemTemplate="{StaticResource ConnectionTemplate}" Grid.Row="2">
+        	<ListBox.ItemContainerStyle>
+        		<Style TargetType="ListBoxItem">
+        			<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        		</Style>
+        	</ListBox.ItemContainerStyle>
+        </ListBox>
+    	<toolkit:PerformanceProgressBar Grid.Row="2" IsIndeterminate="{Binding Loading}" Foreground="Black" Margin="0,0,0,300"/>
     </Grid>
- 
-    <!--Sample code showing usage of ApplicationBar-->
-    <!--<phone:PhoneApplicationPage.ApplicationBar>
-        <shell:ApplicationBar IsVisible="True" IsMenuEnabled="True">
-            <shell:ApplicationBarIconButton IconUri="/Images/appbar_button1.png" Text="Button 1"/>
-            <shell:ApplicationBarIconButton IconUri="/Images/appbar_button2.png" Text="Button 2"/>
-            <shell:ApplicationBar.MenuItems>
-                <shell:ApplicationBarMenuItem Text="MenuItem 1"/>
-                <shell:ApplicationBarMenuItem Text="MenuItem 2"/>
-            </shell:ApplicationBar.MenuItems>
-        </shell:ApplicationBar>
-    </phone:PhoneApplicationPage.ApplicationBar>-->
 
 </phone:PhoneApplicationPage>

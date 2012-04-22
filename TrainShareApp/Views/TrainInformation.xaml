@@ -5,8 +5,8 @@
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="clr-namespace:TrainShareApp.Model"
 	mc:Ignorable="d"
-	x:Class="TrainShareApp.Views.TrainInformation" Width="460"
-    d:DataContext="{d:DesignInstance IsDesignTimeCreatable=False, Type=vm:Connection}"
+	x:Class="TrainShareApp.Views.TrainInformation"
+    d:DataContext="{d:DesignInstance IsDesignTimeCreatable=False, Type=vm:Checkin}"
 	>
 
 	<Grid x:Name="LayoutRoot" Background="Transparent">
@@ -20,13 +20,13 @@
 			<ColumnDefinition/>
 			<ColumnDefinition/>
 		</Grid.ColumnDefinitions>
-		<TextBlock x:Name="From" HorizontalAlignment="Center" TextWrapping="Wrap" Text="From" d:LayoutOverrides="Height" FontSize="13.333" VerticalAlignment="Bottom"/>
-		<TextBlock x:Name="To" HorizontalAlignment="Center" TextWrapping="Wrap" Text="To" d:LayoutOverrides="Height" Grid.Column="1" VerticalAlignment="Bottom" FontSize="13.333"/>
-		<TextBlock HorizontalAlignment="Center" Grid.Row="1" TextWrapping="Wrap" Text="{Binding From.Station.Name}" d:LayoutOverrides="Height" FontSize="{StaticResource PhoneFontSizeLarge}"/>
-		<TextBlock HorizontalAlignment="Center" Grid.Row="1" TextWrapping="Wrap" Text="{Binding To.Station.Name}" d:LayoutOverrides="Height" Grid.Column="1" FontSize="{StaticResource PhoneFontSizeLarge}"/>
-		<TextBlock x:Name="FromAt" HorizontalAlignment="Center" TextWrapping="Wrap" Text="At" d:LayoutOverrides="Height" Grid.Row="2" VerticalAlignment="Bottom" FontSize="13.333"/>
-		<TextBlock x:Name="ToAt" HorizontalAlignment="Center" TextWrapping="Wrap" Text="At" d:LayoutOverrides="Height" Grid.Row="2" Grid.Column="2" VerticalAlignment="Bottom" FontSize="13.333"/>
-		<TextBlock HorizontalAlignment="Center" TextWrapping="Wrap" Text="{Binding From.Departure, StringFormat='HH:mm'}" d:LayoutOverrides="Height" Grid.Row="4" FontSize="{StaticResource PhoneFontSizeMediumLarge}"/>
-		<TextBlock HorizontalAlignment="Center" TextWrapping="Wrap" Text="{Binding To.Arrival, StringFormat='HH:mm'}" d:LayoutOverrides="Height" Grid.Row="3" Grid.Column="1" FontSize="{StaticResource PhoneFontSizeMediumLarge}"/>
+		<TextBlock x:Name="From" Text="From" Style="{StaticResource PhoneTextSmallStyle}" HorizontalAlignment="Center"/>
+		<TextBlock x:Name="To" Text="To" Grid.Column="1" Style="{StaticResource PhoneTextSmallStyle}" HorizontalAlignment="Center"/>
+		<TextBlock Grid.Row="1" TextWrapping="Wrap" Text="{Binding DepartureStation}" Style="{StaticResource PhoneTextLargeStyle}" HorizontalAlignment="Center"/>
+		<TextBlock Grid.Row="1" TextWrapping="Wrap" Text="{Binding ArrivalStation}" Grid.Column="1" Style="{StaticResource PhoneTextLargeStyle}" HorizontalAlignment="Center"/>
+		<TextBlock x:Name="FromAt" Text="Departure" Grid.Row="2" Style="{StaticResource PhoneTextSmallStyle}" HorizontalAlignment="Center"/>
+		<TextBlock x:Name="ToAt" Text="Arrival" Grid.Row="2" Grid.Column="2" Style="{StaticResource PhoneTextSmallStyle}" HorizontalAlignment="Center"/>
+		<TextBlock TextWrapping="Wrap" Text="{Binding DepartureTime, StringFormat=HH:mm}" Grid.Row="4" Style="{StaticResource PhoneTextLargeStyle}" HorizontalAlignment="Center"/>
+		<TextBlock TextWrapping="Wrap" Text="{Binding ArrivalTime, StringFormat=HH:mm}" Grid.Row="3" Grid.Column="1" Style="{StaticResource PhoneTextLargeStyle}" HorizontalAlignment="Center"/>
 	</Grid>
 </UserControl>

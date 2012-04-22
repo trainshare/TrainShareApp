@@ -3,7 +3,7 @@ using TrainShareApp.ViewModels;
 
 namespace TrainShareApp.Storage
 {
-    public class MainViewStorage : StorageHandler<MainViewModel>
+    public class MainViewStorage : StorageHandler<SearchViewModel>
     {
         public override void Configure()
         {

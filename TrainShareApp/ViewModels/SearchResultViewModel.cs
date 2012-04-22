@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows;
@@ -48,6 +47,8 @@ namespace TrainShareApp.ViewModels
                     .SelectMany(
                         from =>
                         checkpoints.Select(to => new Connection {From = from, To = to})));
+
+            Loading = true;
         }
 
         public SearchResultViewModel(
@@ -68,6 +69,8 @@ namespace TrainShareApp.ViewModels
         public string To { get; set; }
         public string Via { get; set; }
         public DateTime Time { get; set; }
+
+        public bool Loading { get; set; }
 
         public IObservableCollection<Connection> Results { get { return _results; } }
 
@@ -105,17 +108,17 @@ namespace TrainShareApp.ViewModels
             if (SelectedConnection == null)
                 return; // We did a manual reset
 
+            _events.Publish(SelectedConnection);
+
             _navigationService
                 .UriFor<CheckinViewModel>()
                 .Navigate();
-
-            // Needs to occur after navigation because otherwise the viewmodel could not be instantiated
-            _events.Publish(SelectedConnection);
         }
 
         private async void SubmitSearch()
         {
             Results.Clear();
+            Loading = true;
 
             try
             {
@@ -127,11 +130,13 @@ namespace TrainShareApp.ViewModels
                 To = result.To.Name;
                 NotifyOfPropertyChange(() => To);
 
+                Loading = false;
                 Results.AddRange(result.Connections);
             }
             catch (Exception e)
             {
                 _logger.Error(e);
+                Loading = false;
                 MessageBox.Show("Sorry, there was an unexpected error for your request. Please try again later.");
                 _navigationService.GoBack();
             }

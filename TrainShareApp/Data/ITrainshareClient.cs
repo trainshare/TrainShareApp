@@ -9,10 +9,9 @@ namespace TrainShareApp.Data
         /// <summary>
         /// Checkin for a connection
         /// </summary>
-        /// <param name="connection">The connection to check in</param>
-        /// <param name="position">The position in the train (between 0 and 10) </param>
+        /// <param name="checkin">The check in</param>
         /// <returns>A task that fires after the checkin</returns>
-        Task Checkin(Connection connection, int position);
+        Task Checkin(Checkin checkin);
 
         /// <summary>
         /// Send an additional access token and secret to the server so it can include friend graph

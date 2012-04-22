@@ -8,6 +8,7 @@
     xmlns:vm="clr-namespace:TrainShareApp.ViewModels"
     xmlns:cal="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro"
     xmlns:local="clr-namespace:TrainShareApp.Views" 
+    xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit" 
     x:Class="TrainShareApp.Views.CheckinView"
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
     FontSize="{StaticResource PhoneFontSizeNormal}"
@@ -23,24 +24,21 @@
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="230"/>
+			<RowDefinition Height="264"/>
             <RowDefinition/>
 			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
 
         <!--ContentPanel - place additional content here-->
 		<Image Grid.Row="0" Stretch="Uniform" Source="/TrainShareApp;component/Logo.png" VerticalAlignment="Top" />
-		<TextBlock x:Name="Title" Text="Checkin" Style="{StaticResource PhoneTextTitle1Style}" Margin="12,0" d:LayoutOverrides="Height" Grid.Row="1"/>
+		<TextBlock Text="Checkin" Style="{StaticResource PhoneTextTitle1Style}" Margin="12,0" d:LayoutOverrides="Height" Grid.Row="1"/>
 		<Grid Grid.Row="2" VerticalAlignment="Top" Margin="0,30,0,0">
-			<TextBlock TextWrapping="Wrap" Text="Front" FontSize="16" HorizontalAlignment="Left" Margin="30,15,0,0"/>
-			<TextBlock TextWrapping="Wrap" Text="Back" HorizontalAlignment="Right" FontSize="16" Margin="0,15,30,0"/>
-			<Slider Maximum="1" LargeChange="0.2" Value="{Binding Position, Mode=TwoWay}" Style="{StaticResource TrainSliderStyle}" VerticalAlignment="Bottom" Foreground="White" HorizontalAlignment="Center"/>
+			<TextBlock TextWrapping="Wrap" Text="Back" Style="{StaticResource PhoneTextSmallStyle}" HorizontalAlignment="Left" Margin="12,60,12,0"/>
+			<TextBlock TextWrapping="Wrap" Text="Front" Style="{StaticResource PhoneTextSmallStyle}" HorizontalAlignment="Right" Margin="12,60,12,0"/>
+			<Slider Maximum="1" LargeChange="0.2" Value="{Binding Position, Mode=TwoWay}" Style="{StaticResource TrainSliderStyle}" Foreground="White" VerticalAlignment="Top"/>
 		</Grid>
-		<local:TrainInformation DataContext="{Binding Connection}" Grid.Row="2" VerticalAlignment="Bottom" Margin="0,0,0,30"/>
-		<StackPanel Orientation="Vertical" Grid.Row="3">
-			<TextBlock TextWrapping="Wrap" Text="Additional Message:" Padding="15,0,0,0" FontSize="24"/>
-			<TextBox TextWrapping="Wrap" Height="250" Text="{Binding Message, Mode=TwoWay}"/>
-		</StackPanel>
+		<local:TrainInformation DataContext="{Binding CurrentCheckin, Mode=TwoWay}" Grid.Row="2" VerticalAlignment="Bottom" Height="132"/>
+		<toolkit:PhoneTextBox Grid.Row="3" Text="{Binding Message, Mode=TwoWay}" Hint="Additional Message" AcceptsReturn="True" DisplayedMaxLength="140" LengthIndicatorVisible="True" TextWrapping="Wrap"/>
 		<Button x:Name="Confirm" Content="Check In" HorizontalAlignment="Right" Grid.Row="4" Margin="0,0,30,30" Width="200"/>
 
 	</Grid>

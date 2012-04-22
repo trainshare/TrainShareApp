@@ -12,9 +12,6 @@
     xmlns:Views="clr-namespace:TrainShareApp.Views"
     x:Class="TrainShareApp.Views.MainView"
     mc:Ignorable="d" d:DesignWidth="480" d:DesignHeight="768"
-    FontFamily="{StaticResource PhoneFontFamilyNormal}"
-    FontSize="{StaticResource PhoneFontSizeNormal}"
-    Foreground="{StaticResource PhoneForegroundBrush}"
     SupportedOrientations="Portrait"  Orientation="Portrait"
     shell:SystemTray.IsVisible="True"
     cal:Bind.AtDesignTime="True"
@@ -25,7 +22,9 @@
 
     <phone:PhoneApplicationPage.ApplicationBar>
         <shell:ApplicationBar IsVisible="True" IsMenuEnabled="True">
-            <cal:AppBarButton Message="Settings" IconUri="/Toolkit.Content/appbar.feature.settings.rest.png" Text="Settings" />
+            <cal:AppBarButton Message="Checkin" IconUri="/icons/appbar.check.rest.png" Text="checkin" />
+            <cal:AppBarButton Message="Checkout" IconUri="/icons/appbar.cancel.rest.png" Text="checkout" />
+            <cal:AppBarButton Message="Settings" IconUri="/icons/appbar.feature.settings.rest.png" Text="settings" />
         </shell:ApplicationBar>
     </phone:PhoneApplicationPage.ApplicationBar>
 
@@ -39,45 +38,34 @@
         <Image Grid.Row="0" Stretch="Uniform" Source="/TrainShareApp;component/Logo.png" />
         <!--Pivot Control-->
         <controls:Pivot Grid.Row="1">
-            <!--Pivot item one-->
-            <controls:PivotItem Header="Search">
-                <Grid Margin="0,40,0,0">
-                    <Grid.ColumnDefinitions>
-                    	<ColumnDefinition Width="150" />
-                    	<ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                    	<RowDefinition Height="70" />
-                    	<RowDefinition Height="70" />
-                    	<RowDefinition Height="70" />
-                    	<RowDefinition Height="70" />
-                    	<RowDefinition />
-                    </Grid.RowDefinitions>
-                    <TextBlock Text="From" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="{StaticResource PhoneFontSizeLarge}"/>
-                    <TextBox x:Name="From" Grid.Column="1" Text="{Binding From, Mode=TwoWay}"/>
-                    <TextBlock Text="To" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="{StaticResource PhoneFontSizeLarge}"/>
-                    <TextBox x:Name="To" Grid.Row="1" Grid.Column="1" Text="{Binding To, Mode=TwoWay}"/>
-                    <TextBlock Text="Via" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="{StaticResource PhoneFontSizeLarge}"/>
-                    <TextBox x:Name="Via" Grid.Row="2" Grid.Column="1" Text="{Binding Via, Mode=TwoWay}"/>
-                    <TextBlock Text="Time" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="{StaticResource PhoneFontSizeLarge}"/>
-                    <ctrls:TimePicker Value="{Binding Time, Mode=TwoWay}" Grid.Row="3" Grid.Column="1"/>
-                    <Button x:Name="SubmitSearch" Grid.Row="4" Grid.Column="1" Content="Go" Width="200" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,40,20"/>
-                </Grid>
-            </controls:PivotItem>
 
             <!--Pivot item two-->
-            <controls:PivotItem Header="Checkin">
+            <controls:PivotItem x:Name="CheckinPivot" Header="Checkin">
                 <Grid>
-                    <Grid Name="InformationWrapper" Visibility="{Binding HasCheckedIn, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}" >
-	                	<Grid.RowDefinitions>
-	                		<RowDefinition Height="Auto"/>
-	                		<RowDefinition Height="Auto"/>
-	                		<RowDefinition/>
-	                	</Grid.RowDefinitions>
-                        <Views:TrainInformation DataContext="{Binding CurrentCheckin.Connection}" Margin="0,0,0,30"/>
-	            		<TextBlock Text="Friends on same train" FontSize="{StaticResource PhoneFontSizeExtraLarge}" VerticalAlignment="Top" Grid.Row="1" Margin="0,0,0,20" />
-	            		<ListBox x:Name="Friends" ItemsSource="{Binding Friends}" ItemTemplate="{StaticResource FriendTemplate}" Style="{StaticResource FriendsListStyle}" d:LayoutOverrides="Height" Grid.Row="2"/>
-                    </Grid>
+					<StackPanel x:Name="InformationWrapper" Margin="12,0" Visibility="{Binding HasCheckedIn, Converter={StaticResource BooleanToVisibilityConverter}}">
+						<TextBlock Text="You have currently checked in" Style="{StaticResource PhoneTextTitle2Style}" HorizontalAlignment="Center" Margin="12,0,12,24"/>
+                		<Views:TrainInformation DataContext="{Binding CurrentCheckin}" />
+                		<Grid>
+                			<TextBlock Text="There are currently no friends on this train" Style="{StaticResource PhoneTextSubtleStyle}" VerticalAlignment="Center" Margin="12,120,12,0"/>
+                			<ListBox ItemsSource="{Binding Friends}" ItemTemplate="{StaticResource FriendTemplate}" Style="{StaticResource FriendsListStyle}"/>
+                		</Grid>
+                	</StackPanel>
+					<StackPanel Visibility="{Binding HasNotCheckedIn, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}" >
+	                	<TextBlock Text="Please check in to see your friends on the same train" TextWrapping="Wrap" Width="300" Style="{StaticResource PhoneTextSubtleStyle}" TextAlignment="Center" Margin="12,120,12,24"/>
+						<Button x:Name="Checkin" Content="Checkin" Width="300" Height="100" />
+					</StackPanel>
+            	</Grid>
+            </controls:PivotItem>
+            <controls:PivotItem x:Name="HistoryPivot" Header="History">
+            	<Grid>
+            		<ListBox x:Name="HistoryList" Visibility="{Binding HasHistory, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}" ItemsSource="{Binding History}" ItemTemplate="{StaticResource HistoryTemplate}" HorizontalContentAlignment="Stretch">
+			        	<ListBox.ItemContainerStyle>
+			        		<Style TargetType="ListBoxItem">
+			        			<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+			        		</Style>
+			        	</ListBox.ItemContainerStyle>
+					</ListBox>
+            		<TextBlock Text="You have not checked in until now" Width="305" Visibility="{Binding HasNoHistory, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}" Style="{StaticResource PhoneTextSubtleStyle}" Margin="12,120,12,0"/>
             	</Grid>
             </controls:PivotItem>
         </controls:Pivot>

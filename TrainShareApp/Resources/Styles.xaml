@@ -37,12 +37,12 @@
 								<ColumnDefinition Width="12"/>
 								<ColumnDefinition Width="*"/>
 							</Grid.ColumnDefinitions>
-							<Image x:Name="Train" Grid.ColumnSpan="3" VerticalAlignment="Top" Height="20" Source="/TrainShareApp;component/train.png"/>
+							<Image x:Name="Train" Grid.ColumnSpan="3" VerticalAlignment="Top" Height="20" Source="/TrainShareApp;component/train.png" Stretch="Fill"/>
 							<Rectangle x:Name="HorizontalFill" Height="12" IsHitTestVisible="False" Margin="0,50,0,0" Opacity="0.2"/>
 							<Rectangle x:Name="HorizontalTrack" Grid.Column="2" Height="12" IsHitTestVisible="False" Margin="0,50,0,0" Opacity="0.2"/>
 							<RepeatButton x:Name="HorizontalTrackLargeChangeDecreaseRepeatButton" IsTabStop="False" Template="{StaticResource PhoneSimpleRepeatButton}"/>
 							<RepeatButton x:Name="HorizontalTrackLargeChangeIncreaseRepeatButton" Grid.Column="2" IsTabStop="False" Template="{StaticResource PhoneSimpleRepeatButton}"/>
-							<Thumb x:Name="HorizontalThumb" Grid.Column="1" Height="12" Margin="0,49,0,0" Width="12" RenderTransformOrigin="0.5,3" Foreground="{TemplateBinding Foreground}" BorderBrush="{TemplateBinding BorderBrush}" Background="{TemplateBinding Background}">
+							<Thumb x:Name="HorizontalThumb" Grid.Column="1" Height="12" Margin="0,50,0,0" Width="12" RenderTransformOrigin="0.5,3" Foreground="{TemplateBinding Foreground}" BorderBrush="{TemplateBinding BorderBrush}" Background="{TemplateBinding Background}">
 								<Thumb.Template>
 									<ControlTemplate>
 										<Canvas Height="12" Width="12">

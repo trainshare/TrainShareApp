@@ -39,71 +39,28 @@ namespace TrainShareApp.ViewModels
             _events.Subscribe(this);
         }
 
-        /// <summary>
-        /// Get or Set the Twitter name of the logged in user
-        /// </summary>
-        public string TwitterName
-        {
-            get
-            {
-                return _twitterClient.IsLoggedIn
-                           ? "Currently logged in as @" + _twitterClient.Token.ScreenName
-                           : "Currently not logged in";
-            }
-        }
-
-        /// <summary>
-        /// Get the Facebook name of the logged in user
-        /// </summary>
-        public string FacebookName
-        {
-            get { return _facebookClient.IsLoggedIn
-                           ? "Currently logged in as " + _facebookClient.Token.ScreenName
-                           : "Currently not logged in"; }
-        }
-
         public bool CanSave
         {
             get { return !string.IsNullOrEmpty(_trainshareClient.Token.Id); }
         }
 
-        public bool CanConnectFb { get { return !_facebookClient.IsLoggedIn; } }
-        public bool CanDisconnectFb { get { return _facebookClient.IsLoggedIn; } }
-
-        public bool CanConnectTw { get { return !_twitterClient.IsLoggedIn; } }
-        public bool CanDisconnectTw { get { return _twitterClient.IsLoggedIn; } }
-
-        public void ConnectFb()
+        public void Facebook()
         {
             _navigationService
                 .UriFor<LoginViewModel>()
-                .WithParam(vm => vm.Client, "facebook")
-                .Navigate();
+                .WithParam(vm => vm.Client, "facebook");
         }
 
-        public void DisconnectFb()
-        {
-            _facebookClient.LogoutAsync();
-        }
-
-        public void ConnectTw()
+        public void Twitter ()
         {
             _navigationService
                 .UriFor<LoginViewModel>()
-                .WithParam(vm => vm.Client, "twitter")
-                .Navigate();
-        }
-
-        public void DisconnectTw()
-        {
-                _twitterClient.LogoutAsync();
+                .WithParam(vm => vm.Client, "twitter");
         }
 
         public void Save()
         {
-            _navigationService
-                .UriFor<MainViewModel>()
-                .Navigate();
+            _navigationService.GoBack();
         }
 
         protected override void OnActivate()
@@ -145,18 +102,12 @@ namespace TrainShareApp.ViewModels
 
         private void UpdateFacebook()
         {
-            NotifyOfPropertyChange(() => FacebookName);
             NotifyOfPropertyChange(() => CanSave);
-            NotifyOfPropertyChange(() => CanConnectFb);
-            NotifyOfPropertyChange(() => CanDisconnectFb);
         }
 
         private void UpdateTwitter()
         {
-            NotifyOfPropertyChange(() => TwitterName);
             NotifyOfPropertyChange(() => CanSave);
-            NotifyOfPropertyChange(() => CanConnectTw);
-            NotifyOfPropertyChange(() => CanDisconnectTw);
         }
     }
 }

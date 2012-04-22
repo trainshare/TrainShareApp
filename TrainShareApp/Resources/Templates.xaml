@@ -4,21 +4,19 @@
 	<DataTemplate x:Key="ConnectionTemplate">
 		<Grid Margin="0,0,0,3" Background="{StaticResource ListItemBrush}" Width="460" Height="60">
 			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="10" />
 				<ColumnDefinition Width="Auto" />
 				<ColumnDefinition />
 				<ColumnDefinition Width="Auto"/>
-				<ColumnDefinition Width="10"/>
 			</Grid.ColumnDefinitions>
 			<Grid.RowDefinitions>
-				<RowDefinition Height="Auto" />
-				<RowDefinition Height="40" />
+				<RowDefinition />
+				<RowDefinition />
 			</Grid.RowDefinitions>
-			<TextBlock x:Name="DepTime" Foreground="Black" Grid.Column="1" Text="{Binding From.Departure, StringFormat=HH:mm}" Grid.Row="1" />
-			<TextBlock x:Name="ArrTime" Foreground="Black" Grid.Column="3" Text="{Binding To.Arrival, StringFormat=HH:mm}" Grid.Row="1" />
-			<TextBlock x:Name="DepStation" Foreground="Black" Grid.Column="1" Text="{Binding From.Station.Name}" />
-			<TextBlock x:Name="ArrStation" Foreground="Black" Grid.Column="3" Text="{Binding To.Station.Name}" />
-			<TextBlock TextWrapping="Wrap" Text="{Binding Sections.Count, StringFormat='Changes: {0}'}" d:LayoutOverrides="Width, Height" Grid.RowSpan="2" Grid.Column="2" Foreground="Black" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+			<TextBlock x:Name="DepTime" Foreground="Black" Grid.Column="0" Text="{Binding From.Departure, StringFormat=HH:mm}" Grid.Row="1" Style="{StaticResource PhoneTextNormalStyle}"/>
+			<TextBlock x:Name="ArrTime" Foreground="Black" Grid.Column="2" Text="{Binding To.Arrival, StringFormat=HH:mm}" Grid.Row="1" Style="{StaticResource PhoneTextNormalStyle}"/>
+			<TextBlock x:Name="DepStation" Foreground="Black" Grid.Column="0" Text="{Binding From.Station.Name}" Style="{StaticResource PhoneTextNormalStyle}"/>
+			<TextBlock x:Name="ArrStation" Foreground="Black" Grid.Column="2" Text="{Binding To.Station.Name}" Style="{StaticResource PhoneTextNormalStyle}"/>
+			<TextBlock x:Name="Changes" Foreground="Black" Text="{Binding Sections.Count, StringFormat='Changes: {0}'}" Grid.RowSpan="2" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{StaticResource PhoneTextNormalStyle}" Grid.ColumnSpan="3"/>
 		</Grid>
 	</DataTemplate>
 	<!-- Resource dictionary entries should be defined here. -->
@@ -53,4 +51,19 @@
 			</Setter.Value>
 		</Setter>
 	</Style>
+	<DataTemplate x:Key="HistoryTemplate">
+		<Grid Margin="0,0,0,3" Background="{StaticResource ListItemBrush}">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition />
+			</Grid.ColumnDefinitions>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+			</Grid.RowDefinitions>
+			<TextBlock x:Name="DepTime" Foreground="Black" Text="{Binding DepartureTime, StringFormat=HH:mm}" Grid.Row="1" Grid.Column="1" Style="{StaticResource PhoneTextNormalStyle}" />
+			<TextBlock x:Name="DepStation" Foreground="Black" Text="{Binding DepartureStation}" Style="{StaticResource PhoneTextNormalStyle}" />
+			<TextBlock x:Name="ArrStation" Foreground="Black" Text="{Binding ArrivalStation}" Style="{StaticResource PhoneTextNormalStyle}" Grid.Row="1" />
+		</Grid>
+	</DataTemplate>
 </ResourceDictionary>

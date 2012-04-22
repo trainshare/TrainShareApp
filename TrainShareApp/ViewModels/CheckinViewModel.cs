@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Windows;
 using Caliburn.Micro;
 using TrainShareApp.Data;
+using TrainShareApp.Event;
 using TrainShareApp.Model;
 
 namespace TrainShareApp.ViewModels
@@ -33,7 +34,7 @@ namespace TrainShareApp.ViewModels
             _events.Subscribe(this);
         }
 
-        public Connection Connection { get; set; }
+        public Checkin CurrentCheckin { get; set; }
 
         public float Position { get; set; }
 
@@ -43,11 +44,16 @@ namespace TrainShareApp.ViewModels
         {
             try
             {
-                var position = (int)Position*10;
+                // subtrack because the front is on the right
+                var position = 10 - (int) Position*10;
                 position = Math.Min(position, 10);
                 position = Math.Max(position, 0);
 
-                await _trainshareClient.Checkin(Connection, position);
+                CurrentCheckin.Position = position;
+                CurrentCheckin.CheckinTime = DateTime.Now;
+
+                // need await to handle exception
+                await _trainshareClient.Checkin(CurrentCheckin);
             }
             catch(Exception e)
             {
@@ -62,11 +68,13 @@ namespace TrainShareApp.ViewModels
 
         public void Handle(Connection message)
         {
-            Connection = message;
+            CurrentCheckin = Checkin.FromConnection(message);
         }
 
         protected override void OnActivate()
         {
+            _events.Publish(Republish.Connection);
+
             Position = 0.5f;
 
             base.OnActivate();
