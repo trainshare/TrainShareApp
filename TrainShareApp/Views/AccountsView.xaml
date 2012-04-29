@@ -24,11 +24,4 @@
 		<Button x:Name="Facebook" Content="Update Facebook Friends" HorizontalAlignment="Center" Margin="0,40,0,0" />
 	</StackPanel>
 
-  <phone:PhoneApplicationPage.ApplicationBar>
-    <shell:ApplicationBar IsVisible="True" IsMenuEnabled="True">
-      <shell:ApplicationBar.Buttons>
-        <cal:AppBarButton Message="Save" IconUri="/icons/appbar.check.rest.png" Text="Save" />
-      </shell:ApplicationBar.Buttons>
-    </shell:ApplicationBar>
-  </phone:PhoneApplicationPage.ApplicationBar>
 </phone:PhoneApplicationPage>

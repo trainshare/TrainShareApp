@@ -21,38 +21,44 @@
 		<cal:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
 	</phone:PhoneApplicationPage.Resources>
 
-    <!--LayoutRoot is the root grid where all page content is placed-->
-    <Grid x:Name="LayoutRoot" Background="{StaticResource MainBackground}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto"/>
-            <RowDefinition/>
-        </Grid.RowDefinitions>
-
-        <Image Grid.Row="0" Stretch="Uniform" Source="/TrainShareApp;component/Logo.png" />
-
-        <!--TitlePanel contains the name of the application and page title-->
-        <StackPanel x:Name="TitlePanel" Grid.Row="1">
-            <TextBlock Text="Connections" Style="{StaticResource PhoneTextTitle1Style}" />
-            <Grid x:Name="Information" Background="Transparent" Margin="0,30">
-            	<Grid.RowDefinitions>
-            		<RowDefinition Height="Auto"/>
-            		<RowDefinition Height="Auto"/>
-            		<RowDefinition Height="Auto"/>
-            		<RowDefinition Height="Auto"/>
-            	</Grid.RowDefinitions>
-            	<Grid.ColumnDefinitions>
-            		<ColumnDefinition/>
-            		<ColumnDefinition/>
-            	</Grid.ColumnDefinitions>
-            	<TextBlock HorizontalAlignment="Center" TextWrapping="Wrap" Text="From" Style="{StaticResource PhoneTextSmallStyle}"/>
-            	<TextBlock HorizontalAlignment="Center" TextWrapping="Wrap" Text="To" Grid.Column="1" Style="{StaticResource PhoneTextSmallStyle}"/>
-            	<TextBlock HorizontalAlignment="Center" TextWrapping="Wrap" Text="{Binding From}" Grid.Row="1" Style="{StaticResource PhoneTextLargeStyle}"/>
-            	<TextBlock HorizontalAlignment="Center" TextWrapping="Wrap" Text="{Binding To}" Grid.Row="1" Grid.Column="1" Style="{StaticResource PhoneTextLargeStyle}"/>
-            	<TextBlock HorizontalAlignment="Center" TextWrapping="Wrap" Text="Departure" Grid.Row="2" Grid.ColumnSpan="2" Style="{StaticResource PhoneTextSmallStyle}"/>
-            	<TextBlock HorizontalAlignment="Center" TextWrapping="Wrap" Text="{Binding Time, Mode=OneWay, StringFormat=HH:mm}" Grid.Row="3" Grid.ColumnSpan="2" Style="{StaticResource PhoneTextLargeStyle}"/>
-            </Grid>
-        </StackPanel>
+	<Grid x:Name="LayoutRoot" Background="{StaticResource MainBackground}">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="*"/>
+		</Grid.RowDefinitions>
+		
+		<!--TitlePanel contains the name of the application and page title-->
+		<StackPanel x:Name="TitlePanel" Grid.Row="0" Margin="12,17,0,28">
+			<TextBlock x:Name="ApplicationTitle" Text="TRAINSHARE" Style="{StaticResource PhoneTextNormalStyle}" Margin="0,0,12,0"/>
+			<TextBlock x:Name="PageTitle" Text="results" Style="{StaticResource PhoneTextTitle1Style}" Margin="0,-12,12,0"/>
+		</StackPanel>
+		
+		<Grid x:Name="InformationWrapper" Grid.Row="1">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition/>
+			</Grid.RowDefinitions>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition/>
+				<ColumnDefinition/>
+			</Grid.ColumnDefinitions>
+				
+			<TextBlock Text="From" Style="{StaticResource PhoneTextSubtleStyle}" />
+			<TextBlock Text="{Binding From}" Style="{StaticResource PhoneTextExtraLargeStyle}" Margin="12,-12,12,12" Grid.Row="1" />
+			<TextBlock Text="To" Style="{StaticResource PhoneTextSubtleStyle}" Grid.Column="1" />
+			<TextBlock Text="{Binding To}" Style="{StaticResource PhoneTextExtraLargeStyle}" Grid.Row="1" Margin="12,-12,12,12" Grid.Column="1" />
+			<TextBlock Text="Departure" Style="{StaticResource PhoneTextSubtleStyle}" Grid.Row="2" />
+			<TextBlock Text="{Binding DepartureTime}" Style="{StaticResource PhoneTextExtraLargeStyle}" Grid.Row="3" Margin="12,-12,12,0" />
+			<TextBlock Text="Arrival" Style="{StaticResource PhoneTextSubtleStyle}" Grid.Row="2" Grid.Column="1" />
+			<TextBlock Text="{Binding ArrivalTime}" Style="{StaticResource PhoneTextExtraLargeStyle}" Grid.Row="3" Grid.Column="1" Margin="12,-12,12,0" />
+		
+        </Grid>
+		
         <ListBox x:Name="Results" ItemsSource="{Binding Results}" SelectedItem="{Binding SelectedConnection, Mode=TwoWay}" ItemTemplate="{StaticResource ConnectionTemplate}" Grid.Row="2">
         	<ListBox.ItemContainerStyle>
         		<Style TargetType="ListBoxItem">
@@ -60,7 +66,16 @@
         		</Style>
         	</ListBox.ItemContainerStyle>
         </ListBox>
+		
     	<toolkit:PerformanceProgressBar Grid.Row="2" IsIndeterminate="{Binding Loading}" Foreground="Black" Margin="0,0,0,300"/>
     </Grid>
+	
+  <phone:PhoneApplicationPage.ApplicationBar>
+    <shell:ApplicationBar IsVisible="True" IsMenuEnabled="True">
+      <shell:ApplicationBar.Buttons>
+        <cal:AppBarButton Message="Cancel" IconUri="/icons/appbar.cancel.rest.png" Text="Cancel" />
+      </shell:ApplicationBar.Buttons>
+    </shell:ApplicationBar>
+  </phone:PhoneApplicationPage.ApplicationBar>
 
 </phone:PhoneApplicationPage>

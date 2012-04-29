@@ -33,6 +33,15 @@ namespace TrainShareApp.ViewModels
                         Sections = new List<CheckinSection>(),
                         CheckinTime = DateTime.Now.AddDays(1)
                     };
+					
+			History = Enumerable.Range(0, 5).Select(i => 
+					new Checkin
+					{
+						DepartureStation = "Maienfeld",
+						ArrivalStation = "Lausanne",
+						DepartureTime = DateTime.Now.AddHours(i),
+						ArrivalTime = DateTime.Now.AddHours(i + 1)
+					}).ToList();
         }
 
         public MainViewModel(
@@ -56,7 +65,7 @@ namespace TrainShareApp.ViewModels
 
         public Checkin CurrentCheckin { get; set; }
 
-        public bool HasNotCheckedIn { get { return CurrentCheckin.ArrivalTime < DateTime.Now; } }
+        public bool HasNotCheckedIn { get { return CurrentCheckin.ArrivalTime >= DateTime.Now; } }
         public bool HasCheckedIn { get { return !HasNotCheckedIn; } }
 
         public IList<Checkin> History { get; private set; } 
@@ -75,7 +84,7 @@ namespace TrainShareApp.ViewModels
 
             try
             {
-                //Friends = (await _trainshareClient.GetFriends()).ToList();
+                Friends = (await _trainshareClient.GetFriends()).ToList();
             }
             catch (Exception e)
             {

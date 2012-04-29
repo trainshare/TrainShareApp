@@ -20,43 +20,45 @@
 		<cal:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
 	</phone:PhoneApplicationPage.Resources>
 
-    <phone:PhoneApplicationPage.ApplicationBar>
-        <shell:ApplicationBar IsVisible="True" IsMenuEnabled="True">
-            <cal:AppBarButton Message="Checkin" IconUri="/icons/appbar.check.rest.png" Text="checkin" />
-            <cal:AppBarButton Message="Checkout" IconUri="/icons/appbar.cancel.rest.png" Text="checkout" />
-            <cal:AppBarButton Message="Settings" IconUri="/icons/appbar.feature.settings.rest.png" Text="settings" />
-        </shell:ApplicationBar>
-    </phone:PhoneApplicationPage.ApplicationBar>
-
     <!--LayoutRoot is the root grid where all page content is placed-->
     <Grid x:Name="LayoutRoot" Background="{StaticResource MainBackground}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
+		<controls:Panorama Title="trainshare">
 
-        <Image Grid.Row="0" Stretch="Uniform" Source="/TrainShareApp;component/Logo.png" />
-        <!--Pivot Control-->
-        <controls:Pivot Grid.Row="1">
-
-            <!--Pivot item two-->
-            <controls:PivotItem x:Name="CheckinPivot" Header="Checkin">
-                <Grid>
-					<StackPanel x:Name="InformationWrapper" Margin="12,0" Visibility="{Binding HasCheckedIn, Converter={StaticResource BooleanToVisibilityConverter}}">
-						<TextBlock Text="You have currently checked in" Style="{StaticResource PhoneTextTitle2Style}" HorizontalAlignment="Center" Margin="12,0,12,24"/>
-                		<Views:TrainInformation DataContext="{Binding CurrentCheckin}" />
-                		<Grid>
-                			<TextBlock Text="There are currently no friends on this train" Style="{StaticResource PhoneTextSubtleStyle}" VerticalAlignment="Center" Margin="12,120,12,0"/>
-                			<ListBox ItemsSource="{Binding Friends}" ItemTemplate="{StaticResource FriendTemplate}" Style="{StaticResource FriendsListStyle}"/>
-                		</Grid>
-                	</StackPanel>
-					<StackPanel Visibility="{Binding HasNotCheckedIn, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}" >
+			<!--Panorama item one-->
+			<controls:PanoramaItem x:Name="checkinItem" Header="checkin">
+				<Grid>
+					<Grid x:Name="InformationWrapper" Visibility="{Binding HasNotCheckedIn, Converter={StaticResource BooleanToVisibilityConverter}}">
+						<Grid.RowDefinitions>
+							<RowDefinition Height="Auto"/>
+							<RowDefinition Height="Auto"/>
+							<RowDefinition Height="Auto"/>
+							<RowDefinition Height="Auto"/>
+							<RowDefinition Height="Auto"/>
+							<RowDefinition Height="Auto"/>
+						</Grid.RowDefinitions>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition/>
+							<ColumnDefinition/>
+						</Grid.ColumnDefinitions>
+						<TextBlock Text="From" Style="{StaticResource PhoneTextSubtleStyle}" />
+						<TextBlock Text="{Binding CurrentCheckin.DepartureStation}" Style="{StaticResource PhoneTextExtraLargeStyle}" Grid.Row="1" Grid.ColumnSpan="2" Margin="12,-12,12,12" />
+						<TextBlock Text="To" Style="{StaticResource PhoneTextSubtleStyle}" Grid.Row="2" />
+						<TextBlock Text="{Binding CurrentCheckin.ArrivalStation}" Style="{StaticResource PhoneTextExtraLargeStyle}" Grid.Row="3" Grid.ColumnSpan="2" Margin="12,-12,12,12" />
+						<TextBlock Text="Departure" Style="{StaticResource PhoneTextSubtleStyle}" Grid.Row="4" />
+						<TextBlock Text="{Binding CurrentCheckin.DepartureTime, StringFormat=HH:mm}" Style="{StaticResource PhoneTextExtraLargeStyle}" Grid.Row="5" Margin="12,-12,12,0" />
+						<TextBlock Text="Arrival" Style="{StaticResource PhoneTextSubtleStyle}" Grid.Row="4" Grid.Column="1" />
+						<TextBlock Text="{Binding CurrentCheckin.ArrivalTime, StringFormat=HH:mm}" Style="{StaticResource PhoneTextExtraLargeStyle}" Grid.Row="5" Grid.Column="1" Margin="12,-12,12,0" />
+						
+					</Grid>
+					<StackPanel x:Name="CheckinWrapper" Visibility="{Binding HasCheckedIn, Converter={StaticResource BooleanToVisibilityConverter}}" >
 	                	<TextBlock Text="Please check in to see your friends on the same train" TextWrapping="Wrap" Width="300" Style="{StaticResource PhoneTextSubtleStyle}" TextAlignment="Center" Margin="12,120,12,24"/>
-						<Button x:Name="Checkin" Content="Checkin" Width="300" Height="100" />
+						<Button x:Name="Checkin" Content="Check In" Width="300" Height="100" />
 					</StackPanel>
-            	</Grid>
-            </controls:PivotItem>
-            <controls:PivotItem x:Name="HistoryPivot" Header="History">
+				</Grid>
+			</controls:PanoramaItem>
+
+			<!--Panorama item two-->
+			<controls:PanoramaItem x:Name="historyItem" Header="history">
             	<Grid>
             		<ListBox x:Name="HistoryList" Visibility="{Binding HasHistory, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}" ItemsSource="{Binding History}" ItemTemplate="{StaticResource HistoryTemplate}" HorizontalContentAlignment="Stretch">
 			        	<ListBox.ItemContainerStyle>
@@ -67,8 +69,14 @@
 					</ListBox>
             		<TextBlock Text="You have not checked in until now" Width="305" Visibility="{Binding HasNoHistory, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}" Style="{StaticResource PhoneTextSubtleStyle}" Margin="12,120,12,0"/>
             	</Grid>
-            </controls:PivotItem>
-        </controls:Pivot>
+			</controls:PanoramaItem>
+			<controls:PanoramaItem x:Name="friendsItem" Header="friends">
+				<Grid d:LayoutOverrides="HorizontalAlignment">
+					<TextBlock Text="There are currently no friends on this train" Style="{StaticResource PhoneTextSubtleStyle}" Margin="12,120,12,0"/>
+					<ListBox ItemsSource="{Binding Friends}" ItemTemplate="{StaticResource FriendTemplate}" Style="{StaticResource FriendsListStyle}" d:LayoutOverrides="Width, Height"/>
+				</Grid>
+			</controls:PanoramaItem>
+		</controls:Panorama>
     </Grid>
 
 </phone:PhoneApplicationPage>

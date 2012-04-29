@@ -8,6 +8,7 @@
     xmlns:cal="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro"
     xmlns:vm="clr-namespace:TrainShareApp.ViewModels"
     xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit" 
+	xmlns:toolkitPrimitives="clr-namespace:Microsoft.Phone.Controls.Primitives;assembly=Microsoft.Phone.Controls.Toolkit" 
 	mc:Ignorable="d"
 	x:Class="TrainShareApp.Views.SearchView"
     SupportedOrientations="Portrait" Orientation="Portrait"
@@ -15,37 +16,40 @@
     cal:Bind.AtDesignTime="True"
     d:DataContext="{d:DesignInstance IsDesignTimeCreatable=True, Type=vm:SearchViewModel}" d:DesignHeight="768" d:DesignWidth="480">
 
-    <Grid x:Name="LayoutRoot" Background="{StaticResource MainBackground}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto"/>
-            <RowDefinition/>
-        </Grid.RowDefinitions>
+	<Grid x:Name="LayoutRoot" Background="{StaticResource MainBackground}">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="*"/>
+		</Grid.RowDefinitions>
 		
-        <Image Grid.Row="0" Stretch="Uniform" Source="/TrainShareApp;component/Logo.png" />
-		<TextBlock Text="Search" Style="{StaticResource PhoneTextTitle1Style}" Grid.Row="1" />
+		<!--TitlePanel contains the name of the application and page title-->
+		<StackPanel x:Name="TitlePanel" Grid.Row="0" Margin="12,17,0,28">
+			<TextBlock x:Name="ApplicationTitle" Text="TRAINSHARE" Style="{StaticResource PhoneTextNormalStyle}" Margin="0,0,12,0"/>
+			<TextBlock x:Name="PageTitle" Text="search" Style="{StaticResource PhoneTextTitle1Style}" Margin="0,-12,12,0"/>
+		</StackPanel>
 		
-		<Grid Grid.Row="2" Height="500" VerticalAlignment="Bottom">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="145" />
-				<ColumnDefinition />
-			</Grid.ColumnDefinitions>
-			<Grid.RowDefinitions>
-				<RowDefinition Height="70" />
-				<RowDefinition Height="70" />
-				<RowDefinition Height="70" />
-				<RowDefinition Height="70" />
-				<RowDefinition />
-			</Grid.RowDefinitions>
-			<TextBlock Text="From" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Style="{StaticResource PhoneTextGroupHeaderStyle}"/>
-			<TextBox x:Name="From" Grid.Row="0" Grid.Column="1" Text="{Binding From, Mode=TwoWay}"/>
-			<TextBlock Text="To" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Style="{StaticResource PhoneTextGroupHeaderStyle}"/>
-			<TextBox x:Name="To" Grid.Row="1" Grid.Column="1" Text="{Binding To, Mode=TwoWay}"/>
-			<TextBlock Text="Via" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Style="{StaticResource PhoneTextGroupHeaderStyle}"/>
-			<TextBox x:Name="Via" Grid.Row="2" Grid.Column="1" Text="{Binding Via, Mode=TwoWay}"/>
-			<TextBlock Text="Time" Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" Style="{StaticResource PhoneTextGroupHeaderStyle}"/>
-			<toolkit:TimePicker Value="{Binding Time, Mode=TwoWay}" Grid.Row="3" Grid.Column="1"/>
-			<Button x:Name="SubmitSearch" Grid.Row="4" Grid.Column="1" Content="Go" Width="200" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,48,24"/>
-		</Grid>
+		<StackPanel Grid.Row="1">
+			<TextBlock Text="From" Style="{StaticResource PhoneTextSubtleStyle}" Margin="12,12,12,0"/>
+			<TextBox x:Name="From" Text="{Binding From, Mode=TwoWay}"/>
+			<TextBlock Text="To" Style="{StaticResource PhoneTextSubtleStyle}" Margin="12,12,12,0"/>
+			<TextBox x:Name="To" Text="{Binding To, Mode=TwoWay}"/>
+			<TextBlock Text="Via" Style="{StaticResource PhoneTextSubtleStyle}" Margin="12,12,12,0"/>
+			<TextBox x:Name="Via" Text="{Binding Via, Mode=TwoWay}"/>
+			<TextBlock Text="Time" Style="{StaticResource PhoneTextSubtleStyle}" HorizontalAlignment="Left" Margin="12,12,12,0"/>
+			<StackPanel Orientation="Horizontal">
+				<TextBlock Text="Dep" Style="{StaticResource PhoneTextNormalStyle}" VerticalAlignment="Center"/>
+				<toolkitPrimitives:ToggleSwitchButton Margin="-24"/>
+				<TextBlock Text="Arr" Style="{StaticResource PhoneTextNormalStyle}" VerticalAlignment="Center"/>
+				<toolkit:TimePicker Value="{Binding Time, Mode=TwoWay}" VerticalAlignment="Center" Margin="60,0,0,0" Width="220"/>
+			</StackPanel>
+		</StackPanel>
 	</Grid>
+  <phone:PhoneApplicationPage.ApplicationBar>
+    <shell:ApplicationBar IsVisible="True" IsMenuEnabled="True">
+      <shell:ApplicationBar.Buttons>
+        <cal:AppBarButton Message="Continue" IconUri="/icons/appbar.check.rest.png" Text="Continue" />
+        <cal:AppBarButton Message="Cancel" IconUri="/icons/appbar.cancel.rest.png" Text="Cancel" />
+      </shell:ApplicationBar.Buttons>
+    </shell:ApplicationBar>
+  </phone:PhoneApplicationPage.ApplicationBar>
 </phone:PhoneApplicationPage>

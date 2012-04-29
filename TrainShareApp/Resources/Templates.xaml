@@ -21,16 +21,20 @@
 	</DataTemplate>
 	<!-- Resource dictionary entries should be defined here. -->
 	<DataTemplate x:Key="FriendTemplate">
-		<Grid Margin="0,0,0,3" Background="{StaticResource ListItemBrush}" Width="460" Height="90">
+		<Grid Margin="0,0,0,24">
 			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="10"/>
+				<ColumnDefinition Width="6"/>
 				<ColumnDefinition Width="Auto"/>
 				<ColumnDefinition/>
 				<ColumnDefinition Width="Auto"/>
 				<ColumnDefinition Width="10"/>
 			</Grid.ColumnDefinitions>
-			<Image Grid.Column="1" Height="60" Width="60" Margin="0,0,10,0" Source="{Binding ImageUrl}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-			<TextBlock Text="{Binding Name}" FontSize="{StaticResource PhoneFontSizeLarge}" d:LayoutOverrides="Width, Height" Foreground="Black" Grid.Column="2" VerticalAlignment="Center" />
+			<Rectangle Fill="White"/>
+			<Image Grid.Column="1" MaxHeight="60" MaxWidth="60" Source="{Binding ImageUrl}" VerticalAlignment="Top"/>
+			<StackPanel Grid.Column="2">
+				<TextBlock Text="{Binding Name}" Style="{StaticResource PhoneTextLargeStyle}"/>
+				<TextBlock Text="{Binding Position}" Style="{StaticResource PhoneTextSubtleStyle}"/>
+			</StackPanel>
 		</Grid>
 	</DataTemplate>
 	<Style x:Key="FriendsListStyle" TargetType="ListBox">
@@ -52,18 +56,20 @@
 		</Setter>
 	</Style>
 	<DataTemplate x:Key="HistoryTemplate">
-		<Grid Margin="0,0,0,3" Background="{StaticResource ListItemBrush}">
+		<Grid Margin="0,0,0,24">
 			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="6" />
+				<ColumnDefinition/>
 				<ColumnDefinition Width="Auto" />
-				<ColumnDefinition />
 			</Grid.ColumnDefinitions>
 			<Grid.RowDefinitions>
-				<RowDefinition Height="Auto" />
-				<RowDefinition Height="Auto" />
+				<RowDefinition />
+				<RowDefinition />
 			</Grid.RowDefinitions>
-			<TextBlock x:Name="DepTime" Foreground="Black" Text="{Binding DepartureTime, StringFormat=HH:mm}" Grid.Row="1" Grid.Column="1" Style="{StaticResource PhoneTextNormalStyle}" />
-			<TextBlock x:Name="DepStation" Foreground="Black" Text="{Binding DepartureStation}" Style="{StaticResource PhoneTextNormalStyle}" />
-			<TextBlock x:Name="ArrStation" Foreground="Black" Text="{Binding ArrivalStation}" Style="{StaticResource PhoneTextNormalStyle}" Grid.Row="1" />
+			<TextBlock x:Name="DepTime" Text="{Binding DepartureTime, StringFormat=HH:mm}" Style="{StaticResource PhoneTextExtraLargeStyle}" Grid.Column="2" Grid.RowSpan="2" VerticalAlignment="Center" />
+			<TextBlock x:Name="DepStation" Text="{Binding DepartureStation}" Style="{StaticResource PhoneTextLargeStyle}" Grid.Column="1" />
+			<TextBlock x:Name="ArrStation" Text="{Binding ArrivalStation}" Style="{StaticResource PhoneTextLargeStyle}" Grid.Row="1" Grid.Column="1" />
+			<Rectangle Fill="White" Grid.RowSpan="2"/>
 		</Grid>
 	</DataTemplate>
 </ResourceDictionary>

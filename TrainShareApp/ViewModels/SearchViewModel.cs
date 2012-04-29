@@ -45,15 +45,20 @@ namespace TrainShareApp.ViewModels
 
         public DateTime Time { get; set; }
 
-        public void SubmitSearch()
+        public void Continue()
         {
             _navigationService
                 .UriFor<SearchResultViewModel>()
                 .WithParam(vm => vm.From, From)
                 .WithParam(vm => vm.Via, Via)
                 .WithParam(vm => vm.To, To)
-                .WithParam(vm => vm.Time, Time)
+                .WithParam(vm => vm.DepartureTime, Time)
                 .Navigate();
+        }
+
+        public void Cancel()
+        {
+            _navigationService.GoBack();
         }
     }
 }

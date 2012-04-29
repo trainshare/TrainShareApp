@@ -49,6 +49,11 @@ namespace TrainShareApp.ViewModels
                         checkpoints.Select(to => new Connection {From = from, To = to})));
 
             Loading = true;
+
+            From = "Lausanne";
+            To = "Genf";
+            Via = string.Empty;
+            ArrivalTime = DateTime.Now;
         }
 
         public SearchResultViewModel(
@@ -68,7 +73,8 @@ namespace TrainShareApp.ViewModels
         public string From { get; set; }
         public string To { get; set; }
         public string Via { get; set; }
-        public DateTime Time { get; set; }
+        public DateTime? DepartureTime { get; set; }
+        public DateTime? ArrivalTime { get; set; }
 
         public bool Loading { get; set; }
 
@@ -122,7 +128,7 @@ namespace TrainShareApp.ViewModels
 
             try
             {
-                var result = await _timeTable.GetConnections(From, To, Time);
+                var result = await _timeTable.GetConnections(From, To, DateTime.Now);
 
                 From = result.From.Name;
                 NotifyOfPropertyChange(() => From);
