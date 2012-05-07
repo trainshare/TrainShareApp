@@ -4,6 +4,7 @@ using System.Net;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Text.RegularExpressions;
+using Newtonsoft.Json.Linq;
 using RestSharp;
 
 namespace TrainShareApp.Extension
@@ -56,6 +57,20 @@ namespace TrainShareApp.Extension
         public static IRestRequest WithRootElement(this IRestRequest request, string root)
         {
             request.RootElement = root;
+            return request;
+        }
+        public static IRestRequest AddJson(this IRestRequest request, JToken json)
+        {
+            request.RequestFormat = DataFormat.Json;
+            request
+                .AddParameter(
+                    new Parameter
+                    {
+                        Name = "application/json; charset=utf-8",
+                        Type = ParameterType.RequestBody,
+                        Value = json.ToString()
+                    });
+
             return request;
         }
 

@@ -23,7 +23,7 @@
     </Grid.Background>
 
     <Grid Background="{StaticResource PhoneBackgroundBrush}"
-          Visibility="{Binding CannotContinue, Converter={StaticResource BooleanToVisibilityConverter}}">
+          Visibility="{Binding ShowLogin, Converter={StaticResource BooleanToVisibilityConverter}}">
       <Grid.RowDefinitions>
         <RowDefinition />
         <RowDefinition Height="100" />

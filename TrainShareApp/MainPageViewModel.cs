@@ -1,15 +1,17 @@
 ﻿using System.Diagnostics;
 using System.Reactive.Linq;
+using System.Windows;
 using System.Windows.Navigation;
 using Caliburn.Micro;
 using System;
 using TrainShareApp.Data;
 using TrainShareApp.Model;
 using TrainShareApp.ViewModels;
+using TrainShareApp.Event;
 
 namespace TrainShareApp
 {
-    public class MainPageViewModel : Screen, IHandle<FacebookToken>, IHandle<TwitterToken>, IHandle<TrainshareToken>
+    public class MainPageViewModel : Screen, IHandle<Token>, IHandle<Dismiss>
     {
         private readonly ILog _logger;
         private readonly IEventAggregator _events;
@@ -71,64 +73,88 @@ namespace TrainShareApp
 
         public bool CanContinue
         {
-            get { return !CannotContinue; }
+            get { return _facebookClient.IsLoggedIn || _twitterClient.IsLoggedIn; }
         }
 
         public bool CannotContinue
         {
-            get { return string.IsNullOrEmpty(_trainshareClient.Token.Id); }
+            get { return !CanContinue; }
         }
 
-        public void Continue()
+        public bool ShowLogin
         {
-            _navigationService
-                .UriFor<MainViewModel>()
-                .Navigate();
+            get { return !_trainshareClient.IsLoggedIn; }
         }
 
-        public void Handle(FacebookToken message)
+        public async void Continue()
+        {
+            try
+            {
+                if (_facebookClient.IsLoggedIn)
+                    await _trainshareClient.LoginAsync(_facebookClient.Token);
+
+                if (_twitterClient.IsLoggedIn)
+                    await _trainshareClient.LoginAsync(_twitterClient.Token);
+
+                _navigationService
+                    .UriFor<MainViewModel>()
+                    .Navigate();
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e);
+                MessageBox.Show("I am terribly sorry but we could not authenticate with Trainshare.");
+            }
+        }
+
+        public void Handle(Token message)
         {
             NotifyOfPropertyChange(() => CanFacebook);
-        }
-
-        public void Handle(TwitterToken message)
-        {
             NotifyOfPropertyChange(() => CanTwitter);
+            NotifyOfPropertyChange(() => CanContinue);
         }
 
-        public void Handle(TrainshareToken message)
+        public void Handle(Dismiss message)
         {
-            NotifyOfPropertyChange(() => CanContinue);
+            if (message == Dismiss.Facebook) NotifyOfPropertyChange(() => CanFacebook);
+            if (message == Dismiss.Twitter) NotifyOfPropertyChange(() => CanTwitter);
         }
 
         protected override void OnInitialize()
         {
-            if (CanContinue)
+            if (_trainshareClient.IsLoggedIn)
             {
-                Continue();
+                _navigationService
+                    .UriFor<MainViewModel>()
+                    .Navigate();
             }
 
             base.OnInitialize();
         }
 
+        private IDisposable _removeSubscription;
+
         protected override void OnActivate()
         {
-            if (CanContinue)
+            if (CanContinue && _removeSubscription == null)
             {
-                Observable
-                    .FromEventPattern<NavigatedEventHandler, NavigationEventArgs>(
-                        h => _navigationService.Navigated += h,
-                        h => _navigationService.Navigated -= h)
-                    .Where(e => e.EventArgs.NavigationMode != NavigationMode.Back)
-                    .Take(1)
-                    .Subscribe(
-                        e =>
-                        {
-                            var service = e.Sender as NavigationService;
-                            Debug.Assert(service != null);
+                _removeSubscription =
+                    Observable
+                        .FromEventPattern<NavigatedEventHandler, NavigationEventArgs>(
+                            h => _navigationService.Navigated += h,
+                            h => _navigationService.Navigated -= h)
+                        .Where(e =>
+                               e.EventArgs.NavigationMode != NavigationMode.Back &&
+                               !e.EventArgs.Uri.ToString().Contains("/Views/LoginView.xaml"))
+                        .Take(1)
+                        .Subscribe(
+                            e =>
+                            {
+                                var service = e.Sender as NavigationService;
+                                Debug.Assert(service != null);
 
-                            service.RemoveBackEntry();
-                        });
+                                service.RemoveBackEntry();
+                            });
             }
 
             base.OnActivate();

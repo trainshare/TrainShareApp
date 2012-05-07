@@ -1,14 +1,60 @@
 ﻿using System;
+using System.Data.Linq;
+using System.Data.Linq.Mapping;
 
 namespace TrainShareApp.Model
 {
+    [Table]
     public class CheckinSection
     {
+        /// <summary>
+        /// Version column aids update performance.
+        /// </summary>
+        [Column(IsVersion = true, DbType = "timestamp", IsDbGenerated = true)]
+        protected Binary Version { get; set; }
+
+        /// <summary>
+        /// Get the PrimaryKey of the database
+        /// </summary>
+        [Column(IsPrimaryKey = true, IsDbGenerated = true, AutoSync = AutoSync.OnInsert)]
+        public int Id { get; set; }
+
+        [Column]
         public string TrainId { get; set; }
+        [Column]
         public string DepartureStation { get; set; }
+        [Column]
         public DateTime DepartureTime { get; set; }
+        [Column]
         public string ArrivalStation { get; set; }
+        [Column]
         public DateTime ArrivalTime { get; set; }
+
+        // Private column for the associated Checkin ID value
+        [Column]
+        private int _checkinId;
+
+        // Entity reference, to identify the Checkin "storage" table
+        private EntityRef<Checkin> _checkin;
+
+        // Association, to describe the relationship between this key and that "storage" table
+        [Association(Storage = "_checkin", ThisKey = "_checkinId", OtherKey = "Id", IsForeignKey = true)]
+        public Checkin Checkin
+        {
+            get { return _checkin.Entity; }
+            set
+            {
+                //OnPropertyChanging("Checkin");
+                _checkin.Entity = value;
+
+                if (value != null)
+                {
+                    _checkinId = value.Id;
+                }
+
+                //OnPropertyChanged("Checkin");
+            }
+        }
 
         public static bool operator ==(CheckinSection a, CheckinSection b)
         {

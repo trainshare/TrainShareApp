@@ -1,4 +1,5 @@
 ﻿using System;
+using Newtonsoft.Json;
 
 namespace TrainShareApp.Model
 {
@@ -16,21 +17,25 @@ namespace TrainShareApp.Model
         /// <summary>
         /// Get or Set the departure time
         /// </summary>
+        [JsonProperty("departure_time")]
         public DateTime DepartureTime { get; set; }
 
         /// <summary>
         /// Get or Set the departure Station
         /// </summary>
+        [JsonProperty("departure_station")]
         public string DepartureStation { get; set; }
 
         /// <summary>
         /// Get or Set the arrival time
         /// </summary>
+        [JsonProperty("arrival_time")]
         public DateTime ArrivalTime { get; set; }
 
         /// <summary>
         /// Get or Set the arrival station
         /// </summary>
+        [JsonProperty("arrival_station")]
         public string ArrivalStation { get; set; }
     }
 }

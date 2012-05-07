@@ -15,37 +15,35 @@ using TrainShareApp.Model;
 
 namespace TrainShareApp.Data
 {
-    public class FacebookClient : IFacebookClient, IHandle<Republish>
+    public class FacebookClient : TokenClientBase, IFacebookClient
     {
         private const string Redirect = "https://www.facebook.com/connect/login_success.html";
         private readonly string _consumerKey;
         private readonly string _consumerSecret;
-        private readonly IEventAggregator _events;
 
-        public FacebookClient(FacebookToken facebookToken, IEventAggregator events)
+        public FacebookClient(IEventAggregator events, Func<DbDataContext> contextFactory)
+            : base("facebook", events, contextFactory)
         {
-            _events = events;
             _consumerKey = Credentials.FacebookToken;
             _consumerSecret = Credentials.FacebookTokenSecret;
 
-            Token = facebookToken;
+            ReloadToken();
 
-            _events.Subscribe(this);
+            if (Token != null)
+                Events.Publish(Token);
         }
-
-        public FacebookToken Token { get; private set; }
 
         public Task LogoutAsync()
         {
-            return TaskEx.Run(Logout);
+            return TaskEx.Run(
+                () =>
+                {
+                    DeleteToken();
+                    Events.Publish(Dismiss.Facebook);
+                });
         }
 
-        public bool IsLoggedIn
-        {
-            get { return Token.Id != 0; }
-        }
-
-        public async Task<FacebookToken> Login(WebBrowser browser)
+        public async Task<Token> LoginAsync(WebBrowser browser)
         {
             var guid = Guid.NewGuid().ToString();
             var client = new RestClient("https://www.facebook.com/dialog/oauth/");
@@ -69,12 +67,17 @@ namespace TrainShareApp.Data
 
             var user = await GetUserInfo(jsonToken["access_token"]);
 
-            Token.Id = user["id"].Value<int>();
-            Token.ScreenName = user["name"].Value<string>();
-            Token.AccessToken = jsonToken["access_token"];
-            Token.Expires = DateTime.Now + TimeSpan.FromSeconds(int.Parse(jsonToken["expires_in"]));
+            InsertOrUpdateToken(
+                new Token
+                {
+                    Id = user["id"].Value<int>(),
+                    Network = "facebook",
+                    ScreenName = user["name"].Value<string>(),
+                    AccessToken = jsonToken["access_token"],
+                    Expires = DateTime.Now + TimeSpan.FromSeconds(int.Parse(jsonToken["expires_in"]))
+                });
 
-            _events.Publish(Token);
+            Events.Publish(Token);
 
             return Token;
         }
@@ -111,20 +114,6 @@ namespace TrainShareApp.Data
                     .ExecuteObservable(request)
                     .Select(response => JObject.Parse(response.Content))
                     .ToTask();
-        }
-
-        private void Logout()
-        {
-            Token.Clear();
-            _events.Publish(Event.Logout.Facebook);
-        }
-
-        public void Handle(Republish message)
-        {
-            if (message == Republish.FacebookToken)
-            {
-                _events.Publish(Token);
-            }
         }
     }
 }

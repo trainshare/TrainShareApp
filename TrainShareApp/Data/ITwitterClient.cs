@@ -7,14 +7,14 @@ namespace TrainShareApp.Data
     public interface ITwitterClient
     {
         /// <summary>
-        /// Login and authorize the app
+        /// LoginAsync and authorize the app
         /// </summary>
         /// <param name="viewBrowser">The browser where the user logs in</param>
-        /// <returns>The new TwitterToken</returns>
-        Task<TwitterToken> Login(WebBrowser viewBrowser);
+        /// <returns>The new Token</returns>
+        Task<Token> LoginAsync(WebBrowser viewBrowser);
 
         /// <summary>
-        /// Dismiss the current TwitterToken
+        /// Dismiss the current Token
         /// </summary>
         /// <returns>A task that signals completion</returns>
         Task LogoutAsync();
@@ -25,8 +25,8 @@ namespace TrainShareApp.Data
         bool IsLoggedIn { get; }
 
         /// <summary>
-        /// Get the current TwitterToken
+        /// Get the current Token
         /// </summary>
-        TwitterToken Token { get; }
+        Token Token { get; }
     }
 }

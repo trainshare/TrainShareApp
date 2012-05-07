@@ -1,114 +1,137 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Data.Linq;
+using System.Data.Linq.Mapping;
 using System.Linq;
 
 namespace TrainShareApp.Model
 {
+    [Table]
     public class Checkin
     {
+        private readonly EntitySet<CheckinSection> _sections;
+
+        public Checkin()
+        {
+            _sections = new EntitySet<CheckinSection>(AttachSection, DetachSection);
+        }
+
+        /// <summary>
+        /// Version column aids update performance.
+        /// </summary>
+        [Column(IsVersion = true, DbType = "timestamp", IsDbGenerated = true)]
+        protected Binary Version { get; set; }
+
+        /// <summary>
+        /// Get the PrimaryKey of the database
+        /// </summary>
+        [Column(IsPrimaryKey = true, IsDbGenerated = true, AutoSync = AutoSync.OnInsert)]
+        public int Id { get; set; }
+
+        /// <summary>
+        /// Get or set the position in the train (1 - 10)
+        /// </summary>
+        [Column]
         public float Position { get; set; }
+
+        /// <summary>
+        /// Get or set the name of the departure station
+        /// </summary>
+        [Column]
         public string DepartureStation { get; set; }
+
+        /// <summary>
+        /// Get or set the time of departure
+        /// </summary>
+        [Column]
         public DateTime DepartureTime { get; set; }
+
+        /// <summary>
+        /// Get or set the name of the arrival station
+        /// </summary>
+        [Column]
         public string ArrivalStation { get; set; }
+
+        /// <summary>
+        /// Get or set the time of arrival
+        /// </summary>
+        [Column]
         public DateTime ArrivalTime { get; set; }
-        public IList<CheckinSection> Sections { get; set; }
+
+        /// <summary>
+        /// Get or set the check in time
+        /// </summary>
+        [Column]
         public DateTime CheckinTime { get; set; }
 
-        public void FromCheckin(Checkin checkin)
+        /// <summary>
+        /// Get or set if the user explicitly checked out
+        /// </summary>
+        [Column(CanBeNull = true)]
+        public bool CheckedOut { get; set; }
+
+        /// <summary>
+        /// Get or set the sections of the travel
+        /// </summary>
+        [Association(Storage = "_sections", OtherKey = "_checkinId", ThisKey = "Id")]
+        public EntitySet<CheckinSection> Sections
         {
-            DepartureStation = checkin.DepartureStation;
-            DepartureTime = checkin.DepartureTime;
-
-            ArrivalStation = checkin.ArrivalStation;
-            ArrivalTime = checkin.ArrivalTime;
-
-            Sections = checkin.Sections;
-            CheckinTime = checkin.CheckinTime;
+            get { return _sections; }
+            set { _sections.Assign(value); }
         }
 
+        /// <summary>
+        /// Set the checkin reference of the <paramref name="section"/> to <value>this</value>
+        /// </summary>
+        /// <param name="section">The section to modify</param>
+        private void AttachSection(CheckinSection section)
+        {
+            //OnPropertyChanging("CheckinSection");
+            section.Checkin = this;
+        }
+
+        /// <summary>
+        /// Remove the checkin reference of the <paramref name="section"/>
+        /// </summary>
+        /// <param name="section">The section to modify</param>
+        private void DetachSection(CheckinSection section)
+        {
+            //OnPropertyChanging("CheckinSection");
+            section.Checkin = null;
+        }
+
+        /// <summary>
+        /// Create new checkin from <paramref name="connection"/>
+        /// </summary>
+        /// <param name="connection">The source connection</param>
+        /// <returns>The created checkin object</returns>
         public static Checkin FromConnection(Connection connection)
         {
-            return
+            var checkin =
                 new Checkin
-                    {
-                        DepartureStation = connection.From.Station.Name,
-                        DepartureTime = connection.From.Departure,
-                        ArrivalStation = connection.To.Station.Name,
-                        ArrivalTime = connection.To.Arrival,
-                        Position = 0.5f,
-                        Sections =
-                            connection
-                            .Sections
-                            .Select(
-                                section =>
-                                new CheckinSection
-                                    {
-                                        TrainId = section.Journey.Name,
-                                        DepartureStation = section.Departure.Station.Name,
-                                        DepartureTime = section.Departure.Departure,
-                                        ArrivalStation = section.Arrival.Station.Name,
-                                        ArrivalTime = section.Arrival.Arrival
-                                    })
-                            .ToList()
-                    };
-        }
+                {
+                    DepartureStation = connection.From.Station.Name,
+                    DepartureTime = connection.From.Departure,
+                    ArrivalStation = connection.To.Station.Name,
+                    ArrivalTime = connection.To.Arrival,
+                    Position = 0.5f
+                };
 
-        public static bool operator ==(Checkin a, Checkin b)
-        {
-            // If both are null, or both are same instance, return true.
-            if (ReferenceEquals(a, b))
-            {
-                return true;
-            }
+            checkin.Sections.AddRange(
+                connection
+                    .Sections
+                    .Select(
+                        section =>
+                        new CheckinSection
+                        {
+                            TrainId = section.Journey.Name,
+                            DepartureStation = section.Departure.Station.Name,
+                            DepartureTime = section.Departure.Departure,
+                            ArrivalStation = section.Arrival.Station.Name,
+                            ArrivalTime = section.Arrival.Arrival
+                        })
+                    .ToList());
 
-            // If one is null, but not both, return false.
-            if (((object) a == null) || ((object) b == null))
-            {
-                return false;
-            }
-
-            // Return true if the fields match:
-            return a.Equals(b);
-        }
-
-        public static bool operator !=(Checkin a, Checkin b)
-        {
-            return !(a == b);
-        }
-
-        public bool Equals(Checkin other)
-        {
-            if (ReferenceEquals(null, other)) return false;
-            if (ReferenceEquals(this, other)) return true;
-
-            return
-                Equals(other.DepartureStation, DepartureStation) &&
-                other.DepartureTime.TimeOfDay.Equals(DepartureTime.TimeOfDay) &&
-                Equals(other.ArrivalStation, ArrivalStation) &&
-                other.ArrivalTime.TimeOfDay.Equals(ArrivalTime.TimeOfDay) &&
-                other.Sections.SequenceEqual(Sections);
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != typeof (Checkin)) return false;
-
-            return Equals((Checkin) obj);
-        }
-
-        public override int GetHashCode()
-        {
-            unchecked
-            {
-                int result = (DepartureStation != null ? DepartureStation.GetHashCode() : 0);
-                result = (result*397) ^ DepartureTime.GetHashCode();
-                result = (result*397) ^ (ArrivalStation != null ? ArrivalStation.GetHashCode() : 0);
-                result = (result*397) ^ ArrivalTime.GetHashCode();
-                result = (result*397) ^ (Sections != null ? Sections.GetHashCode() : 0);
-                return result;
-            }
+            return checkin;
         }
     }
 }

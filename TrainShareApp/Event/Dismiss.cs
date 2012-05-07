@@ -1,8 +1,9 @@
 ﻿namespace TrainShareApp.Event
 {
-    public enum Logout
+    public enum Dismiss
     {
         Facebook,
-        Twitter
+        Twitter,
+        Checkin
     }
 }

@@ -4,18 +4,17 @@ using System.Diagnostics;
 using System.Linq;
 using Caliburn.Micro;
 using TrainShareApp.Data;
-using TrainShareApp.Event;
 using TrainShareApp.Model;
+using TrainShareApp.Event;
 
 namespace TrainShareApp.ViewModels
 {
-    public class MainViewModel : Screen, IHandle<Checkin>
+    public class MainViewModel : Screen, IHandle<Checkin>, IHandle<Dismiss>
     {
         private readonly ILog _logger;
         private readonly IEventAggregator _events;
         private readonly INavigationService _navigationService;
         private readonly ITrainshareClient _trainshareClient;
-        private readonly CheckinHistory _history;
 
         public MainViewModel()
         {
@@ -30,7 +29,6 @@ namespace TrainShareApp.ViewModels
                         ArrivalStation = "Chur",
                         ArrivalTime = DateTime.Now,
                         Position = 0.5f,
-                        Sections = new List<CheckinSection>(),
                         CheckinTime = DateTime.Now.AddDays(1)
                     };
 					
@@ -48,24 +46,24 @@ namespace TrainShareApp.ViewModels
             ILog logger,
             IEventAggregator events,
             INavigationService navigationService,
-            ITrainshareClient trainshareClient,
-            CheckinHistory history)
+            ITrainshareClient trainshareClient)
         {
             _logger = logger;
             _events = events;
             _navigationService = navigationService;
             _trainshareClient = trainshareClient;
-            _history = history;
 
             _events.Subscribe(this);
 
-            CurrentCheckin = trainshareClient.CurrentCheckin;
-            History = history.Get().ToList();
+            Handle(trainshareClient.CurrentCheckin);
+
+            Debug.WriteLine("HasCheckedIn: " + HasCheckedIn);
+            PropertyChanged += (sender, e) => Debug.WriteLine("Property: " + e.PropertyName);
         }
 
         public Checkin CurrentCheckin { get; set; }
 
-        public bool HasNotCheckedIn { get { return CurrentCheckin.ArrivalTime >= DateTime.Now; } }
+        public bool HasNotCheckedIn { get { return CurrentCheckin == null || CurrentCheckin.ArrivalTime <= DateTime.Now; } }
         public bool HasCheckedIn { get { return !HasNotCheckedIn; } }
 
         public IList<Checkin> History { get; private set; } 
@@ -101,7 +99,7 @@ namespace TrainShareApp.ViewModels
 
         public void Checkout()
         {
-            
+            _trainshareClient.Checkout();
         }
 
         public void Settings()
@@ -111,11 +109,20 @@ namespace TrainShareApp.ViewModels
                 .Navigate();
         }
 
-        public void Handle(Checkin message)
+        public async void Handle(Checkin message)
         {
             CurrentCheckin = message;
 
-            History = _history.Get().ToList();
+            History = (await _trainshareClient.GetHistory(10)).ToList();
+        }
+
+        public void Handle(Dismiss message)
+        {
+            if (Dismiss.Checkin == message)
+            {
+                CurrentCheckin = null;
+                Friends.Clear();
+            }
         }
     }
 }

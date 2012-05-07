@@ -3,9 +3,6 @@
     public enum Republish
     {
         Checkin,
-        Connection,
-        TrainshareToken,
-        FacebookToken,
-        TwitterToken
+        Connection
     }
 }

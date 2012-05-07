@@ -48,8 +48,8 @@
 				<ColumnDefinition/>
 			</Grid.ColumnDefinitions>
 			
-			<TextBlock Text="Position" Style="{StaticResource PhoneTextSubtleStyle}" />
-			<Slider Minimum="0" Maximum="10" SmallChange="1" LargeChange="2" Value="{Binding Position, Mode=TwoWay}" Style="{StaticResource TrainSliderStyle}" Foreground="White" Grid.ColumnSpan="2" Grid.Row="1" Margin="12,0"/>
+			<TextBlock Text="Position" Style="{StaticResource PhoneTextSubtleStyle}" Margin="12,0,12,12" />
+			<Slider Minimum="0" Maximum="1" SmallChange="0.1" LargeChange="0.2" Value="{Binding Position, Mode=TwoWay}" Style="{StaticResource TrainSliderStyle}" Foreground="White" Grid.ColumnSpan="2" Grid.Row="1"/>
 			
 			<TextBlock Text="From" Style="{StaticResource PhoneTextSubtleStyle}" Grid.Row="2" />
 			<TextBlock Text="{Binding CurrentCheckin.DepartureStation}" Style="{StaticResource PhoneTextExtraLargeStyle}" Margin="12,-12,12,12" Grid.Row="3" />
@@ -61,7 +61,7 @@
 			<TextBlock Text="{Binding CurrentCheckin.ArrivalTime, StringFormat=HH:mm}" Style="{StaticResource PhoneTextExtraLargeStyle}" Grid.Row="5" Grid.Column="1" Margin="12,-12,12,0" />
 					
 			<TextBlock Text="Optional Message" Style="{StaticResource PhoneTextSubtleStyle}" Grid.Row="6" />	
-			<toolkit:PhoneTextBox Grid.Row="7" Text="{Binding Message, Mode=TwoWay}" Hint="Enter Message" AcceptsReturn="True" DisplayedMaxLength="140" LengthIndicatorVisible="True" TextWrapping="Wrap" Grid.ColumnSpan="2"/>
+			<toolkit:PhoneTextBox Grid.Row="7" Text="{Binding Message, Mode=TwoWay}" Hint="Enter Message" AcceptsReturn="True" DisplayedMaxLength="140" LengthIndicatorVisible="True" TextWrapping="Wrap" Grid.ColumnSpan="2" Margin="0,-12,0,0"/>
 		</Grid>
 	</Grid>
  

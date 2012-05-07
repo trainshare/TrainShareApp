@@ -29,27 +29,20 @@
 		</StackPanel>
 		
 		<StackPanel Grid.Row="1">
-			<TextBlock Text="From" Style="{StaticResource PhoneTextSubtleStyle}" Margin="12,12,12,0"/>
-			<TextBox x:Name="From" Text="{Binding From, Mode=TwoWay}"/>
-			<TextBlock Text="To" Style="{StaticResource PhoneTextSubtleStyle}" Margin="12,12,12,0"/>
-			<TextBox x:Name="To" Text="{Binding To, Mode=TwoWay}"/>
-			<TextBlock Text="Via" Style="{StaticResource PhoneTextSubtleStyle}" Margin="12,12,12,0"/>
-			<TextBox x:Name="Via" Text="{Binding Via, Mode=TwoWay}"/>
+			<TextBlock Text="From" Style="{StaticResource PhoneTextSubtleStyle}" Margin="12,12,12,-12"/>
+			<TextBox x:Name="From" Text="{Binding From, Mode=TwoWay}" Margin="0"/>
+			<TextBlock Text="To" Style="{StaticResource PhoneTextSubtleStyle}" Margin="12,12,12,-12"/>
+			<TextBox x:Name="To" Text="{Binding To, Mode=TwoWay}" Margin="0"/>
+			<TextBlock Text="Via" Style="{StaticResource PhoneTextSubtleStyle}" Margin="12,12,12,-12"/>
+			<TextBox x:Name="Via" Text="{Binding Via, Mode=TwoWay}" Margin="0"/>
 			<TextBlock Text="Time" Style="{StaticResource PhoneTextSubtleStyle}" HorizontalAlignment="Left" Margin="12,12,12,0"/>
 			<StackPanel Orientation="Horizontal">
-				<TextBlock Text="Dep" Style="{StaticResource PhoneTextNormalStyle}" VerticalAlignment="Center"/>
+				<!--<TextBlock Text="Dep" Style="{StaticResource PhoneTextNormalStyle}" VerticalAlignment="Center"/>
 				<toolkitPrimitives:ToggleSwitchButton Margin="-24"/>
-				<TextBlock Text="Arr" Style="{StaticResource PhoneTextNormalStyle}" VerticalAlignment="Center"/>
-				<toolkit:TimePicker Value="{Binding Time, Mode=TwoWay}" VerticalAlignment="Center" Margin="60,0,0,0" Width="220"/>
+				<TextBlock Text="Arr" Style="{StaticResource PhoneTextNormalStyle}" VerticalAlignment="Center"/>-->
+				<toolkit:TimePicker Value="{Binding Time, Mode=TwoWay}" Width="220"/>
 			</StackPanel>
+			<Button x:Name="Search" Content="Search" Width="250" Margin="0,96,0,0"/>
 		</StackPanel>
 	</Grid>
-  <phone:PhoneApplicationPage.ApplicationBar>
-    <shell:ApplicationBar IsVisible="True" IsMenuEnabled="True">
-      <shell:ApplicationBar.Buttons>
-        <cal:AppBarButton Message="Continue" IconUri="/icons/appbar.check.rest.png" Text="Continue" />
-        <cal:AppBarButton Message="Cancel" IconUri="/icons/appbar.cancel.rest.png" Text="Cancel" />
-      </shell:ApplicationBar.Buttons>
-    </shell:ApplicationBar>
-  </phone:PhoneApplicationPage.ApplicationBar>
 </phone:PhoneApplicationPage>

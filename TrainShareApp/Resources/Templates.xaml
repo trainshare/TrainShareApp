@@ -30,10 +30,11 @@
 				<ColumnDefinition Width="10"/>
 			</Grid.ColumnDefinitions>
 			<Rectangle Fill="White"/>
-			<Image Grid.Column="1" MaxHeight="60" MaxWidth="60" Source="{Binding ImageUrl}" VerticalAlignment="Top"/>
+			<Image Grid.Column="1" MaxHeight="60" MaxWidth="60" Source="{Binding ImageUrl}" Margin="6,0,0,0" Stretch="UniformToFill"/>
 			<StackPanel Grid.Column="2">
 				<TextBlock Text="{Binding Name}" Style="{StaticResource PhoneTextLargeStyle}"/>
-				<TextBlock Text="{Binding Position}" Style="{StaticResource PhoneTextSubtleStyle}"/>
+				<TextBlock Text="{Binding TrainshareOverlaps.DepartureStation, StringFormat='Travels from {0}'}" Style="{StaticResource PhoneTextSubtleStyle}"/>
+				<TextBlock Text="{Binding TrainshareOverlaps.ArrivalStation, StringFormat='to {0}'}" Style="{StaticResource PhoneTextSubtleStyle}"/>
 			</StackPanel>
 		</Grid>
 	</DataTemplate>

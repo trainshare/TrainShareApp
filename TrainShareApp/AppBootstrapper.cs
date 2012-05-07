@@ -23,13 +23,23 @@ namespace TrainShareApp {
             // Loggers
             container.Singleton<ILog, DebugLogger>();
 
-            //Tokens and state
-            container
-                .Singleton<Checkin>()
-                .Singleton<CheckinHistory>()
-                .Singleton<TwitterToken>()
-                .Singleton<FacebookToken>()
-                .Singleton<TrainshareToken>();
+            // Database
+            container.Handler<DbDataContext>(
+                ioc =>
+                new DbDataContext(DbDataContext.DbConnectionString)
+                {
+                    DeferredLoadingEnabled = false,
+                    ObjectTrackingEnabled = true
+                });
+
+            using (var context = (DbDataContext)container.GetInstance(typeof(DbDataContext), null))
+            {
+                if (!context.DatabaseExists())
+                {
+                    context.CreateDatabase();
+                    context.SubmitChanges();
+                }
+            }
 
             // Clients
             container

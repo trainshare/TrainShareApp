@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Windows;
 using Caliburn.Micro;
 using TrainShareApp.Data;
+using TrainShareApp.Model;
 using TrainShareApp.Views;
 using ArgumentException = System.ArgumentException;
 
@@ -40,7 +41,7 @@ namespace TrainShareApp.ViewModels
 
         public string Client { get; set; }
 
-        protected override async void OnViewReady(object view)
+        protected override void OnViewReady(object view)
         {
             var castedView = view as LoginView;
             Debug.Assert(castedView != null);
@@ -48,42 +49,10 @@ namespace TrainShareApp.ViewModels
             switch (Client)
             {
                 case "twitter":
-                    try
-                    {
-                        var twitterToken =
-                            await _twitterClient.Login(castedView.Browser);
-
-                        await _trainshareClient.SendAccessToken(
-                            "twitter",
-                            twitterToken.AccessToken,
-                            twitterToken.AccessTokenSecret);
-                    }
-                    catch (Exception e)
-                    {
-                        _logger.Error(e);
-                        MessageBox.Show("I am terribly sorry but your request could not be finished.");
-                    }
-
-                    _navigationService.GoBack();
+                    AuthenticateTwitter(castedView);
                     break;
                 case "facebook":
-                    try
-                    {
-                        var facebookToken =
-                            await _facebookClient.Login(castedView.Browser);
-                        
-                        await _trainshareClient.SendAccessToken(
-                            "facebook",
-                            facebookToken.AccessToken,
-                            null);
-                    }
-                    catch (Exception e)
-                    {
-                        _logger.Error(e);
-                        MessageBox.Show("I am terribly sorry but your request could not be finished.");
-                    }
-
-                    _navigationService.GoBack();
+                    AuthenticateFacebook(castedView);
                     break;
                 default:
                     throw new ArgumentException("The client to login can only be twitter or facebook but it was " +
@@ -91,6 +60,36 @@ namespace TrainShareApp.ViewModels
             }
 
             base.OnViewReady(view);
+        }
+
+        private async void AuthenticateTwitter(LoginView view)
+        {
+            try
+            {
+                await _twitterClient.LoginAsync(view.Browser);
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e);
+                MessageBox.Show("I am terribly sorry but we could not authenticate with Twitter.");
+            }
+
+            _navigationService.GoBack();
+        }
+
+        private async void AuthenticateFacebook(LoginView view)
+        {
+            try
+            {
+                await _facebookClient.LoginAsync(view.Browser);
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e);
+                MessageBox.Show("I am terribly sorry but we could not authenticate with Facebook.");
+            }
+
+            _navigationService.GoBack();
         }
     }
 }

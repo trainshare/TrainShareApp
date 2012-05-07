@@ -1,48 +1,49 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Caliburn.Micro;
 using Microsoft.Phone.Reactive;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestSharp;
+using TrainShareApp.Event;
 using TrainShareApp.Extension;
 using TrainShareApp.Model;
-using TrainShareApp.Event;
 
 namespace TrainShareApp.Data
 {
-    public class TrainshareClient : ITrainshareClient, IHandle<Republish>
+    public class TrainshareClient : TokenClientBase, ITrainshareClient
     {
-        private readonly CheckinHistory _history;
-        private readonly IEventAggregator _events;
-
-        public TrainshareClient(TrainshareToken token, Checkin currentCheckin, CheckinHistory history, IEventAggregator events)
+        public TrainshareClient(IEventAggregator events, Func<DbDataContext> contextFactory)
+            : base("trainshare", events, contextFactory)
         {
-            _history = history;
-            _events = events;
+            ReloadToken();
 
-            Token = token;
-            CurrentCheckin = currentCheckin;
+            if (Token != null)
+                Events.Publish(Token);
 
-            _events.Subscribe(this);
+            ReloadCurrentCheckin();
+
+            if(CurrentCheckin != null)
+                Events.Publish(CurrentCheckin);
         }
-
-        public TrainshareToken Token { get; private set; }
 
         public Checkin CurrentCheckin { get; private set; }
 
-        public async Task<TrainshareToken> SendAccessToken(string network, string token, string tokenSecret)
+        public async Task<Token> LoginAsync(Token token)
         {
-            var client = new RestClient("https://trainshare.herokuapp.com/v1/");
+            var client = new RestClient("http://trainshare.herokuapp.com/v1/");
             var request =
                 new RestRequest("login", Method.POST)
-                    .WithFormat(DataFormat.Json)
-                    .AddBody(
+                    .AddJson(
                         new JObject(
-                            new JProperty("network", network),
-                            new JProperty("access_token", token),
-                            new JProperty("access_token_secret", tokenSecret)));
+                            new JProperty("network", token.Network),
+                            new JProperty("access_token", token.AccessToken),
+                            new JProperty("access_token_secret", token.AccessTokenSecret)));
+
+            request.RequestFormat = DataFormat.Json;
 
             var json =
                 await
@@ -51,28 +52,51 @@ namespace TrainShareApp.Data
                     .Select(response => JObject.Parse(response.Content))
                     .ToTask();
 
-            Token.Id = json["trainshare_id"].Value<string>();
-            Token.Token = json["trainshare_token"].Value<string>();
+            InsertOrUpdateToken(
+                new Token
+                {
+                    Network = "trainshare",
+                    AccessToken = json["trainshare_id"].Value<string>(),
+                    AccessTokenSecret = json["trainshare_token"].Value<string>()
+                });
 
-            _events.Publish(Token);
+            Events.Publish(Token);
 
             return Token;
         }
 
-        public async Task<IEnumerable<TrainshareFriend>> GetFriends()
+        public Task<List<TrainshareFriend>> GetFriends()
         {
-            var client = new RestClient("https://trainshare.herokuapp.com/v1/");
+            var client = new RestClient("http://trainshare.herokuapp.com/v1/");
             var request =
-                new RestRequest("read", Method.GET)
-                    .WithFormat(DataFormat.Json)
-                    .AddParameter("trainshare_id", Token.Id);
+                new RestRequest("read", Method.POST)
+                    .AddParameter("trainshare_id", Token.AccessToken)
+                    .AddParameter("trainshare_token", Token.AccessTokenSecret);
 
             return
-                await
                 client
-                    .ExecuteObservable<List<TrainshareFriend>>(request)
-                    .Select(response => response.Data)
+                    .ExecuteObservable(request)
+                    .Select(response => response.Content)
+                    .Select(JsonConvert.DeserializeObject<List<TrainshareFriend>>)
                     .ToTask();
+        }
+
+        public Task<List<Checkin>> GetHistory(int count)
+        {
+            return TaskEx.Run(
+                () =>
+                {
+                    using (var context = ContextFactory())
+                    {
+                        var checkins =
+                            context
+                                .Checkins
+                                .OrderByDescending(c => c.CheckinTime)
+                                .Take(count);
+
+                        return checkins.ToList();
+                    }
+                });
         }
 
         /*
@@ -84,25 +108,28 @@ namespace TrainShareApp.Data
          */
         public async Task Checkin(Checkin checkin)
         {
-            var client = new RestClient("https://trainshare.herokuapp.com/v1/");
+            var client = new RestClient("http://trainshare.herokuapp.com/v1/");
             var request =
                 new RestRequest("checkin", Method.POST)
-                    .WithFormat(DataFormat.Json)
-                    .AddParameter("trainshare_id", Token.Id)
-                    .AddParameter("trainshare_token", Token.Token)
-                    .AddBody(
-                        new JArray(
-                            checkin
-                                .Sections
-                                .Select(
-                                    section =>
-                                    new JObject(
-                                        new JProperty("departure_station", section.DepartureStation),
-                                        new JProperty("departure_time", section.DepartureTime.ToString("HH:mm")),
-                                        new JProperty("arrival_station", section.ArrivalStation),
-                                        new JProperty("arrival_time", section.ArrivalTime.ToString("HH:mm")),
-                                        new JProperty("train_id", section.TrainId),
-                                        new JProperty("position", checkin.Position)))));
+                    .AddJson(
+                        new JObject(
+                            new JProperty("trainshare_id", Token.AccessToken),
+                            new JProperty("trainshare_token", Token.AccessTokenSecret),
+                            new JProperty("data",
+                                          new JArray(
+                                              checkin
+                                                  .Sections
+                                                  .Select(
+                                                      section =>
+                                                      new JObject(
+                                                          new JProperty("departure_station", section.DepartureStation),
+                                                          new JProperty("departure_time",
+                                                                        section.DepartureTime.ToString("HH:mm")),
+                                                          new JProperty("arrival_station", section.ArrivalStation),
+                                                          new JProperty("arrival_time",
+                                                                        section.ArrivalTime.ToString("HH:mm")),
+                                                          new JProperty("train_id", section.TrainId),
+                                                          new JProperty("position", checkin.Position)))))));
 
             //Skipping the result on purpouse
             await
@@ -110,21 +137,68 @@ namespace TrainShareApp.Data
                     .ExecuteObservable(request)
                     .ToTask();
 
-            _history.Add(checkin);
-            CurrentCheckin.FromCheckin(checkin);
+            AddCheckin(checkin);
+            CurrentCheckin = checkin;
 
-            _events.Publish(CurrentCheckin);
+            Events.Publish(CurrentCheckin);
         }
 
-        public void Handle(Republish message)
+        public Task Checkout()
         {
-            if (message == Republish.TrainshareToken && Token != null)
+            return TaskEx.Run(
+                () =>
+                {
+                    if (CurrentCheckin == null)
+                        return;
+
+                    using (var context = ContextFactory())
+                    {
+                        context.ObjectTrackingEnabled = true;
+
+                        context.Checkins.UpdateOnSubmit(c => c.Id == CurrentCheckin.Id, c => c.CheckedOut = true);
+                    }
+
+                    CurrentCheckin = null;
+
+                    Events.Publish(Dismiss.Checkin);
+                });
+        }
+
+        private void ReloadCurrentCheckin()
+        {
+            using (var context = ContextFactory())
             {
-                _events.Publish(Token);
+                var checkin =
+                    context
+                        .Checkins
+                        .OrderByDescending(c => c.CheckinTime)
+                        .FirstOrDefault();
+
+                if (checkin != null && !checkin.CheckedOut && checkin.ArrivalTime > DateTime.Now)
+                    CurrentCheckin = checkin;
             }
-            else if (message == Republish.Checkin && CurrentCheckin != null)
+        }
+
+        private void AddCheckin(Checkin checkin)
+        {
+            using (var context = ContextFactory())
             {
-                _events.Publish(CurrentCheckin);
+                context.ObjectTrackingEnabled = true;
+
+                var old = context.Checkins.FirstOrDefault(
+                    c =>
+                    c.ArrivalStation.Equals(checkin.ArrivalStation) &&
+                    c.ArrivalTime.Equals(checkin.ArrivalTime) &&
+                    c.DepartureStation.Equals(checkin.DepartureStation) &&
+                    c.DepartureTime.Equals(checkin.DepartureTime));
+
+                if(old != null)
+                {
+                    context.Checkins.DeleteOnSubmit(old);
+                }
+
+                context.Checkins.InsertOnSubmit(checkin);
+                context.SubmitChanges();
             }
         }
     }

@@ -15,38 +15,36 @@ using TrainShareApp.Model;
 
 namespace TrainShareApp.Data
 {
-    public class TwitterClient : ITwitterClient, IHandle<Republish>
+    public class TwitterClient : TokenClientBase, ITwitterClient
     {
         private readonly string _consumerKey;
         private readonly string _consumerSecret;
-        private readonly IEventAggregator _events;
 
-        public TwitterClient(TwitterToken token, IEventAggregator events)
+        public TwitterClient(IEventAggregator events, Func<DbDataContext> contextFactory)
+            : base("twitter", events, contextFactory)
         {
-            _events = events;
             _consumerKey = Credentials.TwitterToken;
             _consumerSecret = Credentials.TwitterTokenSecret;
 
-            Token = token;
+            ReloadToken();
 
-            _events.Subscribe(this);
+            if (Token != null)
+                Events.Publish(Token);
         }
 
         #region ITwitterClient Members
 
-        public TwitterToken Token { get; private set; }
-
         public Task LogoutAsync()
         {
-            return TaskEx.Run(Logout);
+            return TaskEx.Run(
+                () =>
+                {
+                    DeleteToken();
+                    Events.Publish(Dismiss.Twitter);
+                });
         }
 
-        public bool IsLoggedIn
-        {
-            get { return Token.Id != 0; }
-        }
-
-        public async Task<TwitterToken> Login(WebBrowser browser)
+        public async Task<Token> LoginAsync(WebBrowser browser)
         {
             var client = new RestClient("https://api.twitter.com/oauth/");
             client.FollowRedirects = true;
@@ -68,12 +66,17 @@ namespace TrainShareApp.Data
 
             Debug.Assert(requestToken["oauth_token"] == verifier["oauth_token"]);
 
-            Token.Id = int.Parse(accessToken["user_id"]);
-            Token.ScreenName = accessToken["screen_name"];
-            Token.AccessToken = accessToken["oauth_token"];
-            Token.AccessTokenSecret = accessToken["oauth_token_secret"];
+            InsertOrUpdateToken(
+                new Token
+                {
+                    Id = int.Parse(accessToken["user_id"]),
+                    Network = "twitter",
+                    ScreenName = accessToken["screen_name"],
+                    AccessToken = accessToken["oauth_token"],
+                    AccessTokenSecret = accessToken["oauth_token_secret"]
+                });
 
-            _events.Publish(Token);
+            Events.Publish(Token);
 
             return Token;
         }
@@ -121,20 +124,6 @@ namespace TrainShareApp.Data
                     .Select(response => response.Content)
                     .ParseQueryString()
                     .ToTask();
-        }
-
-        private void Logout()
-        {
-            Token.Clear();
-            _events.Publish(Event.Logout.Twitter);
-        }
-
-        public void Handle(Republish message)
-        {
-            if (message == Republish.TwitterToken)
-            {
-                _events.Publish(Token);
-            }
         }
     }
 }

@@ -7,9 +7,8 @@ using TrainShareApp.Model;
 namespace TrainShareApp.ViewModels
 {
     public class AccountsViewModel : Screen,
-        IHandle<FacebookToken>, IHandle<TwitterToken>,
-        IHandle<Logout>,
-        IHandle<TrainshareToken>
+        IHandle<Token>,
+        IHandle<Dismiss>
     {
         private readonly ITrainshareClient _trainshareClient;
         private readonly IFacebookClient _facebookClient;
@@ -41,7 +40,7 @@ namespace TrainShareApp.ViewModels
 
         public bool CanSave
         {
-            get { return !string.IsNullOrEmpty(_trainshareClient.Token.Id); }
+            get { return !string.IsNullOrEmpty(_trainshareClient.Token.AccessToken); }
         }
 
         public void Facebook()
@@ -71,30 +70,21 @@ namespace TrainShareApp.ViewModels
             base.OnActivate();
         }
 
-        public void Handle(FacebookToken message)
+        public void Handle(Token message)
         {
             UpdateFacebook();
-        }
-
-        public void Handle(TwitterToken message)
-        {
             UpdateTwitter();
-        }
-
-        public void Handle(TrainshareToken message)
-        {
             NotifyOfPropertyChange(() => CanSave);
         }
 
-
-        public void Handle(Logout message)
+        public void Handle(Dismiss message)
         {
             switch (message)
             {
-                case Logout.Facebook:
+                case Dismiss.Facebook:
                     UpdateFacebook();
                     break;
-                case Logout.Twitter:
+                case Dismiss.Twitter:
                     UpdateTwitter();
                     break;
             }

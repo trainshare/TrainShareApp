@@ -73,6 +73,7 @@ namespace TrainShareApp.ViewModels
         public string From { get; set; }
         public string To { get; set; }
         public string Via { get; set; }
+        public DateTime Time { get; set; }
         public DateTime? DepartureTime { get; set; }
         public DateTime? ArrivalTime { get; set; }
 
@@ -104,6 +105,7 @@ namespace TrainShareApp.ViewModels
 
         protected override void OnActivate()
         {
+            DepartureTime = Time;
             SubmitSearch();
 
             base.OnActivate();
@@ -128,7 +130,8 @@ namespace TrainShareApp.ViewModels
 
             try
             {
-                var result = await _timeTable.GetConnections(From, To, DateTime.Now);
+                Debug.Assert(DepartureTime.HasValue);
+                var result = await _timeTable.GetConnections(From, To, DepartureTime.Value);
 
                 From = result.From.Name;
                 NotifyOfPropertyChange(() => From);

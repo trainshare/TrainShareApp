@@ -95,6 +95,7 @@
     <Reference Include="Caliburn.Micro.Extensions">
       <HintPath>..\packages\Caliburn.Micro.1.3.1\lib\sl4-windowsphone71\Caliburn.Micro.Extensions.dll</HintPath>
     </Reference>
+    <Reference Include="IsolatedStorageExplorer, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Expression.Drawing" />
     <Reference Include="Microsoft.Phone" />
     <Reference Include="Microsoft.Phone.Controls, Version=7.0.0.0, Culture=neutral, PublicKeyToken=24eec0d8c86cda1e, processorArchitecture=MSIL" />
@@ -102,12 +103,19 @@
       <HintPath>..\packages\SilverlightToolkitWP.4.2011.12.14\lib\sl4-windowsphone71\Microsoft.Phone.Controls.Toolkit.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Phone.Interop" />
-    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.4.5.3\lib\sl4-windowsphone71\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.4.5.4\lib\sl4-windowsphone71\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="PropertyChanged">
+      <HintPath>..\packages\PropertyChanged.Fody.1.20.0.0\Lib\SL4-WP71\PropertyChanged.dll</HintPath>
+    </Reference>
+    <Reference Include="PropertyChanging">
+      <HintPath>..\packages\PropertyChanging.Fody.1.7.0.0\Lib\SL4-WP71\PropertyChanging.dll</HintPath>
     </Reference>
     <Reference Include="RestSharp.WindowsPhone, Version=102.7.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\RestSharp.102.7\lib\sl4-wp71\RestSharp.WindowsPhone.dll</HintPath>
+      <HintPath>..\packages\RestSharp.103.0.0\lib\sl4-wp71\RestSharp.WindowsPhone.dll</HintPath>
     </Reference>
+    <Reference Include="system.data.linq" />
     <Reference Include="System.Observable" />
     <Reference Include="System.Reactive.Core">
       <HintPath>..\packages\Rx-Core.2.0.20304-beta\lib\SL4-WindowsPhone71\System.Reactive.Core.dll</HintPath>
@@ -131,25 +139,29 @@
     </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="mscorlib.extensions" />
+    <None Include="FodyWeavers.xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="AppBootstrapper.cs" />
-    <Compile Include="Data\CheckinHistory.cs" />
     <Compile Include="Data\Credentials.cs" />
+    <Compile Include="Data\DbDataContext.cs" />
     <Compile Include="Data\FacebookClient.cs" />
     <Compile Include="Data\ITimeTable.cs" />
     <Compile Include="Data\ITrainshareClient.cs" />
     <Compile Include="Data\ITwitterClient.cs" />
+    <Compile Include="Data\TableExtensions.cs" />
     <Compile Include="Data\TimeTable.cs" />
+    <Compile Include="Data\TokenClientBase.cs" />
     <Compile Include="Data\TrainshareClient.cs" />
-    <Compile Include="Event\Logout.cs" />
+    <Compile Include="Event\Dismiss.cs" />
     <Compile Include="Event\Republish.cs" />
     <Compile Include="Model\Checkin.cs" />
     <Compile Include="Model\CheckinSection.cs" />
     <Compile Include="Model\Journey.cs" />
+    <Compile Include="Model\EntityBase.cs" />
     <Compile Include="Model\SearchResult.cs" />
     <Compile Include="Model\Section.cs" />
     <Compile Include="Data\TwitterClient.cs" />
@@ -165,15 +177,8 @@
     <Compile Include="Model\Station.cs" />
     <Compile Include="Model\Prognosis.cs" />
     <Compile Include="Model\TrainshareFriend.cs" />
-    <Compile Include="Model\FacebookToken.cs" />
-    <Compile Include="Model\TrainshareToken.cs" />
+    <Compile Include="Model\Token.cs" />
     <Compile Include="Model\TrainshareOverlap.cs" />
-    <Compile Include="Model\TwitterToken.cs" />
-    <Compile Include="Storage\CheckinStorage.cs" />
-    <Compile Include="Storage\FacebookStorage.cs" />
-    <Compile Include="Storage\HistoryStorage.cs" />
-    <Compile Include="Storage\TrainshareStorage.cs" />
-    <Compile Include="Storage\TwitterStorage.cs" />
     <Compile Include="Storage\JsonStorageHandler.cs" />
     <Compile Include="Storage\MainViewStorage.cs" />
     <Compile Include="ViewModels\AccountsViewModel.cs" />
@@ -191,9 +196,6 @@
     </Compile>
     <Compile Include="Views\LoginView.xaml.cs">
       <DependentUpon>LoginView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\PivotPage1.xaml.cs">
-      <DependentUpon>MainView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SearchResultView.xaml.cs">
       <DependentUpon>SearchResultView.xaml</DependentUpon>
@@ -257,24 +259,14 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Image\train.pdn" />
+    <None Include="Image\trainshareapp.psd" />
     <None Include="packages.config" />
     <None Include="Properties\AppManifest.xml" />
     <None Include="Properties\WMAppManifest.xml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="ApplicationIcon.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Resource Include="train.png" />
-    <Resource Include="trainshare-2.jpg" />
-    <Resource Include="background.jpg" />
-    <Content Include="Background.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Resource Include="trainshare-0.jpg" />
-    <Resource Include="trainshare-1.jpg" />
-    <Resource Include="fast-train.jpg" />
-    <Resource Include="Logo.png" />
+    <Resource Include="Resources\train.png" />
     <Content Include="icons\appbar.cancel.rest.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -284,17 +276,30 @@
     <Content Include="icons\appbar.feature.settings.rest.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Image\ApplicationIcon.png" />
+    <Resource Include="Image\background.jpg" />
+    <Content Include="Image\Background.png" />
+    <Resource Include="Image\engine.png" />
+    <Resource Include="Image\fast-train.jpg" />
+    <Resource Include="Image\Logo.png" />
+    <Resource Include="Image\SplashScreenImageGrad.jpg" />
+    <Resource Include="Image\Train-switzerland.jpg" />
+    <Content Include="Image\train.png" />
+    <Resource Include="Image\Trainshare app train.png" />
+    <Content Include="Image\Trainshare app train.svg" />
+    <Resource Include="Image\trainshare-0.jpg" />
+    <Resource Include="Image\trainshare-1.jpg" />
+    <Resource Include="Image\trainshare-2.jpg" />
+    <Resource Include="Image\wagon.png" />
     <Content Include="SplashScreenImage.jpg" />
-    <Content Include="SplashScreenImageGrad.jpg" />
     <Content Include="Toolkit.Content\ApplicationBar.Cancel.png" />
     <Content Include="Toolkit.Content\ApplicationBar.Check.png" />
     <Content Include="Toolkit.Content\ApplicationBar.Delete.png" />
     <Content Include="Toolkit.Content\ApplicationBar.Select.png" />
-    <Resource Include="Train-switzerland.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\Silverlight for Phone\$(TargetFrameworkVersion)\Microsoft.Silverlight.$(TargetFrameworkProfile).Overrides.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\Silverlight for Phone\$(TargetFrameworkVersion)\Microsoft.Silverlight.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>
@@ -303,8 +308,6 @@
   -->
   <ProjectExtensions />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
-  <Target Name="AfterCompile">
-    <NotifyPropertyWeaverMsBuildTask.WeavingTask CheckForIsChanged="true" />
-  </Target>
-  <UsingTask TaskName="NotifyPropertyWeaverMsBuildTask.WeavingTask" AssemblyFile="$(SolutionDir)Tools\NotifyPropertyWeaverMsBuildTask.dll" />
+  <Target Name="AfterCompile" />
+  <Import Project="$(SolutionDir)\Tools\Fody\Fody.targets" />
 </Project>

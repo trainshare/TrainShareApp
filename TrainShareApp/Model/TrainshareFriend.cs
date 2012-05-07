@@ -1,4 +1,7 @@
 ﻿
+using System;
+using Newtonsoft.Json;
+
 namespace TrainShareApp.Model
 {
     /*
@@ -21,11 +24,15 @@ namespace TrainShareApp.Model
     public class TrainshareFriend
     {
         public string Name { get; set; }
-        public string TrainshareId { get; set; }
-        public int Position { get; set; }
-        public bool Upper { get; set; }
+
         public string Message { get; set; }
+        public bool Upper { get; set; }
+        public int Position { get; set; }
+        [JsonProperty("trainshare_id")]
+        public string TrainshareId { get; set; }
+        [JsonProperty("image_url")]
         public string ImageUrl { get; set; }
+        [JsonProperty("overlaps")]
         public TrainshareOverlap TrainshareOverlaps { get; set; }
     }
 }
