@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Windows.Controls;
 using Caliburn.Micro;
 using TrainShareApp.Data;
 using TrainShareApp.Model;
@@ -56,9 +57,6 @@ namespace TrainShareApp.ViewModels
             _events.Subscribe(this);
 
             Handle(trainshareClient.CurrentCheckin);
-
-            Debug.WriteLine("HasCheckedIn: " + HasCheckedIn);
-            PropertyChanged += (sender, e) => Debug.WriteLine("Property: " + e.PropertyName);
         }
 
         public Checkin CurrentCheckin { get; set; }
@@ -106,6 +104,18 @@ namespace TrainShareApp.ViewModels
         {
             _navigationService
                 .UriFor<AccountsViewModel>()
+                .Navigate();
+        }
+
+        public void HistorySelected(Checkin e)
+        {
+            if (e == null) return;
+
+            _navigationService
+                .UriFor<SearchViewModel>()
+                .WithParam(vm => vm.From, e.DepartureStation)
+                .WithParam(vm => vm.To, e.ArrivalStation)
+                .WithParam(vm => vm.Time, DateTime.Now.Date.Add(e.DepartureTime.TimeOfDay))
                 .Navigate();
         }
 

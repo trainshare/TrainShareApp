@@ -67,7 +67,10 @@
 			<!--Panorama item two-->
 			<controls:PanoramaItem x:Name="historyItem" Header="history">
             	<Grid>
-            		<ListBox x:Name="HistoryList" Visibility="{Binding HasHistory, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}" ItemsSource="{Binding History}" ItemTemplate="{StaticResource HistoryTemplate}" HorizontalContentAlignment="Stretch">
+            		<ListBox 
+					x:Name="HistoryList" Visibility="{Binding HasHistory, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}"
+					ItemsSource="{Binding History}" ItemTemplate="{StaticResource HistoryTemplate}" HorizontalContentAlignment="Stretch"
+					cal:Message.Attach="[Event SelectionChanged] = [Action HistorySelected($this)]">
 			        	<ListBox.ItemContainerStyle>
 			        		<Style TargetType="ListBoxItem">
 			        			<Setter Property="HorizontalContentAlignment" Value="Stretch"/>

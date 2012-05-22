@@ -183,6 +183,7 @@ namespace TrainShareApp.Data
         {
             using (var context = ContextFactory())
             {
+                context.IncludeOne<Checkin>(t => t.Sections);
                 context.ObjectTrackingEnabled = true;
 
                 var old = context.Checkins.FirstOrDefault(
@@ -194,6 +195,7 @@ namespace TrainShareApp.Data
 
                 if(old != null)
                 {
+                    context.CheckinSections.DeleteAllOnSubmit(old.Sections);
                     context.Checkins.DeleteOnSubmit(old);
                 }
 
