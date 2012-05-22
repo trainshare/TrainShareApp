@@ -96,6 +96,6 @@ Backup*/
 UpgradeLog*.XML
 
 packages/
-Credentials.cs
- 
- 
+Credentials.cs
+
+
