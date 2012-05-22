@@ -14,7 +14,7 @@
     FontSize="{StaticResource PhoneFontSizeNormal}"
     Foreground="{StaticResource PhoneForegroundBrush}"
     SupportedOrientations="Portrait" Orientation="Portrait"
-    mc:Ignorable="d" d:DesignHeight="768" d:DesignWidth="480"
+    mc:Ignorable="d" d:DesignHeight="696" d:DesignWidth="480"
     shell:SystemTray.IsVisible="True"
     cal:Bind.AtDesignTime="True"
     d:DataContext="{d:DesignInstance IsDesignTimeCreatable=True, Type=vm:CheckinViewModel}">
@@ -52,16 +52,16 @@
 			<Slider Minimum="0" Maximum="1" SmallChange="0.1" LargeChange="0.2" Value="{Binding Position, Mode=TwoWay}" Style="{StaticResource TrainSliderStyle}" Foreground="White" Grid.ColumnSpan="2" Grid.Row="1"/>
 			
 			<TextBlock Text="From" Style="{StaticResource PhoneTextSubtleStyle}" Grid.Row="2" />
-			<TextBlock Text="{Binding CurrentCheckin.DepartureStation}" Style="{StaticResource PhoneTextExtraLargeStyle}" Margin="12,-12,12,12" Grid.Row="3" />
+			<TextBlock Text="{Binding CurrentCheckin.DepartureStation}" Style="{StaticResource PhoneTextExtraLargeStyle}" Margin="12,-6,12,12" Grid.Row="3" />
 			<TextBlock Text="To" Style="{StaticResource PhoneTextSubtleStyle}" Grid.Column="2" Grid.Row="2" />
-			<TextBlock Text="{Binding CurrentCheckin.ArrivalStation}" Style="{StaticResource PhoneTextExtraLargeStyle}" Grid.Row="3" Margin="12,-12,12,12" Grid.Column="1" />
+			<TextBlock Text="{Binding CurrentCheckin.ArrivalStation}" Style="{StaticResource PhoneTextExtraLargeStyle}" Grid.Row="3" Margin="12,-6,12,12" Grid.Column="1" />
 			<TextBlock Text="Departure" Style="{StaticResource PhoneTextSubtleStyle}" Grid.Row="4" />
-			<TextBlock Text="{Binding CurrentCheckin.DepartureTime, StringFormat=HH:mm}" Style="{StaticResource PhoneTextExtraLargeStyle}" Grid.Row="5" Margin="12,-12,12,0" />
+			<TextBlock Text="{Binding CurrentCheckin.DepartureTime, StringFormat=t}" Style="{StaticResource PhoneTextExtraLargeStyle}" Grid.Row="5" Margin="12,-6,12,0" />
 			<TextBlock Text="Arrival" Style="{StaticResource PhoneTextSubtleStyle}" Grid.Row="4" Grid.Column="1" />
-			<TextBlock Text="{Binding CurrentCheckin.ArrivalTime, StringFormat=HH:mm}" Style="{StaticResource PhoneTextExtraLargeStyle}" Grid.Row="5" Grid.Column="1" Margin="12,-12,12,0" />
+			<TextBlock Text="{Binding CurrentCheckin.ArrivalTime, StringFormat=t}" Style="{StaticResource PhoneTextExtraLargeStyle}" Grid.Row="5" Grid.Column="1" Margin="12,-6,12,0" />
 					
 			<TextBlock Text="Optional Message" Style="{StaticResource PhoneTextSubtleStyle}" Grid.Row="6" />	
-			<toolkit:PhoneTextBox Grid.Row="7" Text="{Binding Message, Mode=TwoWay}" Hint="Enter Message" AcceptsReturn="True" DisplayedMaxLength="140" LengthIndicatorVisible="True" TextWrapping="Wrap" Grid.ColumnSpan="2" Margin="0,-12,0,0"/>
+			<toolkit:PhoneTextBox Grid.Row="7" Text="{Binding Message, Mode=TwoWay}" Hint="Enter Message" AcceptsReturn="True" DisplayedMaxLength="140" LengthIndicatorVisible="True" TextWrapping="Wrap" Grid.ColumnSpan="2" Margin="0,-6,0,0"/>
 		</Grid>
 	</Grid>
  

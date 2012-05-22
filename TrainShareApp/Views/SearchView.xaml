@@ -29,13 +29,13 @@
 		</StackPanel>
 		
 		<StackPanel Grid.Row="1">
-			<TextBlock Text="From" Style="{StaticResource PhoneTextSubtleStyle}" Margin="12,12,12,-12"/>
+			<TextBlock Text="From" Style="{StaticResource PhoneTextSubtleStyle}" Margin="12,12,12,-6"/>
 			<TextBox x:Name="From" Text="{Binding From, Mode=TwoWay}" Margin="0"/>
-			<TextBlock Text="To" Style="{StaticResource PhoneTextSubtleStyle}" Margin="12,12,12,-12"/>
+			<TextBlock Text="To" Style="{StaticResource PhoneTextSubtleStyle}" Margin="12,12,12,-6"/>
 			<TextBox x:Name="To" Text="{Binding To, Mode=TwoWay}" Margin="0"/>
-			<TextBlock Text="Via" Style="{StaticResource PhoneTextSubtleStyle}" Margin="12,12,12,-12"/>
+			<TextBlock Text="Via" Style="{StaticResource PhoneTextSubtleStyle}" Margin="12,12,12,-6"/>
 			<TextBox x:Name="Via" Text="{Binding Via, Mode=TwoWay}" Margin="0"/>
-			<TextBlock Text="Time" Style="{StaticResource PhoneTextSubtleStyle}" HorizontalAlignment="Left" Margin="12,12,12,0"/>
+			<TextBlock Text="Time" Style="{StaticResource PhoneTextSubtleStyle}" HorizontalAlignment="Left" Margin="12,12,12,-6"/>
 			<StackPanel Orientation="Horizontal">
 				<!--<TextBlock Text="Dep" Style="{StaticResource PhoneTextNormalStyle}" VerticalAlignment="Center"/>
 				<toolkitPrimitives:ToggleSwitchButton Margin="-24"/>

@@ -1,28 +1,27 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-
 <Deployment xmlns="http://schemas.microsoft.com/windowsphone/2009/deployment" AppPlatformVersion="7.1">
-  <App xmlns="" ProductID="{138a254f-6f0c-419e-bc9a-f2f747554ae5}" Title="TrainShareApp" RuntimeType="Silverlight" Version="1.0.0.0" Genre="apps.normal"  Author="TrainShareApp author" Description="Sample description" Publisher="TrainShareApp">
-    <IconPath IsRelative="true" IsResource="false">Image/ApplicationIcon.png</IconPath>
+  <App xmlns="" ProductID="{138a254f-6f0c-419e-bc9a-f2f747554ae5}" Title="TrainShare" RuntimeType="Silverlight" Version="1.0.0.0" Genre="apps.normal" Author="TrainShareApp author" Description="Sample description" Publisher="TrainShareApp">
+    <IconPath IsRelative="true" IsResource="false">Image\tile-large.png</IconPath>
     <Capabilities>
-      <Capability Name="ID_CAP_IDENTITY_DEVICE"/>
-      <Capability Name="ID_CAP_IDENTITY_USER"/>
-      <Capability Name="ID_CAP_LOCATION"/>
-      <Capability Name="ID_CAP_MEDIALIB"/>
-      <Capability Name="ID_CAP_NETWORKING"/>
-      <Capability Name="ID_CAP_PUSH_NOTIFICATION"/>
-      <Capability Name="ID_CAP_SENSORS"/>
-      <Capability Name="ID_CAP_WEBBROWSERCOMPONENT"/>
-      <Capability Name="ID_CAP_ISV_CAMERA"/>
+      <Capability Name="ID_CAP_IDENTITY_DEVICE" />
+      <Capability Name="ID_CAP_IDENTITY_USER" />
+      <Capability Name="ID_CAP_LOCATION" />
+      <Capability Name="ID_CAP_MEDIALIB" />
+      <Capability Name="ID_CAP_NETWORKING" />
+      <Capability Name="ID_CAP_PUSH_NOTIFICATION" />
+      <Capability Name="ID_CAP_SENSORS" />
+      <Capability Name="ID_CAP_WEBBROWSERCOMPONENT" />
+      <Capability Name="ID_CAP_ISV_CAMERA" />
     </Capabilities>
     <Tasks>
-      <DefaultTask  Name ="_default" NavigationPage="MainPage.xaml"/>
+      <DefaultTask Name="_default" NavigationPage="MainPage.xaml" />
     </Tasks>
     <Tokens>
       <PrimaryToken TokenID="TrainShareAppToken" TaskName="_default">
         <TemplateType5>
-          <BackgroundImageURI IsRelative="true" IsResource="false">Image/Background.png</BackgroundImageURI>
+          <BackgroundImageURI IsRelative="true" IsResource="false">Image\tile-small.png</BackgroundImageURI>
           <Count>0</Count>
-          <Title>TrainShareApp</Title>
+          <Title>TrainShare</Title>
         </TemplateType5>
       </PrimaryToken>
     </Tokens>

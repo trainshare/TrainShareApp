@@ -1,9 +1,6 @@
 <MarketplaceDetails>
-  <SmallAppTile>
-  </SmallAppTile>
-  <LargeAppTile>
-  </LargeAppTile>
-  <PCAppTile>
-  </PCAppTile>
+  <SmallAppTile>tile-small.png</SmallAppTile>
+  <LargeAppTile>tile-large.png</LargeAppTile>
+  <PCAppTile>marketplace.png</PCAppTile>
   <ScreenShots>;;;;;;;;</ScreenShots>
 </MarketplaceDetails>
