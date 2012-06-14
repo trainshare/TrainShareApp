@@ -7,16 +7,19 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:cal="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro"
     xmlns:vm="clr-namespace:TrainShareApp.ViewModels"
-	xmlns:slToolkit ="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
-	xmlns:c4f="clr-namespace:Coding4Fun.Phone.Controls;assembly=Coding4Fun.Phone.Controls" 
-	xmlns:Converters="clr-namespace:Coding4Fun.Phone.Controls.Converters;assembly=Coding4Fun.Phone.Controls"
+    xmlns:telerikPrimitives="clr-namespace:Telerik.Windows.Controls;assembly=Telerik.Windows.Controls.Primitives"
     x:Class="TrainShareApp.Views.SearchResultView"
     SupportedOrientations="Portrait" Orientation="Portrait"
     mc:Ignorable="d" d:DesignHeight="768" d:DesignWidth="480"
     shell:SystemTray.IsVisible="True"
     cal:Bind.AtDesignTime="True"
     d:DataContext="{d:DesignInstance IsDesignTimeCreatable=True, Type=vm:SearchResultViewModel}">
-	<phone:PhoneApplicationPage.Resources>
+
+    <telerikPrimitives:RadTransitionControl.Transition>
+        <telerikPrimitives:RadSlideTransition Orientation="Horizontal" />
+    </telerikPrimitives:RadTransitionControl.Transition>
+
+    <phone:PhoneApplicationPage.Resources>
 		<cal:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
 	</phone:PhoneApplicationPage.Resources>
 	
@@ -67,10 +70,10 @@
 			<TextBlock Text="{Binding From}" Style="{StaticResource PhoneTextExtraLargeStyle}" Margin="12,-6,12,12" Grid.Row="1" />
 			<TextBlock Text="To" Style="{StaticResource PhoneTextSubtleStyle}" Grid.Column="1" />
 			<TextBlock Text="{Binding To}" Style="{StaticResource PhoneTextExtraLargeStyle}" Grid.Row="1" Margin="12,-6,12,12" Grid.Column="1" />
-			<TextBlock Text="Departure" Style="{StaticResource PhoneTextSubtleStyle}" Grid.Row="2" />
-            <TextBlock Text="{Binding DepartureTime, StringFormat=t}" Style="{StaticResource PhoneTextExtraLargeStyle}" Grid.Row="3" Margin="12,-6,12,0" />
-			<TextBlock Text="Arrival" Style="{StaticResource PhoneTextSubtleStyle}" Grid.Row="2" Grid.Column="1" />
-            <TextBlock Text="{Binding ArrivalTime, StringFormat=t}" Style="{StaticResource PhoneTextExtraLargeStyle}" Grid.Row="3" Grid.Column="1" Margin="12,-6,12,0" />
+			<TextBlock Text="Departure" Style="{StaticResource PhoneTextSubtleStyle}" Grid.Row="2" Visibility="{Binding IsDeparture, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            <TextBlock Text="{Binding Time, StringFormat=t}" Style="{StaticResource PhoneTextExtraLargeStyle}" Grid.Row="3" Margin="12,-6,12,0" Visibility="{Binding IsDeparture, Converter={StaticResource BooleanToVisibilityConverter}}" />
+			<TextBlock Text="Arrival" Style="{StaticResource PhoneTextSubtleStyle}" Grid.Row="2" Grid.Column="1" Visibility="{Binding IsArrival, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            <TextBlock Text="{Binding Time, StringFormat=t}" Style="{StaticResource PhoneTextExtraLargeStyle}" Grid.Row="3" Grid.Column="1" Margin="12,-6,12,0" Visibility="{Binding IsArrival, Converter={StaticResource BooleanToVisibilityConverter}}" />
 		
         </Grid>
 		
@@ -81,15 +84,7 @@
         		</Style>
         	</ListBox.ItemContainerStyle>
         </ListBox>
-		<c4f:ProgressOverlay Visibility="{Binding Loading, Converter={StaticResource BooleanToVisibilityConverter}}" Grid.RowSpan="4">
-			<c4f:ProgressOverlay.Content>
-				<StackPanel>
-					<TextBlock HorizontalAlignment="Center">Loading</TextBlock>
-					<slToolkit:PerformanceProgressBar
-						IsIndeterminate="{Binding Loading}" />
-                    </StackPanel>
-			</c4f:ProgressOverlay.Content>
-		</c4f:ProgressOverlay>
+        <telerikPrimitives:RadBusyIndicator AnimationStyle="AnimationStyle9" IsRunning="{Binding Loading}" Grid.Row="4" Foreground="{StaticResource PhoneForegroundBrush}" />
     </Grid>
 
 </phone:PhoneApplicationPage>

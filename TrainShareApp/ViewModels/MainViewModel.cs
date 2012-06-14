@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Controls;
 using Caliburn.Micro;
+using Telerik.Windows.Controls;
 using TrainShareApp.Data;
 using TrainShareApp.Model;
 using TrainShareApp.Event;
@@ -74,20 +75,6 @@ namespace TrainShareApp.ViewModels
         public bool HasNoFriends { get { return Friends == null || Friends.Count == 0; } }
         public bool HasFriends { get { return !HasNoFriends; } }
 
-        protected async override void OnViewReady(object view)
-        {
-            base.OnViewReady(view);
-
-            try
-            {
-                Friends = (await _trainshareClient.GetFriends()).ToList();
-            }
-            catch (Exception e)
-            {
-                _logger.Error(e);
-            }
-        }
-
         public void Checkin()
         {
             _navigationService
@@ -107,25 +94,51 @@ namespace TrainShareApp.ViewModels
                 .Navigate();
         }
 
-        public void HistorySelected(ListBox list, Checkin e)
+        public void HistorySelected(RadDataBoundListBox list)
         {
-            if (e == null) return;
+            var checkin = list.SelectedValue as Checkin;
 
-            list.SelectedIndex = -1;
+            if (checkin == null) return;
 
             _navigationService
                 .UriFor<SearchViewModel>()
-                .WithParam(vm => vm.From, e.DepartureStation)
-                .WithParam(vm => vm.To, e.ArrivalStation)
-                .WithParam(vm => vm.Time, DateTime.Now.Date.Add(e.DepartureTime.TimeOfDay))
+                .WithParam(vm => vm.From, checkin.DepartureStation)
+                .WithParam(vm => vm.To, checkin.ArrivalStation)
+                .WithParam(vm => vm.IsArrival, false)
+                .WithParam(vm => vm.Time, DateTime.Now.Date.Add(checkin.DepartureTime.TimeOfDay))
                 .Navigate();
         }
 
-        public async void Handle(Checkin message)
+        public void Handle(Checkin message)
         {
             CurrentCheckin = message;
 
-            History = (await _trainshareClient.GetHistory(10)).ToList();
+            UpdateHistory();
+            UpdateFriends();
+        }
+
+        private async void UpdateHistory()
+        {
+            try
+            {
+                History = (await _trainshareClient.GetHistory(10)).ToList();
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e);
+            }
+        }
+
+        private async void UpdateFriends()
+        {
+            try
+            {
+                Friends = (await _trainshareClient.GetFriends()).ToList();
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e);
+            }
         }
 
         public void Handle(Dismiss message)

@@ -37,6 +37,13 @@ namespace TrainShareApp.ViewModels
             _events.Subscribe(this);
         }
 
+        public bool IsArrival { get; set; }
+
+        public string ArrivalString
+        {
+            get { return IsArrival ? "Arr" : "Dep"; }
+        }
+
         public string From { get; set; }
 
         public string To { get; set; }
@@ -52,6 +59,7 @@ namespace TrainShareApp.ViewModels
                 .WithParam(vm => vm.From, From)
                 .WithParam(vm => vm.Via, Via)
                 .WithParam(vm => vm.To, To)
+                .WithParam(vm => vm.IsArrival, IsArrival)
                 .WithParam(vm => vm.Time, Time)
                 .Navigate();
         }

@@ -7,17 +7,20 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:cal="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro"
     xmlns:vm="clr-namespace:TrainShareApp.ViewModels"
-    xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit" 
-	xmlns:toolkitPrimitives="clr-namespace:Microsoft.Phone.Controls.Primitives;assembly=Microsoft.Phone.Controls.Toolkit" 
-	xmlns:Coding4Fun_Phone_Controls="clr-namespace:Coding4Fun.Phone.Controls;assembly=Coding4Fun.Phone.Controls" 
-	mc:Ignorable="d"
+    xmlns:telerikPrimitives="clr-namespace:Telerik.Windows.Controls;assembly=Telerik.Windows.Controls.Primitives"
+    xmlns:telerikInput="clr-namespace:Telerik.Windows.Controls;assembly=Telerik.Windows.Controls.Input"
+    mc:Ignorable="d"
 	x:Class="TrainShareApp.Views.SearchView"
     SupportedOrientations="Portrait" Orientation="Portrait"
     shell:SystemTray.IsVisible="True"
     cal:Bind.AtDesignTime="True"
     d:DataContext="{d:DesignInstance IsDesignTimeCreatable=True, Type=vm:SearchViewModel}" d:DesignHeight="768" d:DesignWidth="480">
 
-	<Grid x:Name="LayoutRoot" Background="{StaticResource MainBackground}">
+    <telerikPrimitives:RadTransitionControl.Transition>
+        <telerikPrimitives:RadSlideTransition Orientation="Horizontal" />
+    </telerikPrimitives:RadTransitionControl.Transition>
+
+    <Grid x:Name="LayoutRoot" Background="{StaticResource MainBackground}">
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="*"/>
@@ -41,8 +44,9 @@
 				<!--<TextBlock Text="Dep" Style="{StaticResource PhoneTextNormalStyle}" VerticalAlignment="Center"/>
 				<toolkitPrimitives:ToggleSwitchButton Margin="-24"/>
 				<TextBlock Text="Arr" Style="{StaticResource PhoneTextNormalStyle}" VerticalAlignment="Center"/>-->
-				<toolkit:TimePicker Value="{Binding Time, Mode=TwoWay}" Width="220"/>
-				<Coding4Fun_Phone_Controls:RoundButton Name="RefreshTime" Margin="0,10,0,0" ImageSource="/icons/appbar.refresh.rest.png"/>
+				<telerikPrimitives:RadToggleSwitch Content="{Binding ArrivalString, Mode=OneWay}" IsChecked="{Binding IsArrival, Mode=TwoWay}" Width="163" />
+                <telerikInput:RadTimePicker Value="{Binding Time, Mode=TwoWay}" Width="220" OkButtonIconUri="/icons/appbar.check.rest.png" CancelButtonIconUri="/icons/appbar.cancel.rest.png"/>
+				<telerikPrimitives:RadImageButton ButtonType="Custom" RestStateImageSource="/icons/appbar.refresh.rest.png" PressedStateImageSource="/icons/appbar.refresh.rest.png" ButtonShape="Ellipse" BorderThickness="{StaticResource PhoneBorderThickness}" Margin="{StaticResource PhoneMargin}"/>
 			</StackPanel>
 			<Button x:Name="Search" Content="Search" Width="250" Margin="0,96,0,0"/>
 		</StackPanel>

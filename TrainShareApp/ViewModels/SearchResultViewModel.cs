@@ -53,7 +53,8 @@ namespace TrainShareApp.ViewModels
             From = "Lausanne";
             To = "Genf";
             Via = string.Empty;
-            ArrivalTime = DateTime.Now;
+            IsArrival = true;
+            Time = DateTime.Now;
         }
 
         public SearchResultViewModel(
@@ -73,9 +74,9 @@ namespace TrainShareApp.ViewModels
         public string From { get; set; }
         public string To { get; set; }
         public string Via { get; set; }
+        public bool IsArrival { get; set; }
+        public bool IsDeparture { get { return !IsArrival; } }
         public DateTime Time { get; set; }
-        public DateTime? DepartureTime { get; set; }
-        public DateTime? ArrivalTime { get; set; }
 
         public bool Loading { get; set; }
 
@@ -105,7 +106,6 @@ namespace TrainShareApp.ViewModels
 
         protected override void OnActivate()
         {
-            DepartureTime = Time;
             SubmitSearch();
 
             base.OnActivate();
@@ -130,14 +130,11 @@ namespace TrainShareApp.ViewModels
 
             try
             {
-                Debug.Assert(DepartureTime.HasValue);
-                var result = await _timeTable.GetConnections(From, To, DepartureTime.Value);
+                var result = await _timeTable.GetConnections(From, To, Time);
 
                 From = result.From.Name;
-                NotifyOfPropertyChange(() => From);
 
                 To = result.To.Name;
-                NotifyOfPropertyChange(() => To);
 
                 Loading = false;
                 Results.AddRange(result.Connections);

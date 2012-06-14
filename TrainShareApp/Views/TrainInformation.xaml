@@ -25,7 +25,7 @@
 		<TextBlock Grid.Row="1" TextWrapping="Wrap" Text="{Binding DepartureStation}" Style="{StaticResource PhoneTextLargeStyle}" HorizontalAlignment="Center"/>
 		<TextBlock Grid.Row="1" TextWrapping="Wrap" Text="{Binding ArrivalStation}" Grid.Column="1" Style="{StaticResource PhoneTextLargeStyle}" HorizontalAlignment="Center"/>
 		<TextBlock x:Name="FromAt" Text="Departure" Grid.Row="2" Style="{StaticResource PhoneTextSmallStyle}" HorizontalAlignment="Center"/>
-		<TextBlock x:Name="ToAt" Text="Arrival" Grid.Row="2" Grid.Column="2" Style="{StaticResource PhoneTextSmallStyle}" HorizontalAlignment="Center"/>
+		<TextBlock x:Name="ToAt" Text="IsArrival" Grid.Row="2" Grid.Column="2" Style="{StaticResource PhoneTextSmallStyle}" HorizontalAlignment="Center"/>
 		<TextBlock TextWrapping="Wrap" Text="{Binding DepartureTime, StringFormat=HH:mm}" Grid.Row="4" Style="{StaticResource PhoneTextLargeStyle}" HorizontalAlignment="Center"/>
 		<TextBlock TextWrapping="Wrap" Text="{Binding ArrivalTime, StringFormat=HH:mm}" Grid.Row="3" Grid.Column="1" Style="{StaticResource PhoneTextLargeStyle}" HorizontalAlignment="Center"/>
 	</Grid>

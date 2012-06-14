@@ -1,6 +1,6 @@
-﻿using TrainShareApp.Data;
+﻿using Telerik.Windows.Controls;
+using TrainShareApp.Data;
 using TrainShareApp.Logger;
-using TrainShareApp.Model;
 using TrainShareApp.ViewModels;
 
 namespace TrainShareApp {
@@ -16,11 +16,13 @@ namespace TrainShareApp {
 
         protected override PhoneApplicationFrame CreatePhoneApplicationFrame()
         {
-            return new TransitionFrame();
+            return new RadPhoneApplicationFrame();
         }
 
         protected override void Configure()
         {
+            InteractionEffectManager.AllowedTypes.Add(typeof(RadDataBoundListBoxItem));
+
             container = new PhoneContainer(RootFrame);
 
 			container.RegisterPhoneServices();
@@ -57,18 +59,11 @@ namespace TrainShareApp {
             container
                 .Singleton<MainPageViewModel>()
                 .Singleton<MainViewModel>()
-                .PerRequest<LoginViewModel>()
-                .PerRequest<CheckinViewModel>()
                 .Singleton<AccountsViewModel>()
-                .Singleton<SearchViewModel>()
-                .Singleton<SearchResultViewModel>();
-
-            // This is important to force the container to build up all viewmodel at the beginning
-            ////Console.WriteLine(container.GetInstance(typeof (MainViewModel), null));
-            ////Console.WriteLine(container.GetInstance(typeof (LoginViewModel), null));
-            ////Console.WriteLine(container.GetInstance(typeof (CheckinViewModel), null));
-            ////Console.WriteLine(container.GetInstance(typeof (AccountsViewModel), null));
-            ////Console.WriteLine(container.GetInstance(typeof (SearchResultViewModel), null));
+                .PerRequest<SearchViewModel>()
+                .PerRequest<SearchResultViewModel>()
+                .PerRequest<CheckinViewModel>()
+                .PerRequest<LoginViewModel>();
 
             AddCustomConventions();
         }
