@@ -72,9 +72,9 @@ namespace TrainShareApp.ViewModels
 
         public void Cancel()
         {
-            _navigationService
-                .UriFor<MainViewModel>()
-                .Navigate();
+            _navigationService.RemoveBackEntry();
+            _navigationService.RemoveBackEntry();
+            _navigationService.GoBack();
         }
 
         protected override void OnActivate()

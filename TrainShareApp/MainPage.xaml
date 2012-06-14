@@ -7,6 +7,8 @@
                             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="480"
                             d:DesignHeight="768" xmlns:cal="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro"
                             xmlns:vm="clr-namespace:TrainShareApp"
+                            xmlns:telerikPrimitives="clr-namespace:Telerik.Windows.Controls;assembly=Telerik.Windows.Controls.Primitives"
+                            xmlns:telerik="clr-namespace:Telerik.Windows.Controls;assembly=Telerik.Windows.Core"
                             FontFamily="{StaticResource PhoneFontFamilyNormal}" FontSize="{StaticResource PhoneFontSizeNormal}"
                             Foreground="{StaticResource PhoneForegroundBrush}" SupportedOrientations="Portrait" Orientation="Portrait"
                             shell:SystemTray.IsVisible="True" cal:Bind.AtDesignTime="True"
@@ -32,18 +34,30 @@
       </Grid.RowDefinitions>
 
       <StackPanel x:Name="TitlePanel" Grid.Row="0" Margin="12,17,12,0" VerticalAlignment="Top">
-      	<TextBlock x:Name="ApplicationTitle" Text="Trainshare" Style="{StaticResource PhoneTextNormalStyle}"/>
-      	<TextBlock x:Name="PageTitle" Text="Welcome" Margin="9,-7,0,30" Style="{StaticResource PhoneTextTitle1Style}"/>
-      	<TextBlock TextWrapping="Wrap" FontSize="{StaticResource PhoneFontSizeMedium}"
-      		Text="Thank you very much for using the Train Share App." />
-      	<TextBlock TextWrapping="Wrap" FontSize="{StaticResource PhoneFontSizeMedium}"
-      		Text="To Continue please login to either Facebook or Twitter or both." />
+        <TextBlock x:Name="ApplicationTitle" Text="Trainshare" Style="{StaticResource PhoneTextNormalStyle}" />
+        <TextBlock x:Name="PageTitle" Text="Welcome" Margin="9,-7,0,30" Style="{StaticResource PhoneTextTitle1Style}" />
+        <TextBlock TextWrapping="Wrap" FontSize="{StaticResource PhoneFontSizeMedium}"
+                   Text="Thank you very much for using the Train Share App." />
+        <TextBlock TextWrapping="Wrap" FontSize="{StaticResource PhoneFontSizeMedium}"
+                   Text="To Continue please login to either Facebook or Twitter or both." />
       </StackPanel>
-      <Button x:Name="Facebook" Grid.Row="1" Width="300" VerticalAlignment="Center" HorizontalAlignment="Center" Content="Facebook"/>
-      <Button x:Name="Twitter" Grid.Row="2" Width="300" VerticalAlignment="Center" HorizontalAlignment="Center" Content="Twitter"/>
+      <Button x:Name="Facebook" Grid.Row="1" Width="300" VerticalAlignment="Center" HorizontalAlignment="Center"
+              Content="Facebook" />
+      <Button x:Name="Twitter" Grid.Row="2" Width="300" VerticalAlignment="Center" HorizontalAlignment="Center"
+              Content="Twitter" />
       <Button x:Name="Continue" Grid.Row="3" Width="200" Margin="0 0 20 20" VerticalAlignment="Bottom"
-              HorizontalAlignment="Right" Content="Continue"/>
+              HorizontalAlignment="Right" Content="Continue" />
     </Grid>
+
+    <telerikPrimitives:RadWindow Name="Window" IsFullScreen="True" Grid.RowSpan="4" d:IsHidden="True">
+      <telerikPrimitives:RadWindow.OpenAnimation>
+        <telerik:RadFadeAnimation StartOpacity="0" EndOpacity="1" />
+      </telerikPrimitives:RadWindow.OpenAnimation>
+      <telerikPrimitives:RadWindow.CloseAnimation>
+        <telerik:RadFadeAnimation StartOpacity="1" EndOpacity="0" />
+      </telerikPrimitives:RadWindow.CloseAnimation>
+      <phone:WebBrowser Name="Browser" />
+    </telerikPrimitives:RadWindow>
   </Grid>
 
 </phone:PhoneApplicationPage>

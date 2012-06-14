@@ -8,6 +8,7 @@ using TrainShareApp.Data;
 using TrainShareApp.Model;
 using TrainShareApp.ViewModels;
 using TrainShareApp.Event;
+using TrainShareApp.Views;
 
 namespace TrainShareApp
 {
@@ -48,27 +49,51 @@ namespace TrainShareApp
             get { return !_twitterClient.IsLoggedIn; }
         }
 
-        public void Twitter()
+        public async void Twitter()
         {
-            _navigationService
-                .UriFor<LoginViewModel>()
-                .WithParam(vm => vm.Client, "twitter")
-                .Navigate();
-        }
+            View.Browser.NavigateToString(string.Empty);
+            View.Window.IsOpen = true;
 
+            try
+            {
+                await _twitterClient.LoginAsync(View.Browser);
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e);
+            }
+            finally
+            {
+                View.Window.IsOpen = false;
+            }
+        }
 
         public bool CanFacebook
         {
             get { return !_facebookClient.IsLoggedIn; }
         }
-
-
-        public void Facebook()
+        public async void Facebook()
         {
-            _navigationService
-                .UriFor<LoginViewModel>()
-                .WithParam(vm => vm.Client, "facebook")
-                .Navigate();
+            View.Browser.NavigateToString(string.Empty);
+            View.Window.IsOpen = true;
+
+            try
+            {
+                await _facebookClient.LoginAsync(View.Browser);
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e);
+            }
+            finally
+            {
+                View.Window.IsOpen = false;
+            }
+        }
+
+        private AccountsView View
+        {
+            get { return GetView() as AccountsView; }
         }
 
         public bool CanContinue
@@ -143,9 +168,7 @@ namespace TrainShareApp
                         .FromEventPattern<NavigatedEventHandler, NavigationEventArgs>(
                             h => _navigationService.Navigated += h,
                             h => _navigationService.Navigated -= h)
-                        .Where(e =>
-                               e.EventArgs.NavigationMode != NavigationMode.Back &&
-                               !e.EventArgs.Uri.ToString().Contains("/Views/LoginView.xaml"))
+                        .Where(e => e.EventArgs.NavigationMode != NavigationMode.Back)
                         .Take(1)
                         .Subscribe(
                             e =>

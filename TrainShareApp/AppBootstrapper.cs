@@ -63,8 +63,7 @@ namespace TrainShareApp {
                 .Singleton<AboutViewModel>()
                 .PerRequest<SearchViewModel>()
                 .PerRequest<SearchResultViewModel>()
-                .PerRequest<CheckinViewModel>()
-                .PerRequest<LoginViewModel>();
+                .PerRequest<CheckinViewModel>();
 
             AddCustomConventions();
         }

@@ -30,7 +30,8 @@
       
     <TextBlock TextWrapping="Wrap" Grid.Row="1" d:LayoutOverrides="Height" VerticalAlignment="Center"
                Margin="{StaticResource PhoneHorizontalMargin}">
-      To update  your  Twitter or Facebook friends please click the corr e sponding button.        This enables us to find additional people who could share the train with you .
+      To update  your  Twitter or Facebook friends please click the corr e sponding button. 
+      This enables us to find additional people who could share the train with you .
     </TextBlock>
       
     <Button x:Name="Twitter" Content="Update Twitter Friends" Grid.Row="2" d:LayoutOverrides="Height"
