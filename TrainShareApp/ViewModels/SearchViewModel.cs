@@ -55,5 +55,10 @@ namespace TrainShareApp.ViewModels
                 .WithParam(vm => vm.Time, Time)
                 .Navigate();
         }
+
+        public void RefreshTime()
+        {
+            Time = DateTime.Now;
+        }
     }
 }

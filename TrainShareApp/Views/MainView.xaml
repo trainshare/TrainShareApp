@@ -8,26 +8,83 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:cal="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro"
     xmlns:vm="clr-namespace:TrainShareApp.ViewModels"
-    xmlns:ctrls="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
-    xmlns:Views="clr-namespace:TrainShareApp.Views"
+    xmlns:Interactivity="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+    xmlns:ec="clr-namespace:Microsoft.Expression.Interactivity.Core;assembly=Microsoft.Expression.Interactions"
+    xmlns:telerikCore="clr-namespace:Telerik.Windows.Controls;assembly=Telerik.Windows.Core"
+    xmlns:telerikPrimitives="clr-namespace:Telerik.Windows.Controls;assembly=Telerik.Windows.Controls.Primitives"
     x:Class="TrainShareApp.Views.MainView"
     mc:Ignorable="d" d:DesignWidth="480" d:DesignHeight="768"
     SupportedOrientations="Portrait"  Orientation="Portrait"
     shell:SystemTray.IsVisible="True"
     cal:Bind.AtDesignTime="True"
-    d:DataContext="{d:DesignInstance IsDesignTimeCreatable=True, Type=vm:MainViewModel}">
+    d:DataContext="{d:DesignInstance IsDesignTimeCreatable=True, Type=vm:MainViewModel}"
+    telerikCore:InteractionEffectManager.IsInteractionEnabled="True">
+    
 	<phone:PhoneApplicationPage.Resources>
 		<cal:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
 	</phone:PhoneApplicationPage.Resources>
 
     <!--LayoutRoot is the root grid where all page content is placed-->
     <Grid x:Name="LayoutRoot" Background="{StaticResource MainBackground}">
+    	<VisualStateManager.CustomVisualStateManager>
+    		<ec:ExtendedVisualStateManager/>
+    	</VisualStateManager.CustomVisualStateManager>
+    	<VisualStateManager.VisualStateGroups>
+    		<VisualStateGroup x:Name="CheckinStates" ec:ExtendedVisualStateManager.UseFluidLayout="True">
+    			<VisualStateGroup.Transitions>
+    				<VisualTransition/>
+    			</VisualStateGroup.Transitions>
+    			<VisualState x:Name="CheckedIn">
+    				<Storyboard>
+    					<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="CheckinWrapper">
+    						<DiscreteObjectKeyFrame KeyTime="0">
+    							<DiscreteObjectKeyFrame.Value>
+    								<Visibility>Collapsed</Visibility>
+    							</DiscreteObjectKeyFrame.Value>
+    						</DiscreteObjectKeyFrame>
+    					</ObjectAnimationUsingKeyFrames>
+    					<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="InformationWrapper">
+    						<DiscreteObjectKeyFrame KeyTime="0">
+    							<DiscreteObjectKeyFrame.Value>
+    								<Visibility>Visible</Visibility>
+    							</DiscreteObjectKeyFrame.Value>
+    						</DiscreteObjectKeyFrame>
+    					</ObjectAnimationUsingKeyFrames>
+    					<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="InformationWrapper">
+    						<EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+    						<EasingDoubleKeyFrame KeyTime="0:0:1" Value="1">
+    							<EasingDoubleKeyFrame.EasingFunction>
+    								<QuinticEase EasingMode="EaseIn"/>
+    							</EasingDoubleKeyFrame.EasingFunction>
+    						</EasingDoubleKeyFrame>
+    					</DoubleAnimationUsingKeyFrames>
+    				</Storyboard>
+    			</VisualState>
+    			<VisualState x:Name="CheckedOut">
+    				<Storyboard>
+    					<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="CheckinWrapper">
+    						<DiscreteObjectKeyFrame KeyTime="0">
+    							<DiscreteObjectKeyFrame.Value>
+    								<Visibility>Visible</Visibility>
+    							</DiscreteObjectKeyFrame.Value>
+    						</DiscreteObjectKeyFrame>
+    					</ObjectAnimationUsingKeyFrames>
+    					<DoubleAnimation Duration="0" To="1" Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="CheckinWrapper" d:IsOptimized="True"/>
+    				</Storyboard>
+    			</VisualState>
+    		</VisualStateGroup>
+    	</VisualStateManager.VisualStateGroups>
+
+    	<Interactivity:Interaction.Behaviors>
+    		<ec:DataStateBehavior Binding="{Binding HasCheckedIn, Mode=OneWay}" Value="True" TrueState="CheckedIn" FalseState="CheckedOut"/>
+    	</Interactivity:Interaction.Behaviors>
+
 		<controls:Panorama Title="trainshare">
 
 			<!--Panorama item one-->
 			<controls:PanoramaItem x:Name="checkinItem" Header="checkin">
 				<Grid>
-					<Grid x:Name="InformationWrapper" Visibility="{Binding HasCheckedIn, Converter={StaticResource BooleanToVisibilityConverter}}">
+					<Grid x:Name="InformationWrapper" Visibility="Collapsed">
 						<Grid.RowDefinitions>
 							<RowDefinition Height="Auto"/>
 							<RowDefinition Height="Auto"/>
@@ -49,9 +106,9 @@
 						<TextBlock Text="{Binding CurrentCheckin.DepartureTime, StringFormat=HH:mm}" Style="{StaticResource PhoneTextExtraLargeStyle}" Grid.Row="5" Margin="12,-6,12,0" />
 						<TextBlock Text="Arrival" Style="{StaticResource PhoneTextSubtleStyle}" Grid.Row="4" Grid.Column="1" />
 						<TextBlock Text="{Binding CurrentCheckin.ArrivalTime, StringFormat=HH:mm}" Style="{StaticResource PhoneTextExtraLargeStyle}" Grid.Row="5" Grid.Column="1" Margin="12,-6,12,0" />
-						<Button Name="Checkout" Content="Check Out" Grid.Row="6" Grid.ColumnSpan="2" VerticalAlignment="Bottom" Margin="0,0,0,24" Width="300" Height="120" />
+						<Button x:Name="Checkout" Content="Check Out" Grid.Row="6" Grid.ColumnSpan="2" VerticalAlignment="Bottom" Margin="0,0,0,24" Width="300" Height="120" />
 					</Grid>
-					<StackPanel x:Name="CheckinWrapper" Visibility="{Binding HasNotCheckedIn, Converter={StaticResource BooleanToVisibilityConverter}}" >
+					<StackPanel x:Name="CheckinWrapper" Visibility="Collapsed" Opacity="0" >
 	                	<TextBlock Text="Please check in to see your friends on the same train" TextWrapping="Wrap" Width="300" Style="{StaticResource PhoneTextSubtleStyle}" TextAlignment="Center" Margin="12,120,12,24"/>
 						<Button x:Name="Checkin" Content="Check In" Width="300" Height="120" />
 					</StackPanel>
@@ -60,7 +117,7 @@
 			<controls:PanoramaItem x:Name="friendsItem" Header="friends">
 				<Grid d:LayoutOverrides="HorizontalAlignment">
 					<TextBlock Text="There are currently no friends on this train" Style="{StaticResource PhoneTextSubtleStyle}" Margin="12,120,12,0" Visibility="{Binding HasNoFriends, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}"/>
-					<ListBox ItemsSource="{Binding Friends}" ItemTemplate="{StaticResource FriendTemplate}" Style="{StaticResource FriendsListStyle}" Visibility="{Binding HasFriends, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}"/>
+					<ListBox x:Name="listBox" ItemsSource="{Binding Friends}" ItemTemplate="{StaticResource FriendTemplate}" Style="{StaticResource FriendsListStyle}" Visibility="{Binding HasFriends, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}" Margin="12,0,0,0"/>
 				</Grid>
 			</controls:PanoramaItem>
 
@@ -68,9 +125,8 @@
 			<controls:PanoramaItem x:Name="historyItem" Header="history">
             	<Grid>
             		<ListBox 
-					x:Name="HistoryList" Visibility="{Binding HasHistory, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}"
-					ItemsSource="{Binding History}" ItemTemplate="{StaticResource HistoryTemplate}" HorizontalContentAlignment="Stretch"
-					cal:Message.Attach="[Event SelectionChanged] = [Action HistorySelected($this)]">
+					x:Name="HistoryList" Visibility="{Binding HasHistory, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}" HorizontalContentAlignment="Stretch"
+					cal:Message.Attach="[Event SelectionChanged] = [Action HistorySelected($source, $this)]" Margin="12,0,0,0">
 			        	<ListBox.ItemContainerStyle>
 			        		<Style TargetType="ListBoxItem">
 			        			<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
@@ -78,6 +134,8 @@
 			        	</ListBox.ItemContainerStyle>
 					</ListBox>
             		<TextBlock Text="You have not checked in until now" Width="305" Visibility="{Binding HasNoHistory, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}" Style="{StaticResource PhoneTextSubtleStyle}" Margin="12,120,12,0"/>
+            		<telerikPrimitives:RadDataBoundListBox VerticalAlignment="Top" d:LayoutOverrides="Width" EmptyContent="You have not checked in yet" ItemsSource="{Binding History}" ItemTemplate="{StaticResource HistoryTemplate}">
+					</telerikPrimitives:RadDataBoundListBox>
             	</Grid>
 			</controls:PanoramaItem>
 		</controls:Panorama>

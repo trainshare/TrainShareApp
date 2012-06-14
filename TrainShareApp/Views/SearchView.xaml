@@ -9,6 +9,7 @@
     xmlns:vm="clr-namespace:TrainShareApp.ViewModels"
     xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit" 
 	xmlns:toolkitPrimitives="clr-namespace:Microsoft.Phone.Controls.Primitives;assembly=Microsoft.Phone.Controls.Toolkit" 
+	xmlns:Coding4Fun_Phone_Controls="clr-namespace:Coding4Fun.Phone.Controls;assembly=Coding4Fun.Phone.Controls" 
 	mc:Ignorable="d"
 	x:Class="TrainShareApp.Views.SearchView"
     SupportedOrientations="Portrait" Orientation="Portrait"
@@ -41,6 +42,7 @@
 				<toolkitPrimitives:ToggleSwitchButton Margin="-24"/>
 				<TextBlock Text="Arr" Style="{StaticResource PhoneTextNormalStyle}" VerticalAlignment="Center"/>-->
 				<toolkit:TimePicker Value="{Binding Time, Mode=TwoWay}" Width="220"/>
+				<Coding4Fun_Phone_Controls:RoundButton Name="RefreshTime" Margin="0,10,0,0" ImageSource="/icons/appbar.refresh.rest.png"/>
 			</StackPanel>
 			<Button x:Name="Search" Content="Search" Width="250" Margin="0,96,0,0"/>
 		</StackPanel>

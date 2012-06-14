@@ -156,6 +156,8 @@ namespace TrainShareApp.Data
                         context.ObjectTrackingEnabled = true;
 
                         context.Checkins.UpdateOnSubmit(c => c.Id == CurrentCheckin.Id, c => c.CheckedOut = true);
+
+                        context.SubmitChanges();
                     }
 
                     CurrentCheckin = null;

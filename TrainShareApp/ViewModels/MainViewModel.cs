@@ -107,9 +107,11 @@ namespace TrainShareApp.ViewModels
                 .Navigate();
         }
 
-        public void HistorySelected(Checkin e)
+        public void HistorySelected(ListBox list, Checkin e)
         {
             if (e == null) return;
+
+            list.SelectedIndex = -1;
 
             _navigationService
                 .UriFor<SearchViewModel>()
