@@ -40,15 +40,15 @@
 			<TextBlock Text="Via" Style="{StaticResource PhoneTextSubtleStyle}" Margin="12,12,12,-6"/>
 			<TextBox x:Name="Via" Text="{Binding Via, Mode=TwoWay}" Margin="0"/>
 			<TextBlock Text="Time" Style="{StaticResource PhoneTextSubtleStyle}" HorizontalAlignment="Left" Margin="12,12,12,-6"/>
+			
 			<StackPanel Orientation="Horizontal">
-				<!--<TextBlock Text="Dep" Style="{StaticResource PhoneTextNormalStyle}" VerticalAlignment="Center"/>
-				<toolkitPrimitives:ToggleSwitchButton Margin="-24"/>
-				<TextBlock Text="Arr" Style="{StaticResource PhoneTextNormalStyle}" VerticalAlignment="Center"/>-->
 				<telerikPrimitives:RadToggleSwitch Content="{Binding ArrivalString, Mode=OneWay}" IsChecked="{Binding IsArrival, Mode=TwoWay}" Width="163" />
                 <telerikInput:RadTimePicker Value="{Binding Time, Mode=TwoWay}" Width="220" OkButtonIconUri="/icons/appbar.check.rest.png" CancelButtonIconUri="/icons/appbar.cancel.rest.png"/>
 				<telerikPrimitives:RadImageButton ButtonType="Custom" RestStateImageSource="/icons/appbar.refresh.rest.png" PressedStateImageSource="/icons/appbar.refresh.rest.png" ButtonShape="Ellipse" BorderThickness="{StaticResource PhoneBorderThickness}" Margin="{StaticResource PhoneMargin}"/>
 			</StackPanel>
+			
 			<Button x:Name="Search" Content="Search" Width="250" Margin="0,96,0,0"/>
+			
 		</StackPanel>
 	</Grid>
 </phone:PhoneApplicationPage>

@@ -1,20 +1,16 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using Caliburn.Micro;
 using TrainShareApp.Data;
-using TrainShareApp.Event;
-using TrainShareApp.Model;
+using TrainShareApp.Views;
 
 namespace TrainShareApp.ViewModels
 {
-    public class AccountsViewModel : Screen,
-        IHandle<Token>,
-        IHandle<Dismiss>
+    public class AccountsViewModel : Screen
     {
-        private readonly ITrainshareClient _trainshareClient;
+        private readonly ILog _logger;
         private readonly IFacebookClient _facebookClient;
         private readonly ITwitterClient _twitterClient;
-        private readonly INavigationService _navigationService;
-        private readonly IEventAggregator _events;
 
         public AccountsViewModel()
         {
@@ -23,81 +19,57 @@ namespace TrainShareApp.ViewModels
 
         public AccountsViewModel(
             ILog logger,
-            IEventAggregator events,
-            INavigationService navigationService,
-            ITrainshareClient trainshareClient,
             IFacebookClient facebookClient,
             ITwitterClient twitterClient)
         {
-            _trainshareClient = trainshareClient;
+            _logger = logger;
             _facebookClient = facebookClient;
             _twitterClient = twitterClient;
-            _navigationService = navigationService;
-            _events = events;
-
-            _events.Subscribe(this);
         }
 
-        public bool CanSave
-        {
-            get { return !string.IsNullOrEmpty(_trainshareClient.Token.AccessToken); }
-        }
+        public bool Loading { get; set; }
 
-        public void Facebook()
+        public async void Facebook()
         {
-            _navigationService
-                .UriFor<LoginViewModel>()
-                .WithParam(vm => vm.Client, "facebook");
-        }
+            View.Browser.NavigateToString(string.Empty);
+            View.Window.IsOpen = true;
 
-        public void Twitter ()
-        {
-            _navigationService
-                .UriFor<LoginViewModel>()
-                .WithParam(vm => vm.Client, "twitter");
-        }
-
-        public void Save()
-        {
-            _navigationService.GoBack();
-        }
-
-        protected override void OnActivate()
-        {
-            UpdateFacebook();
-            UpdateTwitter();
-
-            base.OnActivate();
-        }
-
-        public void Handle(Token message)
-        {
-            UpdateFacebook();
-            UpdateTwitter();
-            NotifyOfPropertyChange(() => CanSave);
-        }
-
-        public void Handle(Dismiss message)
-        {
-            switch (message)
+            try
             {
-                case Dismiss.Facebook:
-                    UpdateFacebook();
-                    break;
-                case Dismiss.Twitter:
-                    UpdateTwitter();
-                    break;
+                await _facebookClient.LoginAsync(View.Browser);
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e);
+            }
+            finally
+            {
+                View.Window.IsOpen = false;
             }
         }
 
-        private void UpdateFacebook()
+        public async void Twitter()
         {
-            NotifyOfPropertyChange(() => CanSave);
+            View.Browser.NavigateToString(string.Empty);
+            View.Window.IsOpen = true;
+
+            try
+            {
+                await _twitterClient.LoginAsync(View.Browser);
+            }
+            catch(Exception e)
+            {
+                _logger.Error(e);
+            }
+            finally
+            {
+                View.Window.IsOpen = false;
+            }
         }
 
-        private void UpdateTwitter()
+        private AccountsView View
         {
-            NotifyOfPropertyChange(() => CanSave);
+            get { return GetView() as AccountsView; }
         }
     }
 }

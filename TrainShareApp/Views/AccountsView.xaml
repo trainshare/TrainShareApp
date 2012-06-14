@@ -5,23 +5,48 @@
                             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                             xmlns:vm="clr-namespace:TrainShareApp.ViewModels" xmlns:cal="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro"
+                            xmlns:telerikPrimitives="clr-namespace:Telerik.Windows.Controls;assembly=Telerik.Windows.Controls.Primitives"
+                            xmlns:telerik="clr-namespace:Telerik.Windows.Controls;assembly=Telerik.Windows.Core"
                             x:Class="TrainShareApp.Views.AccountsView" FontFamily="{StaticResource PhoneFontFamilyNormal}"
                             FontSize="{StaticResource PhoneFontSizeNormal}" Foreground="{StaticResource PhoneForegroundBrush}"
                             SupportedOrientations="Portrait" Orientation="Portrait" mc:Ignorable="d" shell:SystemTray.IsVisible="True"
                             cal:Bind.AtDesignTime="True" d:DataContext="{d:DesignInstance IsDesignTimeCreatable=True, Type=vm:AccountsViewModel}"
-                            d:DesignHeight="696" d:DesignWidth="480">
+                            d:DesignHeight="768" d:DesignWidth="480">
 
   <!--LayoutRoot is the root grid where all page content is placed-->
-  <StackPanel x:Name="LayoutRoot" Background="Transparent">
-<!--TitlePanel contains the name of the application and page title-->
-		<StackPanel x:Name="TitlePanel" Margin="12,0,0,0">
-			<TextBlock x:Name="ApplicationTitle" Text="Trainshare" Style="{StaticResource PhoneTextNormalStyle}" />
-			<TextBlock x:Name="PageTitle" Text="Accounts" Margin="9,-7,0,0"
-				Style="{StaticResource PhoneTextTitle1Style}" />
-		</StackPanel>
-		<TextBlock TextWrapping="Wrap" Margin="40,60,40,0"><Run Text="To update "/><Run Text="your "/><Run Text="Twitter or Facebook friends please click the corr"/><Run Text="e"/><Run Text="sponding button."/><LineBreak/><Run Text="This enables us to find additional people who could share the train with you"/><Run Text="."/></TextBlock>
-		<Button x:Name="Twitter" Content="Update Twitter Friends" HorizontalAlignment="Center" Margin="0,100,0,0" />
-		<Button x:Name="Facebook" Content="Update Facebook Friends" HorizontalAlignment="Center" Margin="0,40,0,0" />
-	</StackPanel>
+  <Grid x:Name="LayoutRoot" Background="Transparent">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" MinHeight="113" />
+      <RowDefinition />
+      <RowDefinition />
+      <RowDefinition />
+    </Grid.RowDefinitions>
+      
+    <!--TitlePanel contains the name of the application and page title-->
+    <StackPanel x:Name="TitlePanel" Margin="12,0,0,0" d:LayoutOverrides="Height">
+      <TextBlock x:Name="ApplicationTitle" Text="Trainshare" Style="{StaticResource PhoneTextNormalStyle}" />
+      <TextBlock x:Name="PageTitle" Text="Accounts" Margin="9,-7,0,0" Style="{StaticResource PhoneTextTitle1Style}" />
+    </StackPanel>
+      
+    <TextBlock TextWrapping="Wrap" Grid.Row="1" d:LayoutOverrides="Height" VerticalAlignment="Center"
+               Margin="{StaticResource PhoneHorizontalMargin}">
+      To update  your  Twitter or Facebook friends please click the corr e sponding button.        This enables us to find additional people who could share the train with you .
+    </TextBlock>
+      
+    <Button x:Name="Twitter" Content="Update Twitter Friends" Grid.Row="2" d:LayoutOverrides="Height"
+            HorizontalAlignment="Center" VerticalAlignment="Center" />
+    <Button x:Name="Facebook" Content="Update Facebook Friends" HorizontalAlignment="Center" Grid.Row="3"
+            VerticalAlignment="Top" />
+
+    <telerikPrimitives:RadWindow Name="Window" IsFullScreen="True" Grid.RowSpan="4" d:IsHidden="True">
+      <telerikPrimitives:RadWindow.OpenAnimation>
+        <telerik:RadFadeAnimation StartOpacity="0" EndOpacity="1" />
+      </telerikPrimitives:RadWindow.OpenAnimation>
+      <telerikPrimitives:RadWindow.CloseAnimation>
+        <telerik:RadFadeAnimation StartOpacity="1" EndOpacity="0" />
+      </telerikPrimitives:RadWindow.CloseAnimation>
+      <phone:WebBrowser Name="Browser" />
+    </telerikPrimitives:RadWindow>
+  </Grid>
 
 </phone:PhoneApplicationPage>

@@ -10,7 +10,7 @@
                             xmlns:ec="clr-namespace:Microsoft.Expression.Interactivity.Core;assembly=Microsoft.Expression.Interactions"
                             xmlns:telerikCore="clr-namespace:Telerik.Windows.Controls;assembly=Telerik.Windows.Core"
                             xmlns:telerikPrimitives="clr-namespace:Telerik.Windows.Controls;assembly=Telerik.Windows.Controls.Primitives"
-                            x:Class="TrainShareApp.Views.MainView" mc:Ignorable="d" d:DesignWidth="480" d:DesignHeight="768"
+                            x:Class="TrainShareApp.Views.MainView" mc:Ignorable="d" d:DesignWidth="480" d:DesignHeight="696"
                             SupportedOrientations="Portrait" Orientation="Portrait" shell:SystemTray.IsVisible="True" cal:Bind.AtDesignTime="True"
                             d:DataContext="{d:DesignInstance IsDesignTimeCreatable=True, Type=vm:MainViewModel}">
 
@@ -18,26 +18,21 @@
     <cal:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
   </phone:PhoneApplicationPage.Resources>
 
+  <phone:PhoneApplicationPage.ApplicationBar>
+    <shell:ApplicationBar IsVisible="True" IsMenuEnabled="True">
+      <shell:ApplicationBar.Buttons>
+        <cal:AppBarButton IconUri="/icons/appbar.feature.settings.rest.png" Text="settings" Message="Settings" />
+        <cal:AppBarButton IconUri="/icons/appbar.questionmark.rest.png" Text="about" Message="About" />
+      </shell:ApplicationBar.Buttons>
+    </shell:ApplicationBar>
+  </phone:PhoneApplicationPage.ApplicationBar>
+
   <!--LayoutRoot is the root grid where all page content is placed-->
   <Grid x:Name="LayoutRoot" Background="{StaticResource MainBackground}">
-    <VisualStateManager.CustomVisualStateManager>
-      <ec:ExtendedVisualStateManager />
-    </VisualStateManager.CustomVisualStateManager>
     <VisualStateManager.VisualStateGroups>
       <VisualStateGroup x:Name="CheckinStates" ec:ExtendedVisualStateManager.UseFluidLayout="True">
-        <VisualStateGroup.Transitions>
-          <VisualTransition />
-        </VisualStateGroup.Transitions>
         <VisualState x:Name="CheckedIn">
           <Storyboard>
-            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)"
-                                           Storyboard.TargetName="CheckinWrapper">
-              <DiscreteObjectKeyFrame KeyTime="0">
-                <DiscreteObjectKeyFrame.Value>
-                  <Visibility>Collapsed</Visibility>
-                </DiscreteObjectKeyFrame.Value>
-              </DiscreteObjectKeyFrame>
-            </ObjectAnimationUsingKeyFrames>
             <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)"
                                            Storyboard.TargetName="InformationWrapper">
               <DiscreteObjectKeyFrame KeyTime="0">
@@ -49,11 +44,7 @@
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)"
                                            Storyboard.TargetName="InformationWrapper">
               <EasingDoubleKeyFrame KeyTime="0" Value="0" />
-              <EasingDoubleKeyFrame KeyTime="0:0:1" Value="1">
-                <EasingDoubleKeyFrame.EasingFunction>
-                  <QuinticEase EasingMode="EaseIn" />
-                </EasingDoubleKeyFrame.EasingFunction>
-              </EasingDoubleKeyFrame>
+              <EasingDoubleKeyFrame KeyTime="0:0:1" Value="1" />
             </DoubleAnimationUsingKeyFrames>
           </Storyboard>
         </VisualState>
@@ -67,8 +58,11 @@
                 </DiscreteObjectKeyFrame.Value>
               </DiscreteObjectKeyFrame>
             </ObjectAnimationUsingKeyFrames>
-            <DoubleAnimation Duration="0" To="1" Storyboard.TargetProperty="(UIElement.Opacity)"
-                             Storyboard.TargetName="CheckinWrapper" d:IsOptimized="True" />
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)"
+                                           Storyboard.TargetName="CheckinWrapper">
+              <EasingDoubleKeyFrame KeyTime="0" Value="0" />
+              <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="1" />
+            </DoubleAnimationUsingKeyFrames>
           </Storyboard>
         </VisualState>
       </VisualStateGroup>
@@ -79,12 +73,16 @@
                             FalseState="CheckedOut" />
     </Interactivity:Interaction.Behaviors>
 
+    <telerikPrimitives:RadTransitionControl.Transition>
+      <telerikPrimitives:RadContinuumAndSlideTransition />
+    </telerikPrimitives:RadTransitionControl.Transition>
+
     <controls:Panorama Title="trainshare">
 
       <!--Panorama item one-->
       <controls:PanoramaItem x:Name="checkinItem" Header="checkin">
         <Grid>
-          <Grid x:Name="InformationWrapper" Visibility="Collapsed">
+          <Grid x:Name="InformationWrapper" Visibility="Collapsed" Opacity="0">
             <Grid.RowDefinitions>
               <RowDefinition Height="Auto" />
               <RowDefinition Height="Auto" />
@@ -102,39 +100,40 @@
             <TextBlock Text="{Binding CurrentCheckin.DepartureStation}"
                        Style="{StaticResource PhoneTextExtraLargeStyle}" Grid.Row="1" Grid.ColumnSpan="2" Margin="12,-6,12,12" />
             <TextBlock Text="To" Style="{StaticResource PhoneTextSubtleStyle}" Grid.Row="2" />
-            <TextBlock Text="{Binding CurrentCheckin.ArrivalStation}"
-                       Style="{StaticResource PhoneTextExtraLargeStyle}" Grid.Row="3" Grid.ColumnSpan="2" Margin="12,-6,12,12" />
+            <TextBlock Text="{Binding CurrentCheckin.ArrivalStation}" Style="{StaticResource PhoneTextExtraLargeStyle}"
+                       Grid.Row="3" Grid.ColumnSpan="2" Margin="12,-6,12,12" />
             <TextBlock Text="Departure" Style="{StaticResource PhoneTextSubtleStyle}" Grid.Row="4" />
             <TextBlock Text="{Binding CurrentCheckin.DepartureTime, StringFormat=t}"
                        Style="{StaticResource PhoneTextExtraLargeStyle}" Grid.Row="5" Margin="12,-6,12,0" />
-            <TextBlock Text="Arrival" Style="{StaticResource PhoneTextSubtleStyle}" Grid.Row="4"
-                       Grid.Column="1" />
+            <TextBlock Text="Arrival" Style="{StaticResource PhoneTextSubtleStyle}" Grid.Row="4" Grid.Column="1" />
             <TextBlock Text="{Binding CurrentCheckin.ArrivalTime, StringFormat=t}"
                        Style="{StaticResource PhoneTextExtraLargeStyle}" Grid.Row="5" Grid.Column="1" Margin="12,-6,12,0" />
-            <Button x:Name="Checkout" Content="Check Out" Grid.Row="6" Grid.ColumnSpan="2"
-                    VerticalAlignment="Bottom" Margin="0,0,0,24" Width="300" Height="120" />
+            <Button x:Name="Checkout" Content="Check Out" Grid.Row="6" Grid.ColumnSpan="2" VerticalAlignment="Bottom"
+                    Margin="0,0,0,24" Width="300" Height="120" />
           </Grid>
           <StackPanel x:Name="CheckinWrapper" Visibility="Collapsed" Opacity="0">
-            <TextBlock Text="Please check in to see your friends on the same train" TextWrapping="Wrap"
-                       Width="300" Style="{StaticResource PhoneTextSubtleStyle}" TextAlignment="Center" Margin="12,120,12,24" />
+            <TextBlock Text="Please check in to see your friends on the same train" TextWrapping="Wrap" Width="300"
+                       Style="{StaticResource PhoneTextSubtleStyle}" TextAlignment="Center" Margin="12,120,12,24" />
             <Button x:Name="Checkin" Content="Check In" Width="300" Height="120" />
           </StackPanel>
         </Grid>
       </controls:PanoramaItem>
       <controls:PanoramaItem x:Name="friendsItem" Header="friends">
         <Grid d:LayoutOverrides="HorizontalAlignment">
-          <telerikPrimitives:RadDataBoundListBox EmptyContent="There are currently no friends on this train" ItemsSource="{Binding Friends}"
-                                                 ItemTemplate="{StaticResource FriendTemplate}" telerikCore:InteractionEffectManager.IsInteractionEnabled="True"
-                                                 cal:Message.Attach="[Event ItemTap] = [Action HistorySelected($source)]" Margin="12,0,0,0"/>
+          <telerikPrimitives:RadDataBoundListBox EmptyContent="There are currently no friends on this train"
+                                                 ItemsSource="{Binding Friends}" ItemTemplate="{StaticResource FriendTemplate}"
+                                                 telerikCore:InteractionEffectManager.IsInteractionEnabled="True"
+                                                 cal:Message.Attach="[Event ItemTap] = [Action HistorySelected($source)]" Margin="12,0,0,0" />
         </Grid>
       </controls:PanoramaItem>
 
       <!--Panorama item two-->
       <controls:PanoramaItem x:Name="historyItem" Header="history">
         <Grid>
-          <telerikPrimitives:RadDataBoundListBox EmptyContent="You have not checked in yet" ItemsSource="{Binding History}"
-                                                 ItemTemplate="{StaticResource HistoryTemplate}" telerikCore:InteractionEffectManager.IsInteractionEnabled="True"
-                                                 cal:Message.Attach="[Event ItemTap] = [Action HistorySelected($source)]" Margin="12,0,0,0"/>
+          <telerikPrimitives:RadDataBoundListBox EmptyContent="You have not checked in yet"
+                                                 ItemsSource="{Binding History}" ItemTemplate="{StaticResource HistoryTemplate}"
+                                                 telerikCore:InteractionEffectManager.IsInteractionEnabled="True"
+                                                 cal:Message.Attach="[Event ItemTap] = [Action HistorySelected($source)]" Margin="12,0,0,0" />
         </Grid>
       </controls:PanoramaItem>
     </controls:Panorama>

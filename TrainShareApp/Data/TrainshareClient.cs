@@ -16,9 +16,12 @@ namespace TrainShareApp.Data
 {
     public class TrainshareClient : TokenClientBase, ITrainshareClient
     {
-        public TrainshareClient(IEventAggregator events, Func<DbDataContext> contextFactory)
+        private readonly ILog _logger;
+
+        public TrainshareClient(IEventAggregator events, Func<DbDataContext> contextFactory, ILog logger)
             : base("trainshare", events, contextFactory)
         {
+            _logger = logger;
             ReloadToken();
 
             if (Token != null)
@@ -52,13 +55,21 @@ namespace TrainShareApp.Data
                     .Select(response => JObject.Parse(response.Content))
                     .ToTask();
 
-            InsertOrUpdateToken(
-                new Token
-                {
-                    Network = "trainshare",
-                    AccessToken = json["trainshare_id"].Value<string>(),
-                    AccessTokenSecret = json["trainshare_token"].Value<string>()
-                });
+            try
+            {
+                InsertOrUpdateToken(
+                    new Token
+                    {
+                        Network = "trainshare",
+                        AccessToken = json["trainshare_id"].Value<string>(),
+                        AccessTokenSecret = json["trainshare_token"].Value<string>()
+                    });
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e);
+                return null;
+            }
 
             Events.Publish(Token);
 

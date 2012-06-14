@@ -7,6 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:cal="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro"
     xmlns:vm="clr-namespace:TrainShareApp.ViewModels"
+    xmlns:telerikCore="clr-namespace:Telerik.Windows.Controls;assembly=Telerik.Windows.Core"
     xmlns:telerikPrimitives="clr-namespace:Telerik.Windows.Controls;assembly=Telerik.Windows.Controls.Primitives"
     x:Class="TrainShareApp.Views.SearchResultView"
     SupportedOrientations="Portrait" Orientation="Portrait"
@@ -60,6 +61,7 @@
 				<RowDefinition Height="Auto"/>
 				<RowDefinition Height="Auto"/>
 				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
 			</Grid.RowDefinitions>
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition/>
@@ -74,16 +76,17 @@
             <TextBlock Text="{Binding Time, StringFormat=t}" Style="{StaticResource PhoneTextExtraLargeStyle}" Grid.Row="3" Margin="12,-6,12,0" Visibility="{Binding IsDeparture, Converter={StaticResource BooleanToVisibilityConverter}}" />
 			<TextBlock Text="Arrival" Style="{StaticResource PhoneTextSubtleStyle}" Grid.Row="2" Grid.Column="1" Visibility="{Binding IsArrival, Converter={StaticResource BooleanToVisibilityConverter}}" />
             <TextBlock Text="{Binding Time, StringFormat=t}" Style="{StaticResource PhoneTextExtraLargeStyle}" Grid.Row="3" Grid.Column="1" Margin="12,-6,12,0" Visibility="{Binding IsArrival, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            <StackPanel Grid.Row="4" Grid.ColumnSpan="2" Margin="{StaticResource PhoneMargin}" Orientation="Horizontal" Visibility="{Binding IsTomorrow, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+            	<Image Source="i.png" Height="24"/>
+            	<TextBlock TextWrapping="Wrap" Text="This are results for tomorrow" Margin="{StaticResource PhoneHorizontalMargin}" />
+            </StackPanel>
 		
         </Grid>
 		
-        <ListBox x:Name="Results" ItemsSource="{Binding Results}" SelectedItem="{Binding SelectedConnection, Mode=TwoWay}" ItemTemplate="{StaticResource ConnectionTemplate}" Grid.Row="2" Margin="0,24,0,0">
-        	<ListBox.ItemContainerStyle>
-        		<Style TargetType="ListBoxItem">
-        			<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-        		</Style>
-        	</ListBox.ItemContainerStyle>
-        </ListBox>
+		<telerikPrimitives:RadDataBoundListBox ItemsSource="{Binding Results}" ItemTemplate="{StaticResource ConnectionTemplate}"
+		 Grid.Row="2" telerikCore:InteractionEffectManager.IsInteractionEnabled="True"
+		 cal:Message.Attach="[Event ItemTap] = [Action ConnectionSelected($source)]" EmptyContent="" Margin="0,12,0,0" />
+
         <telerikPrimitives:RadBusyIndicator AnimationStyle="AnimationStyle9" IsRunning="{Binding Loading}" Grid.Row="4" Foreground="{StaticResource PhoneForegroundBrush}" />
     </Grid>
 

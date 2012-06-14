@@ -2,16 +2,16 @@
 using System.Diagnostics;
 using System.Windows;
 using Caliburn.Micro;
+using Telerik.Windows.Controls;
 using TrainShareApp.Data;
 using TrainShareApp.Event;
 using TrainShareApp.Model;
 
 namespace TrainShareApp.ViewModels
 {
-    public class CheckinViewModel : Screen, IHandle<Connection>
+    public class CheckinViewModel : Screen
     {
         private readonly ILog _logger;
-        private readonly IEventAggregator _events;
         private readonly INavigationService _navigationService;
         private readonly ITrainshareClient _trainshareClient;
 
@@ -22,16 +22,12 @@ namespace TrainShareApp.ViewModels
 
         public CheckinViewModel(
             ILog logger,
-            IEventAggregator events,
             INavigationService navigationService,
             ITrainshareClient trainshareClient)
         {
             _logger = logger;
-            _events = events;
             _navigationService = navigationService;
             _trainshareClient = trainshareClient;
-
-            _events.Subscribe(this);
         }
 
         public Checkin CurrentCheckin { get; set; }
@@ -40,10 +36,14 @@ namespace TrainShareApp.ViewModels
 
         public string Message { get; set; }
 
+        public bool Loading { get; set; }
+
         public async void Confirm()
         {
             try
             {
+                Loading = true;
+
                 // subtrack because the front is on the right
                 var position = 10 - (int) Position*10;
                 position = Math.Min(position, 10);
@@ -58,24 +58,29 @@ namespace TrainShareApp.ViewModels
             catch(Exception e)
             {
                 _logger.Error(e);
-                MessageBox.Show("Sorry, there was an unexpected error while checking in. Please try again later.");
+                RadMessageBox.Show("Sorry, there was an unexpected error while checking in. Please try again later.");
             }
+            finally
+            {
+                Loading = false;
 
+                _navigationService
+                    .UriFor<MainViewModel>()
+                    .Navigate();
+            }
+        }
+
+        public void Cancel()
+        {
             _navigationService
                 .UriFor<MainViewModel>()
                 .Navigate();
         }
 
-        public void Handle(Connection message)
-        {
-            CurrentCheckin = Checkin.FromConnection(message);
-        }
-
         protected override void OnActivate()
         {
-            _events.Publish(Republish.Connection);
-
             Position = 0.5f;
+            CurrentCheckin = Checkin.FromConnection(App.Instance.SearchSelection);
 
             base.OnActivate();
         }

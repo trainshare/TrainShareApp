@@ -94,6 +94,13 @@ namespace TrainShareApp.ViewModels
                 .Navigate();
         }
 
+        public void About()
+        {
+            _navigationService
+                .UriFor<AboutViewModel>()
+                .Navigate();
+        }
+
         public void HistorySelected(RadDataBoundListBox list)
         {
             var checkin = list.SelectedValue as Checkin;

@@ -1,25 +1,19 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Windows;
 using Caliburn.Micro;
+using Telerik.Windows.Controls;
 using TrainShareApp.Data;
-using TrainShareApp.Event;
 using TrainShareApp.Model;
 
 namespace TrainShareApp.ViewModels
 {
-    public class SearchResultViewModel : Screen, IHandle<Republish>
+    public class SearchResultViewModel : Screen
     {
         private readonly ILog _logger;
         private readonly INavigationService _navigationService;
         private readonly ITimeTable _timeTable;
-        private readonly IEventAggregator _events;
-
-        private readonly IObservableCollection<Connection> _results =
-            new BindableCollection<Connection>();
-
-        private Connection _selectedConnection;
 
         public SearchResultViewModel()
         {
@@ -42,11 +36,11 @@ namespace TrainShareApp.ViewModels
                         })
                     .ToArray();
 
-            Results.AddRange(
+            Results =
                 checkpoints
                     .SelectMany(
                         from =>
-                        checkpoints.Select(to => new Connection {From = from, To = to})));
+                        checkpoints.Select(to => new Connection {From = from, To = to}));
 
             Loading = true;
 
@@ -59,50 +53,28 @@ namespace TrainShareApp.ViewModels
 
         public SearchResultViewModel(
             ILog logger,
-            IEventAggregator events,
             INavigationService navigationService,
             ITimeTable timeTable)
         {
             _logger = logger;
             _navigationService = navigationService;
             _timeTable = timeTable;
-            _events = events;
-
-            _events.Subscribe(this);
         }
+
+        public bool Loading { get; set; }
 
         public string From { get; set; }
         public string To { get; set; }
         public string Via { get; set; }
+
         public bool IsArrival { get; set; }
         public bool IsDeparture { get { return !IsArrival; } }
+
+        public bool IsTomorrow { get { return Time.TimeOfDay < DateTime.Now.TimeOfDay && Time > DateTime.Now; } }
+
         public DateTime Time { get; set; }
 
-        public bool Loading { get; set; }
-
-        public IObservableCollection<Connection> Results { get { return _results; } }
-
-        public Connection SelectedConnection
-        {
-            get { return _selectedConnection; }
-            set
-            {
-                _selectedConnection = value;
-                NotifyOfPropertyChange(() => SelectedConnection);
-
-                // Handle selection
-                SelectionChanged();
-            }
-        }
-
-        public void Handle(Republish message)
-        {
-            if (message == Republish.Connection &&
-                SelectedConnection != null)
-            {
-                _events.Publish(SelectedConnection);
-            }
-        }
+        public IEnumerable<Connection> Results { get; set; }
 
         protected override void OnActivate()
         {
@@ -111,12 +83,14 @@ namespace TrainShareApp.ViewModels
             base.OnActivate();
         }
 
-        private void SelectionChanged()
+        public void ConnectionSelected(RadDataBoundListBox list)
         {
-            if (SelectedConnection == null)
-                return; // We did a manual reset
+            var global = App.Instance;
+            var connection = list.SelectedValue as Connection;
 
-            _events.Publish(SelectedConnection);
+            if (connection == null || global == null) return;
+
+            global.SearchSelection = connection;
 
             _navigationService
                 .UriFor<CheckinViewModel>()
@@ -125,26 +99,29 @@ namespace TrainShareApp.ViewModels
 
         private async void SubmitSearch()
         {
-            Results.Clear();
+            Results = null;
             Loading = true;
+
+            if (Time < DateTime.Now.Subtract(App.SearchTimeTolerance))
+                Time = Time.AddDays(1);
 
             try
             {
                 var result = await _timeTable.GetConnections(From, To, Time);
 
                 From = result.From.Name;
-
                 To = result.To.Name;
-
-                Loading = false;
-                Results.AddRange(result.Connections);
+                Results = result.Connections;
             }
             catch (Exception e)
             {
                 _logger.Error(e);
-                Loading = false;
-                MessageBox.Show("Sorry, there was an unexpected error for your request. Please try again later.");
+                RadMessageBox.Show("Sorry, there was an unexpected error for your request. Please try again later.");
                 _navigationService.GoBack();
+            }
+            finally
+            {
+                Loading = false;
             }
         }
     }

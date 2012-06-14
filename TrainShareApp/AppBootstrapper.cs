@@ -60,6 +60,7 @@ namespace TrainShareApp {
                 .Singleton<MainPageViewModel>()
                 .Singleton<MainViewModel>()
                 .Singleton<AccountsViewModel>()
+                .Singleton<AboutViewModel>()
                 .PerRequest<SearchViewModel>()
                 .PerRequest<SearchResultViewModel>()
                 .PerRequest<CheckinViewModel>()
