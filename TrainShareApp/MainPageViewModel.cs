@@ -72,6 +72,7 @@ namespace TrainShareApp
         {
             get { return !_facebookClient.IsLoggedIn; }
         }
+
         public async void Facebook()
         {
             View.Browser.NavigateToString(string.Empty);

@@ -187,7 +187,7 @@ namespace TrainShareApp.Data
                         .OrderByDescending(c => c.CheckinTime)
                         .FirstOrDefault();
 
-                if (checkin != null && !checkin.CheckedOut && checkin.ArrivalTime > DateTime.Now)
+                if (checkin != null && !checkin.CheckedOut && checkin.ArrivalTime > DateTime.Now.Add(App.SearchTimeTolerance))
                     CurrentCheckin = checkin;
             }
         }
