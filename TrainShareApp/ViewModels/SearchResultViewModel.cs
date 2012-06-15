@@ -107,7 +107,7 @@ namespace TrainShareApp.ViewModels
 
             try
             {
-                var result = await _timeTable.GetConnections(From, To, Time);
+                var result = await _timeTable.GetConnections(From, To, Time, IsArrival);
 
                 From = result.From.Name;
                 To = result.To.Name;

@@ -27,15 +27,16 @@ namespace TrainShareApp.Data
                     .SelectMany(response => response.Data);
         }
 
-        public Task<SearchResult> GetConnections(string from, string to, DateTime departure)
+        public Task<SearchResult> GetConnections(string from, string to, DateTime time, bool isArrival = false)
         {
             var client = new RestClient("http://transport.opendata.ch/v1/");
             var request =
                 new RestRequest("connections")
                     .AddParameter("from", from)
                     .AddParameter("to", to)
-                    .AddParameter("date", departure.ToString("yyyy-MM-dd"))
-                    .AddParameter("time", departure.ToString("HH:mm"));
+                    .AddParameter("date", time.ToString("yyyy-MM-dd"))
+                    .AddParameter("time", time.ToString("HH:mm"))
+                    .AddParameter("isArrivalTime", isArrival ? 1 : 0);
 
             return
                 client
