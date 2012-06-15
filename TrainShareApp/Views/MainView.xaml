@@ -126,7 +126,7 @@
           <telerikPrimitives:RadDataBoundListBox EmptyContent="There are currently no friends on this train"
                                                  ItemsSource="{Binding Friends}" ItemTemplate="{StaticResource FriendTemplate}"
                                                  telerikCore:InteractionEffectManager.IsInteractionEnabled="True"
-                                                 cal:Message.Attach="[Event ItemTap] = [Action HistorySelected($source)]" Margin="12,0,0,0" />
+                                                 cal:Message.Attach="[Event ItemTap] = [Action HistorySelected($source)]" />
         </Grid>
       </controls:PanoramaItem>
 
@@ -136,7 +136,7 @@
           <telerikPrimitives:RadDataBoundListBox EmptyContent="You have not checked in yet"
                                                  ItemsSource="{Binding History}" ItemTemplate="{StaticResource HistoryTemplate}"
                                                  telerikCore:InteractionEffectManager.IsInteractionEnabled="True"
-                                                 cal:Message.Attach="[Event ItemTap] = [Action HistorySelected($source)]" Margin="12,0,0,0" />
+                                                 cal:Message.Attach="[Event ItemTap] = [Action HistorySelected($source)]" />
         </Grid>
       </controls:PanoramaItem>
     </controls:Panorama>

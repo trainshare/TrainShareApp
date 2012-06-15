@@ -21,7 +21,7 @@ namespace TrainShareApp.ViewModels
         public MainViewModel()
         {
             Debug.Assert(Execute.InDesignMode, "Default constructor can only be called to generate design data.");
-            Friends = Enumerable.Range(0, 10).Select(i => new TrainshareFriend { Name = "Friend #" + i }).ToList();
+            Friends = Enumerable.Range(0, 10).Select(i => new TrainshareFriend { Name = "Friend #" + i, ImageUrl = "/icons/User.png"}).ToList();
 
             CurrentCheckin =
                 new Checkin

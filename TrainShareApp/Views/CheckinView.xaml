@@ -29,7 +29,7 @@
 			<RowDefinition Height="*"/>
 		</Grid.RowDefinitions>
 		
-		<telerikPrimitives:RadBusyIndicator IsRunning="{Binding Loading}" Foreground="{StaticResource PhoneForegroundBrush}" Background="#CC000000" Grid.RowSpan="2" Canvas.ZIndex="5" Content="Sending..." AnimationStyle="AnimationStyle9" />
+		<telerikPrimitives:RadBusyIndicator IsRunning="{Binding Loading}" Foreground="{StaticResource PhoneForegroundBrush}" Background="#CC000000" Grid.RowSpan="2" Canvas.ZIndex="5" Content="Sending..." AnimationStyle="AnimationStyle9" Margin="-12,0" />
 		
 		<!--TitlePanel contains the name of the application and page title-->
 		<StackPanel x:Name="TitlePanel" Grid.Row="0" Margin="12,17,0,24">
