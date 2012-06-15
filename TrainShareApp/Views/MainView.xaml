@@ -112,7 +112,7 @@
             <TextBlock Text="{Binding CurrentCheckin.ArrivalTime, StringFormat=t}"
                        Style="{StaticResource PhoneTextExtraLargeStyle}" Grid.Row="5" Grid.Column="1" Margin="12,-6,12,0" />
             <Button x:Name="Checkout" Content="Check Out" Grid.Row="6" Grid.ColumnSpan="2" VerticalAlignment="Bottom"
-                    Margin="0,0,0,24" Width="300" Height="120" />
+                    Margin="0,0,0,24" Width="300" />
           </Grid>
           <StackPanel x:Name="CheckinWrapper" Visibility="Collapsed" Opacity="0">
             <TextBlock Text="Please check in to see your friends on the same train" TextWrapping="Wrap" Width="300"

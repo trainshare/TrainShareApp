@@ -9,6 +9,7 @@
     xmlns:vm="clr-namespace:TrainShareApp.ViewModels"
     xmlns:telerikPrimitives="clr-namespace:Telerik.Windows.Controls;assembly=Telerik.Windows.Controls.Primitives"
     xmlns:telerikInput="clr-namespace:Telerik.Windows.Controls;assembly=Telerik.Windows.Controls.Input"
+    xmlns:telerikToggleSwitch="clr-namespace:Telerik.Windows.Controls.ToggleSwitch;assembly=Telerik.Windows.Controls.Primitives"
     mc:Ignorable="d"
 	x:Class="TrainShareApp.Views.SearchView"
     SupportedOrientations="Portrait" Orientation="Portrait"
@@ -48,7 +49,13 @@
 						<CompositeTransform ScaleX="0.8" ScaleY="0.8"/>
 					</telerikPrimitives:RadImageButton.RenderTransform>
 				</telerikPrimitives:RadImageButton>
-				<telerikPrimitives:RadToggleSwitch Content="{Binding ArrivalString, Mode=OneWay}" IsChecked="{Binding IsArrival, Mode=TwoWay}" VerticalAlignment="Center" Margin="64,12,12,12" Width="163" Background="{StaticResource LogoBrush}" />
+				<telerikPrimitives:RadToggleSwitch Content="{Binding ArrivalString, Mode=TwoWay}" IsChecked="{Binding IsArrival, Mode=TwoWay}" VerticalAlignment="Center" Margin="64,12,12,12" Width="163">
+				    <telerikPrimitives:RadToggleSwitch.ButtonStyle>
+                        <Style TargetType="telerikToggleSwitch:ToggleSwitchButton">
+                            <Setter Property="CheckBackground" Value="{StaticResource LogoBrush}"/>
+				        </Style>
+				    </telerikPrimitives:RadToggleSwitch.ButtonStyle>
+				</telerikPrimitives:RadToggleSwitch>
 			</StackPanel>
 			
 			<Button x:Name="Search" Content="Search" Width="250" Margin="0,96,0,0"/>
