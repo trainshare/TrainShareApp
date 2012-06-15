@@ -1,6 +1,6 @@
 ﻿<ResourceDictionary
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
-	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:es="clr-namespace:Microsoft.Expression.Shapes;assembly=Microsoft.Expression.Drawing">
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 	<ControlTemplate x:Key="PhoneSimpleRepeatButton" TargetType="RepeatButton">
 		<Rectangle Fill="Transparent"/>
 	</ControlTemplate>

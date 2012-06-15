@@ -78,9 +78,9 @@
     </telerikPrimitives:RadTransitionControl.Transition>
 
     <controls:Panorama>
-    	<controls:Panorama.Title>
-    		<TextBlock Text="trainshare" Foreground="{StaticResource LogoBrush}" />
-    	</controls:Panorama.Title>
+      <controls:Panorama.Title>
+        <TextBlock Text="trainshare" Foreground="{StaticResource LogoBrush}" />
+      </controls:Panorama.Title>
 
       <!--Panorama item one-->
       <controls:PanoramaItem x:Name="checkinItem" Header="checkin">
@@ -124,9 +124,24 @@
       <controls:PanoramaItem x:Name="friendsItem" Header="friends">
         <Grid d:LayoutOverrides="HorizontalAlignment">
           <telerikPrimitives:RadDataBoundListBox EmptyContent="There are currently no friends on this train"
-                                                 ItemsSource="{Binding Friends}" ItemTemplate="{StaticResource FriendTemplate}"
-                                                 telerikCore:InteractionEffectManager.IsInteractionEnabled="True"
-                                                 cal:Message.Attach="[Event ItemTap] = [Action HistorySelected($source)]" />
+                                                 ItemsSource="{Binding Friends}" telerikCore:InteractionEffectManager.IsInteractionEnabled="True"
+                                                 cal:Message.Attach="[Event ItemTap] = [Action HistorySelected($source)]">
+            <telerikPrimitives:RadDataBoundListBox.ItemTemplate>
+              <DataTemplate>
+                <StackPanel Orientation="Horizontal">
+                  <Image MaxHeight="60" MaxWidth="60" Source="{Binding UserImage}" Width="60"
+                         Height="60" Margin="{StaticResource PhoneHorizontalMargin}" />
+                  <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="{Binding Name}" Style="{StaticResource PhoneTextLargeStyle}" />
+                    <TextBlock Text="{Binding TrainshareOverlaps.DepartureStation, StringFormat=Travels from \{0\}}"
+                               Style="{StaticResource PhoneTextSubtleStyle}" />
+                    <TextBlock Text="{Binding TrainshareOverlaps.ArrivalStation, StringFormat=to \{0\}}"
+                               Style="{StaticResource PhoneTextSubtleStyle}" />
+                  </StackPanel>
+                </StackPanel>
+              </DataTemplate>
+            </telerikPrimitives:RadDataBoundListBox.ItemTemplate>
+          </telerikPrimitives:RadDataBoundListBox>
         </Grid>
       </controls:PanoramaItem>
 

@@ -77,8 +77,9 @@
 			<TextBlock Text="Arrival" Style="{StaticResource PhoneTextSubtleStyle}" Grid.Row="2" Grid.Column="1" Visibility="{Binding IsArrival, Converter={StaticResource BooleanToVisibilityConverter}}" />
             <TextBlock Text="{Binding Time, StringFormat=t}" Style="{StaticResource PhoneTextExtraLargeStyle}" Grid.Row="3" Grid.Column="1" Margin="12,-6,12,0" Visibility="{Binding IsArrival, Converter={StaticResource BooleanToVisibilityConverter}}" />
             <StackPanel Grid.Row="4" Grid.ColumnSpan="2" Margin="{StaticResource PhoneMargin}" Orientation="Horizontal" Visibility="{Binding IsTomorrow, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
-            	<Image Source="\icons\i.png" Height="24"/>
-            	<TextBlock TextWrapping="Wrap" Text="This are results for tomorrow" Margin="{StaticResource PhoneHorizontalMargin}" />
+            	<Image Source="/icons/i-black.png" VerticalAlignment="Center" Visibility="{StaticResource PhoneLightThemeVisibility}"/>
+            	<Image Source="/icons/i-white.png" VerticalAlignment="Center" Visibility="{StaticResource PhoneDarkThemeVisibility}" Margin="-24,0,0,0"/>
+            	<TextBlock Text="This are results for tomorrow" Margin="{StaticResource PhoneHorizontalMargin}" />
             </StackPanel>
 		
         </Grid>

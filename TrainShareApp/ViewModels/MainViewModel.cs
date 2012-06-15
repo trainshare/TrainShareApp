@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Windows.Controls;
 using Caliburn.Micro;
 using Telerik.Windows.Controls;
 using TrainShareApp.Data;

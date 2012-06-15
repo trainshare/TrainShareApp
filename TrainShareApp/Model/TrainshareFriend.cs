@@ -1,5 +1,7 @@
 ﻿
 using System;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using Newtonsoft.Json;
 
 namespace TrainShareApp.Model
@@ -34,5 +36,21 @@ namespace TrainShareApp.Model
         public string ImageUrl { get; set; }
         [JsonProperty("overlaps")]
         public TrainshareOverlap TrainshareOverlaps { get; set; }
+
+        public ImageSource UserImage
+        {
+            get
+            {
+                var realImage = new BitmapImage();
+
+                realImage.CreateOptions = BitmapCreateOptions.BackgroundCreation;
+                realImage.ImageFailed +=
+                    (sender, args) => realImage.UriSource = new Uri("/icons/user.png", UriKind.Relative);
+
+                realImage.UriSource = new Uri(ImageUrl);
+
+                return realImage;
+            }
+        }
     }
 }
