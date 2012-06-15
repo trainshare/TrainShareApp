@@ -91,9 +91,9 @@ namespace TrainShareApp
             }
         }
 
-        private AccountsView View
+        private MainPage View
         {
-            get { return GetView() as AccountsView; }
+            get { return GetView() as MainPage; }
         }
 
         public bool CanContinue
