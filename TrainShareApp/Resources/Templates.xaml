@@ -12,11 +12,11 @@
 				<RowDefinition />
 				<RowDefinition />
 			</Grid.RowDefinitions>
-			<TextBlock x:Name="DepTime" Foreground="Black" Grid.Column="0" Text="{Binding From.Departure, StringFormat=t}" Grid.Row="1" Style="{StaticResource PhoneTextNormalStyle}"/>
-			<TextBlock x:Name="ArrTime" Foreground="Black" Grid.Column="2" Text="{Binding To.Arrival, StringFormat=t}" Grid.Row="1" Style="{StaticResource PhoneTextNormalStyle}"/>
-			<TextBlock x:Name="DepStation" Foreground="Black" Grid.Column="0" Text="{Binding From.Station.Name}" Style="{StaticResource PhoneTextNormalStyle}"/>
-			<TextBlock x:Name="ArrStation" Foreground="Black" Grid.Column="2" Text="{Binding To.Station.Name}" Style="{StaticResource PhoneTextNormalStyle}"/>
-			<TextBlock x:Name="Changes" Foreground="Black" Text="{Binding Sections.Count, StringFormat='Changes: {0}'}" Grid.RowSpan="2" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{StaticResource PhoneTextNormalStyle}" Grid.ColumnSpan="3"/>
+			<TextBlock x:Name="DepTime" Grid.Column="0" Text="{Binding From.Departure, StringFormat=t}" Grid.Row="1" Style="{StaticResource PhoneTextNormalStyle}"/>
+			<TextBlock x:Name="ArrTime" Grid.Column="2" Text="{Binding To.Arrival, StringFormat=t}" Grid.Row="1" Style="{StaticResource PhoneTextNormalStyle}"/>
+			<TextBlock x:Name="DepStation" Grid.Column="0" Text="{Binding From.Station.Name}" Style="{StaticResource PhoneTextNormalStyle}"/>
+			<TextBlock x:Name="ArrStation" Grid.Column="2" Text="{Binding To.Station.Name}" Style="{StaticResource PhoneTextNormalStyle}"/>
+			<TextBlock x:Name="Changes" Text="{Binding Sections.Count, StringFormat='Changes: {0}'}" Grid.RowSpan="2" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{StaticResource PhoneTextNormalStyle}" Grid.ColumnSpan="3"/>
 		</Grid>
 	</DataTemplate>
 	<!-- Resource dictionary entries should be defined here. -->

@@ -42,7 +42,7 @@
 		<StaticResource ResourceKey="PhoneForegroundBrush"/>
 	</phone:PhoneApplicationPage.Foreground>
 
-	<Grid x:Name="LayoutRoot" Background="{StaticResource MainBackground}">
+	<Grid x:Name="LayoutRoot" Background="{StaticResource MainBackground}" Margin="{StaticResource PhoneHorizontalMargin}">
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="Auto"/>
@@ -51,7 +51,7 @@
 		
 		<!--TitlePanel contains the name of the application and page title-->
 		<StackPanel x:Name="TitlePanel" Grid.Row="0" Margin="12,17,0,28">
-			<TextBlock x:Name="ApplicationTitle" Text="TRAINSHARE" Style="{StaticResource PhoneTextNormalStyle}" Margin="0,0,12,0"/>
+			<TextBlock x:Name="ApplicationTitle" Text="TRAINSHARE" Style="{StaticResource PhoneTextNormalStyle}" Margin="0,0,12,0" Foreground="{StaticResource LogoBrush}"/>
 			<TextBlock x:Name="PageTitle" Text="results" Style="{StaticResource PhoneTextTitle1Style}" Margin="0,-12,12,0"/>
 		</StackPanel>
 		

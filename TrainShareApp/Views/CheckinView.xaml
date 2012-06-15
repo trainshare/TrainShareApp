@@ -23,7 +23,7 @@
     </telerikPrimitives:RadTransitionControl.Transition>
 
     <!--LayoutRoot is the root grid where all page content is placed-->
-	<Grid x:Name="LayoutRoot" Background="{StaticResource MainBackground}">
+	<Grid x:Name="LayoutRoot" Background="{StaticResource MainBackground}" Margin="{StaticResource PhoneHorizontalMargin}">
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="*"/>
@@ -32,8 +32,8 @@
 		<telerikPrimitives:RadBusyIndicator IsRunning="{Binding Loading}" Foreground="{StaticResource PhoneForegroundBrush}" Background="#CC000000" Grid.RowSpan="2" Canvas.ZIndex="5" Content="Sending..." AnimationStyle="AnimationStyle9" />
 		
 		<!--TitlePanel contains the name of the application and page title-->
-		<StackPanel x:Name="TitlePanel" Grid.Row="0" Margin="12,17,0,28">
-			<TextBlock x:Name="ApplicationTitle" Text="TRAINSHARE" Style="{StaticResource PhoneTextNormalStyle}" Margin="0,0,12,0"/>
+		<StackPanel x:Name="TitlePanel" Grid.Row="0" Margin="12,17,0,24">
+			<TextBlock x:Name="ApplicationTitle" Text="TRAINSHARE" Style="{StaticResource PhoneTextNormalStyle}" Margin="0,0,12,0" Foreground="{StaticResource LogoBrush}"/>
 			<TextBlock x:Name="PageTitle" Text="confirm" Style="{StaticResource PhoneTextTitle1Style}" Margin="0,-12,12,0"/>
 		</StackPanel>
 		
@@ -53,7 +53,7 @@
 			</Grid.ColumnDefinitions>
 			
 			<TextBlock Text="Position" Style="{StaticResource PhoneTextSubtleStyle}" Margin="12,0,12,12" />
-			<Slider Minimum="0" Maximum="1" SmallChange="0.1" LargeChange="0.2" Value="{Binding Position, Mode=TwoWay}" Style="{StaticResource TrainSliderStyle}" Foreground="White" Grid.ColumnSpan="2" Grid.Row="1"/>
+			<Slider Minimum="0" Maximum="1" SmallChange="0.1" LargeChange="0.2" Value="{Binding Position, Mode=TwoWay}" Style="{StaticResource TrainSliderStyle}" Grid.ColumnSpan="2" Grid.Row="1" Foreground="{StaticResource PhoneBackgroundBrush}" Background="{StaticResource PhoneForegroundBrush}" BorderBrush="{StaticResource MainBackground}"/>
 			
 			<TextBlock Text="From" Style="{StaticResource PhoneTextSubtleStyle}" Grid.Row="2" />
 			<TextBlock Text="{Binding CurrentCheckin.DepartureStation}" Style="{StaticResource PhoneTextExtraLargeStyle}" Margin="12,-6,12,12" Grid.Row="3" />

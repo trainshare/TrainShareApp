@@ -14,7 +14,7 @@
                             d:DesignHeight="768" d:DesignWidth="480">
 
   <!--LayoutRoot is the root grid where all page content is placed-->
-  <Grid x:Name="LayoutRoot" Background="Transparent">
+  <Grid x:Name="LayoutRoot" Background="Transparent" Margin="{StaticResource PhoneHorizontalMargin}">
     <Grid.RowDefinitions>
       <RowDefinition Height="Auto" MinHeight="113" />
       <RowDefinition />
@@ -23,30 +23,28 @@
     </Grid.RowDefinitions>
       
     <!--TitlePanel contains the name of the application and page title-->
-    <StackPanel x:Name="TitlePanel" Margin="12,0,0,0" d:LayoutOverrides="Height">
-      <TextBlock x:Name="ApplicationTitle" Text="Trainshare" Style="{StaticResource PhoneTextNormalStyle}" />
-      <TextBlock x:Name="PageTitle" Text="Accounts" Margin="9,-7,0,0" Style="{StaticResource PhoneTextTitle1Style}" />
+      
+    <StackPanel x:Name="TitlePanel" Grid.Row="0" Margin="13,17,0,24">
+    	<TextBlock x:Name="ApplicationTitle" Text="TRAINSHARE" Style="{StaticResource PhoneTextNormalStyle}" Margin="0,0,12,0" Foreground="{StaticResource LogoBrush}"/>
+    	<TextBlock x:Name="PageTitle" Text="settings" Style="{StaticResource PhoneTextTitle1Style}" Margin="0,-12,12,0"/>
     </StackPanel>
       
     <TextBlock TextWrapping="Wrap" Grid.Row="1" d:LayoutOverrides="Height" VerticalAlignment="Center"
-               Margin="{StaticResource PhoneHorizontalMargin}">
-      To update  your  Twitter or Facebook friends please click the corr e sponding button. 
-      This enables us to find additional people who could share the train with you .
-    </TextBlock>
+               Margin="{StaticResource PhoneHorizontalMargin}"><Run Text="To update your Twitter or Facebook friends please click the corr e sponding button. This enables us to find additional people who could share the train with you ."/></TextBlock>
       
     <Button x:Name="Twitter" Content="Update Twitter Friends" Grid.Row="2" d:LayoutOverrides="Height"
             HorizontalAlignment="Center" VerticalAlignment="Center" />
     <Button x:Name="Facebook" Content="Update Facebook Friends" HorizontalAlignment="Center" Grid.Row="3"
             VerticalAlignment="Top" />
 
-    <telerikPrimitives:RadWindow Name="Window" IsFullScreen="True" Grid.RowSpan="4" d:IsHidden="True">
+    <telerikPrimitives:RadWindow x:Name="Window" IsFullScreen="True" Grid.RowSpan="4" d:IsHidden="True">
       <telerikPrimitives:RadWindow.OpenAnimation>
         <telerik:RadFadeAnimation StartOpacity="0" EndOpacity="1" />
       </telerikPrimitives:RadWindow.OpenAnimation>
       <telerikPrimitives:RadWindow.CloseAnimation>
         <telerik:RadFadeAnimation StartOpacity="1" EndOpacity="0" />
       </telerikPrimitives:RadWindow.CloseAnimation>
-      <phone:WebBrowser Name="Browser" />
+      <phone:WebBrowser x:Name="Browser" />
     </telerikPrimitives:RadWindow>
   </Grid>
 

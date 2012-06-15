@@ -77,7 +77,10 @@
       <telerikPrimitives:RadContinuumAndSlideTransition />
     </telerikPrimitives:RadTransitionControl.Transition>
 
-    <controls:Panorama Title="trainshare">
+    <controls:Panorama>
+    	<controls:Panorama.Title>
+    		<TextBlock Text="trainshare" Foreground="{StaticResource LogoBrush}" />
+    	</controls:Panorama.Title>
 
       <!--Panorama item one-->
       <controls:PanoramaItem x:Name="checkinItem" Header="checkin">

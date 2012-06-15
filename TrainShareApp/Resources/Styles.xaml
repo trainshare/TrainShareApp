@@ -15,7 +15,7 @@
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="Slider">
-					<Grid Background="Transparent">
+					<Grid Background="{TemplateBinding Background}">
 						<VisualStateManager.VisualStateGroups>
 							<VisualStateGroup x:Name="CommonStates">
 								<VisualState x:Name="Normal"/>
@@ -43,7 +43,7 @@
 								<Thumb.Template>
 									<ControlTemplate>
 										<Canvas Height="18" Width="12">
-											<Polygon Points="0 6, 6 0, 12 6, 12 18, 0 18" Fill="White" />
+											<Polygon Points="0 6, 6 0, 12 6, 12 18, 0 18" Fill="{TemplateBinding Foreground}" />
 											<!--es:BlockArrow Fill="{TemplateBinding Foreground}" Margin="15 0" Height="40" Canvas.Left="-24" Canvas.Top="-28" Orientation="Up" UseLayoutRounding="False" Width="30"/-->
 										</Canvas>
 									</ControlTemplate>
