@@ -12,11 +12,11 @@ namespace TrainShareApp.Data
 {
     public class TimeTable : ITimeTable
     {
-        public IObservable<Station> GetLocations(string locationName)
+        public IObservable<IEnumerable<Station>> GetLocations(string locationName)
         {
             var client = new RestClient("http://transport.opendata.ch/v1/");
             var request =
-                new RestRequest("stations")
+                new RestRequest("locations")
                     .WithRootElement("stations")
                     .WithFormat(DataFormat.Json)
                     .AddParameter("query", locationName);
@@ -24,7 +24,7 @@ namespace TrainShareApp.Data
             return
                 client
                     .ExecuteObservable<List<Station>>(request)
-                    .SelectMany(response => response.Data);
+                    .Select(list => list.Data as IEnumerable<Station>);
         }
 
         public Task<SearchResult> GetConnections(string from, string to, DateTime time, bool isArrival = false)

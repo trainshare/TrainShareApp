@@ -86,6 +86,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <None Include="TrainShareApp_2012_06_16_15_15_04.sap" />
     <Reference Include="AsyncCtpLibrary_Phone">
       <HintPath>C:\Users\Adrian\Documents\Microsoft Visual Studio Async CTP\Samples\AsyncCtpLibrary_Phone.dll</HintPath>
     </Reference>
@@ -98,6 +99,7 @@
     <Reference Include="Microsoft.Expression.Interactions, Version=3.8.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Phone" />
     <Reference Include="Microsoft.Phone.Controls, Version=7.0.0.0, Culture=neutral, PublicKeyToken=24eec0d8c86cda1e, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.Phone.Interop" />
     <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.4.5.7\lib\sl4-windowsphone71\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -107,14 +109,20 @@
     </Reference>
     <Reference Include="system.data.linq" />
     <Reference Include="System.Observable" />
-    <Reference Include="System.Reactive.Core">
+    <Reference Include="System.Reactive.Core, Version=2.0.20304.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Rx-Core.2.0.20304-beta\lib\SL4-WindowsPhone71\System.Reactive.Core.dll</HintPath>
     </Reference>
-    <Reference Include="System.Reactive.Interfaces">
+    <Reference Include="System.Reactive.Interfaces, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Rx-Interfaces.2.0.20304-beta\lib\SL4-WindowsPhone71\System.Reactive.Interfaces.dll</HintPath>
     </Reference>
-    <Reference Include="System.Reactive.Linq">
+    <Reference Include="System.Reactive.Linq, Version=2.0.20304.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Rx-Linq.2.0.20304-beta\lib\SL4-WindowsPhone71\System.Reactive.Linq.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.PlatformServices">
+      <HintPath>..\packages\Rx-PlatformServices.2.0.20304-beta\lib\SL4-WindowsPhone71\System.Reactive.PlatformServices.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.Windows.Threading">
+      <HintPath>..\packages\Rx-Silverlight.2.0.20304-beta\lib\SL4-WindowsPhone71\System.Reactive.Windows.Threading.dll</HintPath>
     </Reference>
     <Reference Include="System.Windows" />
     <Reference Include="system" />
@@ -142,12 +150,15 @@
     <Compile Include="Data\ITimeTable.cs" />
     <Compile Include="Data\ITrainshareClient.cs" />
     <Compile Include="Data\ITwitterClient.cs" />
+    <Compile Include="Data\StationSuggester.cs" />
     <Compile Include="Data\TableExtensions.cs" />
     <Compile Include="Data\TimeTable.cs" />
+    <Compile Include="Data\TimeTableSuggester.cs" />
     <Compile Include="Data\TokenClientBase.cs" />
     <Compile Include="Data\TrainshareClient.cs" />
     <Compile Include="Event\Dismiss.cs" />
     <Compile Include="Event\Republish.cs" />
+    <Compile Include="Extension\StringExtensions.cs" />
     <Compile Include="Model\Checkin.cs" />
     <Compile Include="Model\CheckinSection.cs" />
     <Compile Include="Model\Journey.cs" />

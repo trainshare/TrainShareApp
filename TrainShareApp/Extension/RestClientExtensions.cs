@@ -35,8 +35,19 @@ namespace TrainShareApp.Extension
                 request,
                 response =>
                 {
-                    subject.OnNext(response);
-                    subject.OnCompleted();
+                    try
+                    {
+                        if (response.ErrorException == null) subject.OnNext(response);
+                        else subject.OnError(response.ErrorException);
+                    }
+                    catch (Exception e)
+                    {
+                        subject.OnError(e);
+                    }
+                    finally
+                    {
+                        subject.OnCompleted();
+                    }
                 });
 
             return subject;
