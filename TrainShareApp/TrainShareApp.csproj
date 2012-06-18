@@ -86,7 +86,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="TrainShareApp_2012_06_16_15_15_04.sap" />
     <Reference Include="AsyncCtpLibrary_Phone">
       <HintPath>C:\Users\Adrian\Documents\Microsoft Visual Studio Async CTP\Samples\AsyncCtpLibrary_Phone.dll</HintPath>
     </Reference>
@@ -144,21 +143,20 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="AppBootstrapper.cs" />
+    <Compile Include="Data\CacheTimeTable.cs" />
     <Compile Include="Data\Credentials.cs" />
     <Compile Include="Data\DbDataContext.cs" />
     <Compile Include="Data\FacebookClient.cs" />
     <Compile Include="Data\ITimeTable.cs" />
     <Compile Include="Data\ITrainshareClient.cs" />
     <Compile Include="Data\ITwitterClient.cs" />
-    <Compile Include="Data\StationSuggester.cs" />
-    <Compile Include="Data\TableExtensions.cs" />
     <Compile Include="Data\TimeTable.cs" />
-    <Compile Include="Data\TimeTableSuggester.cs" />
     <Compile Include="Data\TokenClientBase.cs" />
     <Compile Include="Data\TrainshareClient.cs" />
     <Compile Include="Event\Dismiss.cs" />
     <Compile Include="Event\Republish.cs" />
     <Compile Include="Extension\StringExtensions.cs" />
+    <Compile Include="Extension\TableExtensions.cs" />
     <Compile Include="Model\Checkin.cs" />
     <Compile Include="Model\CheckinSection.cs" />
     <Compile Include="Model\Journey.cs" />

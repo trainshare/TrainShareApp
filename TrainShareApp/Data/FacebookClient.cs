@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.NetworkInformation;
 using System.Reactive.Linq;
 using System.Security;
 using System.Text.RegularExpressions;
@@ -45,6 +46,9 @@ namespace TrainShareApp.Data
 
         public async Task<Token> LoginAsync(WebBrowser browser)
         {
+            // Check for network connectivity
+            if (!NetworkInterface.GetIsNetworkAvailable()) return null;
+
             var guid = Guid.NewGuid().ToString();
             var client = new RestClient("https://www.facebook.com/dialog/oauth/");
             var request =
@@ -82,7 +86,7 @@ namespace TrainShareApp.Data
             return Token;
         }
 
-        private static async Task<IDictionary<string, string>> GetRequestToken(WebBrowser browser, Uri uri)
+        private static Task<IDictionary<string, string>> GetRequestToken(WebBrowser browser, Uri uri)
         {
             var task =
                 Observable
@@ -93,15 +97,15 @@ namespace TrainShareApp.Data
                     .Take(1)
                     .Select(e => e.EventArgs.Uri.ToString())
                     .Select(address => address.Substring(address.IndexOf('#') + 1))
-                    .ParseQueryString()
-                    .ToTask();
+                    .ToTask()
+                    .ParseQueryString();
 
             browser.Navigate(uri);
 
-            return await task;
+            return task;
         }
 
-        private static async Task<JObject> GetUserInfo(string accessToken)
+        private static Task<JObject> GetUserInfo(string accessToken)
         {
             var client = new RestClient("https://graph.facebook.com/me");
             var request =
@@ -109,11 +113,9 @@ namespace TrainShareApp.Data
                     .AddParameter("access_token", accessToken);
 
             return
-                await
                 client
-                    .ExecuteObservable(request)
-                    .Select(response => JObject.Parse(response.Content))
-                    .ToTask();
+                    .ExecutTaskAsync(request)
+                    .ContinueWith(task => JObject.Parse(task.Result.Content));
         }
     }
 }

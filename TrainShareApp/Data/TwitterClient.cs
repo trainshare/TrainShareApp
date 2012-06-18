@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Net.NetworkInformation;
 using System.Reactive.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -46,9 +47,15 @@ namespace TrainShareApp.Data
 
         public async Task<Token> LoginAsync(WebBrowser browser)
         {
-            var client = new RestClient("https://api.twitter.com/oauth/");
-            client.FollowRedirects = true;
-            client.Authenticator = OAuth1Authenticator.ForRequestToken(_consumerKey, _consumerSecret);
+            // Check for network connectivity
+            if (!NetworkInterface.GetIsNetworkAvailable()) return null;
+
+            var client =
+                new RestClient("https://api.twitter.com/oauth/")
+                {
+                    FollowRedirects = true,
+                    Authenticator = OAuth1Authenticator.ForRequestToken(_consumerKey, _consumerSecret)
+                };
 
             var requestToken = await GetRequestToken(client);
 
@@ -83,17 +90,16 @@ namespace TrainShareApp.Data
 
         #endregion
 
-        private async Task<IDictionary<string, string>> GetRequestToken(IRestClient client)
+        private Task<IDictionary<string, string>> GetRequestToken(IRestClient client)
         {
-            return await
-                   client
-                       .ExecuteObservable(new RestRequest("request_token"))
-                       .Select(response => response.Content)
-                       .ParseQueryString()
-                       .ToTask();
+            return
+                client
+                    .ExecutTaskAsync(new RestRequest("request_token"))
+                    .ContinueWith(task => task.Result.Content)
+                    .ParseQueryString();
         }
 
-        private async Task<IDictionary<string, string>> GetVerifier(WebBrowser browser, Uri uri)
+        private Task<IDictionary<string, string>> GetVerifier(WebBrowser browser, Uri uri)
         {
             var task =
                 Observable
@@ -105,25 +111,23 @@ namespace TrainShareApp.Data
                     .Do(e => e.EventArgs.Cancel = true)
                     .Select(e => e.EventArgs.Uri.ToString())
                     .Select(address => address.Substring(address.IndexOf('?') + 1))
-                    .ParseQueryString()
-                    .ToTask();
+                    .ToTask()
+                    .ParseQueryString();
 
             browser.Navigate(uri);
 
-            return await task;
+            return task;
         }
 
-        private async Task<IDictionary<string, string>> GetAccessToken(IRestClient client)
+        private Task<IDictionary<string, string>> GetAccessToken(IRestClient client)
         {
             Debug.Assert(client.Authenticator is OAuth1Authenticator);
 
             return
-                await
                 client
-                    .ExecuteObservable(new RestRequest("access_token"))
-                    .Select(response => response.Content)
-                    .ParseQueryString()
-                    .ToTask();
+                    .ExecutTaskAsync(new RestRequest("access_token"))
+                    .ContinueWith(task => task.Result.Content)
+                    .ParseQueryString();
         }
     }
 }

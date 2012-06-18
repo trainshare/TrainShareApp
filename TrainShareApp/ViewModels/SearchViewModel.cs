@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Reactive.Concurrency;
-using System.Reactive.Linq;
 using Caliburn.Micro;
 using Telerik.Windows.Controls;
 using TrainShareApp.Data;
@@ -42,6 +38,8 @@ namespace TrainShareApp.ViewModels
             _timeTable = timeTable;
 
             _events.Subscribe(this);
+
+            Time = DateTime.Now;
         }
 
         protected override void OnInitialize()
@@ -53,6 +51,8 @@ namespace TrainShareApp.ViewModels
             View.Via.InitSuggestionsProvider(CreateProvider());
         }
 
+        private static readonly TimeSpan ThrottleTime = TimeSpan.FromMilliseconds(100);
+
         private IAutoCompleteProvider CreateProvider()
         {
             var provider =
@@ -61,16 +61,22 @@ namespace TrainShareApp.ViewModels
                     FilterKeyProvider = o => (o as Station).Name,
                     FilterKeyPath = "Name"
                 };
+            var latestUpdate = DateTime.Now;
 
-            Observable
-                .FromEventPattern(
-                    h => provider.InputChanged += h,
-                    h => provider.InputChanged -= h)
-                .Throttle(TimeSpan.FromMilliseconds(100))
-                .Select(eve => _timeTable.GetLocations(provider.InputString))
-                .Switch()
-                .ObserveOnDispatcher()
-                .Subscribe(stations => provider.LoadSuggestions(stations.OrderByDescending(st => st.Score)));
+            provider.InputChanged +=
+                async (sender, args) =>
+                {
+                    if (latestUpdate.Add(ThrottleTime) > DateTime.Now) return;
+
+                    var begin = DateTime.Now;
+                    latestUpdate = begin > latestUpdate ? begin : latestUpdate;
+
+                    var locations = await _timeTable.GetLocations(provider.InputString);
+
+                    if (latestUpdate != begin) return;
+
+                    provider.LoadSuggestions(locations.OrderByDescending(st => st.Score));
+                };
 
             return provider;
         }
