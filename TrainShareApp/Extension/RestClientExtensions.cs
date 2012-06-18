@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Reactive.Linq;
-using System.Reactive.Subjects;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using RestSharp;
 
@@ -11,25 +12,32 @@ namespace TrainShareApp.Extension
 {
     public static class RestClientExtensions
     {
-        public static IObservable<IRestResponse> ExecuteObservable(this IRestClient client, IRestRequest request)
+        public static Task<IRestResponse> ExecutTaskAsync(this IRestClient client, IRestRequest request)
         {
-            var subject = new AsyncSubject<IRestResponse>();
+            var subject = new TaskCompletionSource<IRestResponse>();
 
             client.ExecuteAsync(
                 request,
                 response =>
                 {
-                    subject.OnNext(response);
-                    subject.OnCompleted();
+                    try
+                    {
+                        if (response.ErrorException == null) subject.SetResult(response);
+                        else subject.SetException(response.ErrorException);
+                    }
+                    catch (Exception e)
+                    {
+                        subject.SetException(e);
+                    }
                 });
 
-            return subject;
+            return subject.Task;
         }
 
-        public static IObservable<IRestResponse<T>> ExecuteObservable<T>(this IRestClient client, IRestRequest request)
-            where T : new()
+        public static Task<IRestResponse<T>> ExecutTaskAsync<T>(this IRestClient client, IRestRequest request)
+            where T : new() 
         {
-            var subject = new AsyncSubject<IRestResponse<T>>();
+            var subject = new TaskCompletionSource<IRestResponse<T>>();
 
             client.ExecuteAsync<T>(
                 request,
@@ -37,20 +45,16 @@ namespace TrainShareApp.Extension
                 {
                     try
                     {
-                        if (response.ErrorException == null) subject.OnNext(response);
-                        else subject.OnError(response.ErrorException);
+                        if (response.ErrorException == null) subject.SetResult(response);
+                        else subject.SetException(response.ErrorException);
                     }
                     catch (Exception e)
                     {
-                        subject.OnError(e);
-                    }
-                    finally
-                    {
-                        subject.OnCompleted();
+                        subject.SetException(e);
                     }
                 });
 
-            return subject;
+            return subject.Task;
         }
 
         public static IRestRequest WithFormat(this IRestRequest request, DataFormat format)
@@ -85,15 +89,20 @@ namespace TrainShareApp.Extension
             return request;
         }
 
-        public static IObservable<IDictionary<string, string>> ParseQueryString(this IObservable<string> uri)
+        public static Task<IDictionary<string, string>> ParseQueryString(this Task<string> task)
         {
             return
-                uri
-                    .SelectMany(address => address.Split('&'))
-                    .Select(vp => Regex.Split(vp, "="))
-                    .ToDictionary(
-                        singlePair => singlePair[0],
-                        singlePair => singlePair.Length == 2 ? singlePair[1] : string.Empty);
+                task
+                    .ContinueWith(
+                        t =>
+                        t
+                            .Result
+                            .Split('&')
+                            .Select(vp => Regex.Split(vp, "="))
+                            .ToDictionary(
+                                singlePair => singlePair[0],
+                                singlePair => singlePair.Length == 2 ? singlePair[1] : string.Empty)
+                        as IDictionary<string, string>);
         }
     }
 }

@@ -53,7 +53,7 @@ namespace TrainShareApp {
                 .Singleton<ITwitterClient, TwitterClient>()
                 .Singleton<IFacebookClient, FacebookClient>()
                 .Singleton<ITrainshareClient, TrainshareClient>()
-                .Singleton<ITimeTable, TimeTable>();
+                .Singleton<ITimeTable, CacheTimeTable>();
 
             // ViewModels
             container

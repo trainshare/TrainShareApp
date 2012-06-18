@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reactive.Linq;
+using System.Net.NetworkInformation;
 using System.Threading.Tasks;
 using Caliburn.Micro;
-using Microsoft.Phone.Reactive;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestSharp;
 using TrainShareApp.Event;
@@ -37,6 +35,9 @@ namespace TrainShareApp.Data
 
         public async Task<Token> LoginAsync(Token token)
         {
+            // Check for network connectivity
+            if (!NetworkInterface.GetIsNetworkAvailable()) return null;
+
             var client = new RestClient("http://trainshare.herokuapp.com/v1/");
             var request =
                 new RestRequest("login", Method.POST)
@@ -48,15 +49,14 @@ namespace TrainShareApp.Data
 
             request.RequestFormat = DataFormat.Json;
 
-            var json =
-                await
-                client
-                    .ExecuteObservable(request)
-                    .Select(response => JObject.Parse(response.Content))
-                    .ToTask();
-
             try
             {
+                var json =
+                    await
+                    client
+                        .ExecutTaskAsync(request)
+                        .ContinueWith(task => JObject.Parse(task.Result.Content));
+
                 InsertOrUpdateToken(
                     new Token
                     {
@@ -64,32 +64,43 @@ namespace TrainShareApp.Data
                         AccessToken = json["trainshare_id"].Value<string>(),
                         AccessTokenSecret = json["trainshare_token"].Value<string>()
                     });
+
+                Events.Publish(Token);
+
+                return Token;
             }
             catch (Exception e)
             {
                 _logger.Error(e);
                 return null;
             }
-
-            Events.Publish(Token);
-
-            return Token;
         }
 
-        public Task<List<TrainshareFriend>> GetFriends()
+        public async Task<List<TrainshareFriend>> GetFriends()
         {
+            // Check for network connectivity
+            if (!NetworkInterface.GetIsNetworkAvailable()) return new List<TrainshareFriend>();
+
             var client = new RestClient("http://trainshare.herokuapp.com/v1/");
             var request =
                 new RestRequest("read", Method.POST)
                     .AddParameter("trainshare_id", Token.AccessToken)
                     .AddParameter("trainshare_token", Token.AccessTokenSecret);
 
-            return
-                client
-                    .ExecuteObservable(request)
-                    .Select(response => response.Content)
-                    .Select(JsonConvert.DeserializeObject<List<TrainshareFriend>>)
-                    .ToTask();
+            try
+            {
+                return
+                    await
+                    client
+                        .ExecutTaskAsync<List<TrainshareFriend>>(request)
+                        .ContinueWith(task => task.Result.Data);
+            }
+            catch(Exception e)
+            {
+                _logger.Error(e);
+
+                return new List<TrainshareFriend>();
+            }
         }
 
         public Task<List<Checkin>> GetHistory(int count)
@@ -119,6 +130,9 @@ namespace TrainShareApp.Data
          */
         public async Task Checkin(Checkin checkin)
         {
+            // Check for network connectivity
+            if (!NetworkInterface.GetIsNetworkAvailable()) return;
+
             var client = new RestClient("http://trainshare.herokuapp.com/v1/");
             var request =
                 new RestRequest("checkin", Method.POST)
@@ -142,16 +156,20 @@ namespace TrainShareApp.Data
                                                           new JProperty("train_id", section.TrainId),
                                                           new JProperty("position", checkin.Position)))))));
 
-            //Skipping the result on purpouse
-            await
-                client
-                    .ExecuteObservable(request)
-                    .ToTask();
+            try
+            {
+                //Skipping the result on purpouse
+                await client.ExecutTaskAsync(request);
 
-            AddCheckin(checkin);
-            CurrentCheckin = checkin;
+                AddCheckin(checkin);
+                CurrentCheckin = checkin;
 
-            Events.Publish(CurrentCheckin);
+                Events.Publish(CurrentCheckin);
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e);
+            }
         }
 
         public Task Checkout()

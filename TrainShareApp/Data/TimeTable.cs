@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reactive.Linq;
 using System.Threading.Tasks;
-using Microsoft.Phone.Reactive;
 using Newtonsoft.Json.Linq;
 using RestSharp;
 using TrainShareApp.Extension;
@@ -12,7 +10,7 @@ namespace TrainShareApp.Data
 {
     public class TimeTable : ITimeTable
     {
-        public IObservable<IEnumerable<Station>> GetLocations(string locationName)
+        public Task<IEnumerable<Station>> GetLocations(string locationName)
         {
             var client = new RestClient("http://transport.opendata.ch/v1/");
             var request =
@@ -23,8 +21,8 @@ namespace TrainShareApp.Data
 
             return
                 client
-                    .ExecuteObservable<List<Station>>(request)
-                    .Select(list => list.Data as IEnumerable<Station>);
+                    .ExecutTaskAsync<List<Station>>(request)
+                    .ContinueWith(task => task.Result.Data as IEnumerable<Station>);
         }
 
         public Task<SearchResult> GetConnections(string from, string to, DateTime time, bool isArrival = false)
@@ -40,9 +38,8 @@ namespace TrainShareApp.Data
 
             return
                 client
-                    .ExecuteObservable(request)
-                    .Select(response => JObject.Parse(response.Content).ToObject<SearchResult>())
-                    .ToTask();
+                    .ExecutTaskAsync(request)
+                    .ContinueWith(task => JObject.Parse(task.Result.Content).ToObject<SearchResult>());
         }
     }
 }
