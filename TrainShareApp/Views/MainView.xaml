@@ -10,7 +10,7 @@
                             xmlns:ec="clr-namespace:Microsoft.Expression.Interactivity.Core;assembly=Microsoft.Expression.Interactions"
                             xmlns:telerikCore="clr-namespace:Telerik.Windows.Controls;assembly=Telerik.Windows.Core"
                             xmlns:telerikPrimitives="clr-namespace:Telerik.Windows.Controls;assembly=Telerik.Windows.Controls.Primitives"
-                            x:Class="TrainShareApp.Views.MainView" mc:Ignorable="d" d:DesignWidth="480" d:DesignHeight="696"
+                            xmlns:TrainShareApp="clr-namespace:TrainShareApp" x:Class="TrainShareApp.Views.MainView" mc:Ignorable="d" d:DesignWidth="480" d:DesignHeight="696"
                             SupportedOrientations="Portrait" Orientation="Portrait" shell:SystemTray.IsVisible="True" cal:Bind.AtDesignTime="True"
                             d:DataContext="{d:DesignInstance IsDesignTimeCreatable=True, Type=vm:MainViewModel}">
 
@@ -82,7 +82,7 @@
         <TextBlock Text="trainshare" Foreground="{StaticResource LogoBrush}" />
       </controls:Panorama.Title>
 
-      <!--Panorama item one-->
+      <!--Checkin-->
       <controls:PanoramaItem x:Name="checkinItem" Header="checkin">
         <Grid>
           <Grid x:Name="InformationWrapper" Visibility="Collapsed" Opacity="0">
@@ -121,6 +121,8 @@
           </StackPanel>
         </Grid>
       </controls:PanoramaItem>
+        
+      <!-- Friends -->
       <controls:PanoramaItem x:Name="friendsItem" Header="friends">
         <Grid d:LayoutOverrides="HorizontalAlignment">
           <telerikPrimitives:RadDataBoundListBox EmptyContent="There are currently no friends on this train"
@@ -145,14 +147,19 @@
         </Grid>
       </controls:PanoramaItem>
 
-      <!--Panorama item two-->
+      <!-- History -->
       <controls:PanoramaItem x:Name="historyItem" Header="history">
         <Grid>
-          <telerikPrimitives:RadDataBoundListBox EmptyContent="You have not checked in yet"
-                                                 ItemsSource="{Binding History}" ItemTemplate="{StaticResource HistoryTemplate}"
-                                                 telerikCore:InteractionEffectManager.IsInteractionEnabled="True"
-                                                 cal:Message.Attach="[Event ItemTap] = [Action HistorySelected($source)]" />
-        </Grid>
+                    <telerikPrimitives:RadDataBoundListBox
+                                                 EmptyContent="You have not checked in yet"
+                                                 ItemsSource="{Binding GroupedHistory}">
+                        <telerikPrimitives:RadDataBoundListBox.ItemTemplate>
+                            <DataTemplate>
+                                <TrainShareApp:HistoryControlView />
+                            </DataTemplate>
+                        </telerikPrimitives:RadDataBoundListBox.ItemTemplate>
+                    </telerikPrimitives:RadDataBoundListBox>
+                </Grid>
       </controls:PanoramaItem>
     </controls:Panorama>
   </Grid>

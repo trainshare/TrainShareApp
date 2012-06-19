@@ -20,28 +20,95 @@ namespace TrainShareApp.ViewModels
         public MainViewModel()
         {
             Debug.Assert(Execute.InDesignMode, "Default constructor can only be called to generate design data.");
-            Friends = Enumerable.Range(0, 10).Select(i => new TrainshareFriend { Name = "Friend #" + i, ImageUrl = "/icons/User.png"}).ToList();
+            Friends =
+                Enumerable.Range(0, 10).Select(
+                    i => new TrainshareFriend {Name = "Friend #" + i, ImageUrl = "/icons/User.png"}).ToList();
 
             CurrentCheckin =
                 new Checkin
-                    {
-                        DepartureStation = "Maienfeld",
-                        DepartureTime = DateTime.Now,
-                        ArrivalStation = "Chur",
-                        ArrivalTime = DateTime.Now,
-                        Position = 0.5f,
-                        CheckinTime = DateTime.Now.AddDays(1)
-                    };
-					
-			History = Enumerable.Range(0, 5).Select(i => 
-					new Checkin
-					{
-						DepartureStation = "Maienfeld",
-						ArrivalStation = "Lausanne",
-						DepartureTime = DateTime.Now.AddHours(i),
-						ArrivalTime = DateTime.Now.AddHours(i + 1)
-					}).ToList();
+                {
+                    DepartureStation = "Maienfeld",
+                    DepartureTime = DateTime.Now,
+                    ArrivalStation = "Chur",
+                    ArrivalTime = DateTime.Now,
+                    Position = 0.5f,
+                    CheckinTime = DateTime.Now.AddDays(1)
+                };
+
+            History =
+                Enumerable
+                    .Range(0, 5)
+                    .Select(
+                        i =>
+                        new Checkin
+                        {
+                            DepartureStation = "Maienfeld",
+                            ArrivalStation = "Lausanne",
+                            DepartureTime = DateTime.Now.AddHours(i),
+                            ArrivalTime = DateTime.Now.AddHours(i + 1)
+                        })
+                    .ToList();
+
+            GenerateGrouped();
         }
+
+        public void GenerateGrouped()
+        {
+            GroupedHistory =
+                Enumerable
+                    .Range(0, 5)
+                    .Select(
+                        i =>
+                        new Checkin
+                        {
+                            DepartureStation = "Maienfeld",
+                            ArrivalStation = "Lausanne",
+                            DepartureTime = DateTime.Now.AddHours(i),
+                            ArrivalTime = DateTime.Now.AddHours(i + 1)
+                        })
+                    .SelectMany(
+                        checkin =>
+                        {
+                            var swapped =
+                                new Checkin
+                                {
+                                    DepartureStation = checkin.ArrivalStation,
+                                    ArrivalStation = checkin.DepartureStation,
+                                    ArrivalTime = checkin.ArrivalTime,
+                                    DepartureTime = checkin.DepartureTime
+                                };
+                            var zrich =
+                                new Checkin
+                                {
+                                    DepartureStation = "Zürich",
+                                    ArrivalStation = checkin.ArrivalStation,
+                                    ArrivalTime = checkin.ArrivalTime,
+                                    DepartureTime = checkin.DepartureTime
+                                };
+                            var basel =
+                                new Checkin
+                                {
+                                    DepartureStation = "Basel",
+                                    ArrivalStation = checkin.ArrivalStation,
+                                    ArrivalTime = checkin.ArrivalTime,
+                                    DepartureTime = checkin.DepartureTime
+                                };
+
+                            return new[] {checkin, swapped, zrich, basel};
+                        })
+                    .GroupBy(checkin => new {checkin.DepartureStation, checkin.ArrivalStation})
+                    .Select(
+                        grouping =>
+                        new HistoryControlViewModel
+                        {
+                            From = grouping.Key.DepartureStation,
+                            To = grouping.Key.ArrivalStation,
+                            Checkins = grouping.ToList(),
+                            Expanded = true
+                        })
+                    .ToList();
+        }
+
 
         public MainViewModel(
             ILog logger,
@@ -56,6 +123,8 @@ namespace TrainShareApp.ViewModels
 
             _events.Subscribe(this);
 
+            GenerateGrouped();
+
             Handle(trainshareClient.CurrentCheckin);
         }
 
@@ -68,6 +137,8 @@ namespace TrainShareApp.ViewModels
 
         public bool HasNoHistory { get { return History == null || History.Count == 0; } }
         public bool HasHistory { get { return !HasNoHistory; } }
+
+        public IEnumerable<HistoryControlViewModel> GroupedHistory { get; set; }
 
         public IList<TrainshareFriend> Friends { get; private set; }
 

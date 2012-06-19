@@ -178,6 +178,10 @@
     <Compile Include="Model\TrainshareFriend.cs" />
     <Compile Include="Model\Token.cs" />
     <Compile Include="Model\TrainshareOverlap.cs" />
+    <Compile Include="ViewModels\HistoryControlViewModel.cs" />
+    <Compile Include="Views\HistoryControlView.xaml.cs">
+      <DependentUpon>HistoryControlView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Storage\JsonStorageHandler.cs" />
     <Compile Include="Storage\MainViewStorage.cs" />
     <Compile Include="ViewModels\AboutViewModel.cs" />
@@ -218,6 +222,10 @@
     </Page>
     <Page Include="Resources\Brushes.xaml">
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\HistoryControlView.xaml">
+      <Generator>MSBuild:MarkupCompilePass1</Generator>
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Resources\Styles.xaml">
@@ -265,6 +273,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\train.png" />
+    <Content Include="icons\add.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="icons\appbar.cancel.rest.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -290,7 +301,13 @@
     <Content Include="icons\i-white.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="icons\next.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="icons\right.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icons\subtract.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="icons\user.png">

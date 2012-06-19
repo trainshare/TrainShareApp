@@ -1,0 +1,72 @@
+﻿<UserControl
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:telerikPrimitives="clr-namespace:Telerik.Windows.Controls;assembly=Telerik.Windows.Controls.Primitives"
+	xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity" xmlns:ec="clr-namespace:Microsoft.Expression.Interactivity.Core;assembly=Microsoft.Expression.Interactions"
+	xmlns:vm="clr-namespace:TrainShareApp.ViewModels" mc:Ignorable="d"
+	x:Class="TrainShareApp.HistoryControlView"
+	d:DesignWidth="216" d:DesignHeight="48"
+    d:DataContext="{d:DesignInstance IsDesignTimeCreatable=True, Type=vm:HistoryControlViewModel}">
+
+	<i:Interaction.Behaviors>
+		<ec:DataStateBehavior Binding="{Binding Expanded}" Value="True" TrueState="ExpandedState" FalseState="CollapsedState"/>
+	</i:Interaction.Behaviors>
+
+    <StackPanel x:Name="LayoutRoot" Background="Transparent">
+    	<VisualStateManager.VisualStateGroups>
+    		<VisualStateGroup x:Name="ExpandStates">
+    			<VisualState x:Name="CollapsedState">
+    				<Storyboard>
+    					<DoubleAnimation Duration="0" To="1" Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="Expand" d:IsOptimized="True"/>
+    				</Storyboard>
+    			</VisualState>
+    			<VisualState x:Name="ExpandedState">
+    				<Storyboard>
+    					<DoubleAnimation Duration="0" To="1" Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="Collapse" d:IsOptimized="True"/>
+    					<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="TimeList">
+    						<DiscreteObjectKeyFrame KeyTime="0">
+    							<DiscreteObjectKeyFrame.Value>
+    								<Visibility>Visible</Visibility>
+    							</DiscreteObjectKeyFrame.Value>
+    						</DiscreteObjectKeyFrame>
+    					</ObjectAnimationUsingKeyFrames>
+    				</Storyboard>
+    			</VisualState>
+    		</VisualStateGroup>
+    	</VisualStateManager.VisualStateGroups>
+        
+        <StackPanel Orientation="Horizontal">
+            <telerikPrimitives:RadImageButton x:Name="Expand" PressedStateImageSource="/icons/add.png" RestStateImageSource="/icons/add.png" BorderThickness="{StaticResource PhoneBorderThickness}" ButtonShape="Ellipse" Opacity="0" RenderTransformOrigin="0.5,0.5" >
+            	<telerikPrimitives:RadImageButton.RenderTransform>
+            		<CompositeTransform ScaleX="0.75" ScaleY="0.75"/>
+            	</telerikPrimitives:RadImageButton.RenderTransform>
+            </telerikPrimitives:RadImageButton>
+            <telerikPrimitives:RadImageButton x:Name="Collapse" Margin="-48,0,0,0" PressedStateImageSource="/icons/subtract.png" RestStateImageSource="/icons/subtract.png" ButtonShape="Ellipse" BorderThickness="{StaticResource PhoneBorderThickness}" Opacity="0" RenderTransformOrigin="0.5,0.5" >
+            	<telerikPrimitives:RadImageButton.RenderTransform>
+            		<CompositeTransform ScaleX="0.75" ScaleY="0.75"/>
+            	</telerikPrimitives:RadImageButton.RenderTransform>
+            </telerikPrimitives:RadImageButton>
+            <TextBlock x:Name="From" Text="{Binding From}" />
+            <telerikPrimitives:RadImageButton x:Name="ConnectArrow" PressedStateImageSource="/icons/next.png" RestStateImageSource="/icons/next.png" RenderTransformOrigin="0.5,0.5" >
+            	<telerikPrimitives:RadImageButton.RenderTransform>
+            		<CompositeTransform ScaleX="0.75" ScaleY="0.75"/>
+            	</telerikPrimitives:RadImageButton.RenderTransform>
+            </telerikPrimitives:RadImageButton>
+            <TextBlock x:Name="To" Text="{Binding To}" />
+        </StackPanel>
+        
+        <ItemsControl x:Name="TimeList" ItemsSource="{Binding Checkins}" Visibility="Collapsed">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{Binding DepartureTime, StringFormat=t}" />
+                        <telerikPrimitives:RadImageButton x:Name="TimeConnectArrow" PressedStateImageSource="/icons/next.png" RestStateImageSource="/icons/next.png" />
+                        <TextBlock Text="{Binding ArrivalTime, StringFormat=t}" />
+                    </StackPanel>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </StackPanel>
+</UserControl>
