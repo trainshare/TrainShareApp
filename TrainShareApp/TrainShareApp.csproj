@@ -150,7 +150,6 @@
     <Compile Include="Data\ITimeTable.cs" />
     <Compile Include="Data\ITrainshareClient.cs" />
     <Compile Include="Data\ITwitterClient.cs" />
-    <Compile Include="Data\TableExtensions.cs" />
     <Compile Include="Data\TimeTable.cs" />
     <Compile Include="Data\TokenClientBase.cs" />
     <Compile Include="Data\TrainshareClient.cs" />
