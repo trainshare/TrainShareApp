@@ -8,5 +8,15 @@ namespace TrainShareApp.ViewModels
         public string To { get; set; }
         public IEnumerable Checkins { get; set; }
         public bool Expanded { get; set; }
+
+        public void Expand()
+        {
+            Expanded = true;
+        }
+
+        public void Collapse()
+        {
+            Expanded = false;
+        }
     }
 }

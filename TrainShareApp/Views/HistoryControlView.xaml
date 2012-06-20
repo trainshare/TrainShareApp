@@ -5,7 +5,7 @@
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:telerikPrimitives="clr-namespace:Telerik.Windows.Controls;assembly=Telerik.Windows.Controls.Primitives"
 	xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity" xmlns:ec="clr-namespace:Microsoft.Expression.Interactivity.Core;assembly=Microsoft.Expression.Interactions"
-	xmlns:vm="clr-namespace:TrainShareApp.ViewModels" mc:Ignorable="d"
+	xmlns:vm="clr-namespace:TrainShareApp.ViewModels" xmlns:cal="http://www.caliburnproject.org" mc:Ignorable="d"
 	x:Class="TrainShareApp.HistoryControlView"
 	d:DesignWidth="216" d:DesignHeight="48"
     d:DataContext="{d:DesignInstance IsDesignTimeCreatable=True, Type=vm:HistoryControlViewModel}">
@@ -37,33 +37,39 @@
     		</VisualStateGroup>
     	</VisualStateManager.VisualStateGroups>
         
-        <StackPanel Orientation="Horizontal">
-            <telerikPrimitives:RadImageButton x:Name="Expand" PressedStateImageSource="/icons/add.png" RestStateImageSource="/icons/add.png" BorderThickness="{StaticResource PhoneBorderThickness}" ButtonShape="Ellipse" Opacity="0" RenderTransformOrigin="0.5,0.5" >
-            	<telerikPrimitives:RadImageButton.RenderTransform>
-            		<CompositeTransform ScaleX="0.75" ScaleY="0.75"/>
-            	</telerikPrimitives:RadImageButton.RenderTransform>
-            </telerikPrimitives:RadImageButton>
-            <telerikPrimitives:RadImageButton x:Name="Collapse" Margin="-48,0,0,0" PressedStateImageSource="/icons/subtract.png" RestStateImageSource="/icons/subtract.png" ButtonShape="Ellipse" BorderThickness="{StaticResource PhoneBorderThickness}" Opacity="0" RenderTransformOrigin="0.5,0.5" >
-            	<telerikPrimitives:RadImageButton.RenderTransform>
-            		<CompositeTransform ScaleX="0.75" ScaleY="0.75"/>
-            	</telerikPrimitives:RadImageButton.RenderTransform>
-            </telerikPrimitives:RadImageButton>
-            <TextBlock x:Name="From" Text="{Binding From}" />
-            <telerikPrimitives:RadImageButton x:Name="ConnectArrow" PressedStateImageSource="/icons/next.png" RestStateImageSource="/icons/next.png" RenderTransformOrigin="0.5,0.5" >
-            	<telerikPrimitives:RadImageButton.RenderTransform>
-            		<CompositeTransform ScaleX="0.75" ScaleY="0.75"/>
-            	</telerikPrimitives:RadImageButton.RenderTransform>
-            </telerikPrimitives:RadImageButton>
-            <TextBlock x:Name="To" Text="{Binding To}" />
-        </StackPanel>
+        <Grid Height="48">
+        	<Grid.ColumnDefinitions>
+        		<ColumnDefinition Width="48"/>
+        		<ColumnDefinition/>
+        		<ColumnDefinition Width="48"/>
+        		<ColumnDefinition/>
+        	</Grid.ColumnDefinitions>
+            <telerikPrimitives:RadImageButton x:Name="Expand" PressedStateImageSource="/icons/add.png" RestStateImageSource="/icons/add.png" BorderThickness="{StaticResource PhoneBorderThickness}" ButtonShape="Ellipse" Opacity="0" RenderTransformOrigin="0.5,0.5" cal:Message.Attach="[Event Click] = [Action Expand()]" >
+    			<telerikPrimitives:RadImageButton.RenderTransform>
+    				<CompositeTransform ScaleX="0.5" ScaleY="0.5"/>
+    			</telerikPrimitives:RadImageButton.RenderTransform>
+    		</telerikPrimitives:RadImageButton>
+            <telerikPrimitives:RadImageButton x:Name="Collapse" PressedStateImageSource="/icons/subtract.png" RestStateImageSource="/icons/subtract.png" ButtonShape="Ellipse" BorderThickness="{StaticResource PhoneBorderThickness}" Opacity="0" RenderTransformOrigin="0.5,0.5" cal:Message.Attach="[Event Click] = [Action Collapse()]" >
+    			<telerikPrimitives:RadImageButton.RenderTransform>
+    				<CompositeTransform ScaleX="0.5" ScaleY="0.5"/>
+    			</telerikPrimitives:RadImageButton.RenderTransform>
+    		</telerikPrimitives:RadImageButton>
+    		<TextBlock x:Name="From" Text="{Binding From}" d:LayoutOverrides="Height" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" MaxHeight="48" Margin="{StaticResource PhoneHorizontalMargin}" />
+    		<telerikPrimitives:RadImageButton x:Name="ConnectArrow" PressedStateImageSource="/icons/next.png" RestStateImageSource="/icons/next.png" RenderTransformOrigin="0.5,0.5" d:LayoutOverrides="HorizontalAlignment" Grid.Column="2" >
+    			<telerikPrimitives:RadImageButton.RenderTransform>
+    				<CompositeTransform ScaleX="0.5" ScaleY="0.5"/>
+    			</telerikPrimitives:RadImageButton.RenderTransform>
+    		</telerikPrimitives:RadImageButton>
+    		<TextBlock x:Name="To" Text="{Binding To}" d:LayoutOverrides="Height" Grid.Column="3" MaxHeight="48" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="{StaticResource PhoneHorizontalMargin}" />
+    	</Grid>
         
         <ItemsControl x:Name="TimeList" ItemsSource="{Binding Checkins}" Visibility="Collapsed">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{Binding DepartureTime, StringFormat=t}" />
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <TextBlock Text="{Binding DepartureTime, StringFormat=t}" Width="120" />
                         <telerikPrimitives:RadImageButton x:Name="TimeConnectArrow" PressedStateImageSource="/icons/next.png" RestStateImageSource="/icons/next.png" />
-                        <TextBlock Text="{Binding ArrivalTime, StringFormat=t}" />
+                        <TextBlock Text="{Binding ArrivalTime, StringFormat=t}" Width="120" />
                     </StackPanel>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
