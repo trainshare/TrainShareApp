@@ -152,7 +152,7 @@
       <controls:PanoramaItem x:Name="historyItem" Header="history" Orientation="Horizontal">
         <Grid>
           <ScrollViewer>
-            <ItemsControl ItemsSource="{Binding GroupedHistory}" Width="480">
+            <ItemsControl ItemsSource="{Binding GroupedHistory}" Width="600">
               <ItemsControl.ItemTemplate>
                 <DataTemplate>
                   <TrainShareApp:HistoryControlView />

@@ -3,7 +3,8 @@ using TrainShareApp.Data;
 using TrainShareApp.Logger;
 using TrainShareApp.ViewModels;
 
-namespace TrainShareApp {
+namespace TrainShareApp
+{
     using System;
     using System.Collections.Generic;
     using System.Windows.Controls;
@@ -12,7 +13,7 @@ namespace TrainShareApp {
 
     public class AppBootstrapper : PhoneBootstrapper
     {
-        PhoneContainer container;
+        private PhoneContainer container;
 
         protected override PhoneApplicationFrame CreatePhoneApplicationFrame()
         {
@@ -21,11 +22,11 @@ namespace TrainShareApp {
 
         protected override void Configure()
         {
-            InteractionEffectManager.AllowedTypes.Add(typeof(RadDataBoundListBoxItem));
+            InteractionEffectManager.AllowedTypes.Add(typeof (RadDataBoundListBoxItem));
 
             container = new PhoneContainer(RootFrame);
 
-			container.RegisterPhoneServices();
+            container.RegisterPhoneServices();
 
             // Loggers
             container.Singleton<ILog, DebugLogger>();
@@ -39,7 +40,7 @@ namespace TrainShareApp {
                     ObjectTrackingEnabled = true
                 });
 
-            using (var context = (DbDataContext)container.GetInstance(typeof(DbDataContext), null))
+            using (var context = (DbDataContext) container.GetInstance(typeof (DbDataContext), null))
             {
                 if (!context.DatabaseExists())
                 {
@@ -83,12 +84,14 @@ namespace TrainShareApp {
             container.BuildUp(instance);
         }
 
-        static void AddCustomConventions()
+        private static void AddCustomConventions()
         {
-            ConventionManager.AddElementConvention<Pivot>(Pivot.ItemsSourceProperty, "SelectedItem", "SelectionChanged").ApplyBinding =
-                (viewModelType, path, property, element, convention) => {
+            ConventionManager.AddElementConvention<Pivot>(Pivot.ItemsSourceProperty, "SelectedItem", "SelectionChanged")
+                .ApplyBinding =
+                (viewModelType, path, property, element, convention) =>
+                {
                     if (ConventionManager
-                        .GetElementConvention(typeof(ItemsControl))
+                        .GetElementConvention(typeof (ItemsControl))
                         .ApplyBinding(viewModelType, path, property, element, convention))
                     {
                         ConventionManager
@@ -101,10 +104,12 @@ namespace TrainShareApp {
                     return false;
                 };
 
-            ConventionManager.AddElementConvention<Panorama>(Panorama.ItemsSourceProperty, "SelectedItem", "SelectionChanged").ApplyBinding =
-                (viewModelType, path, property, element, convention) => {
+            ConventionManager.AddElementConvention<Panorama>(Panorama.ItemsSourceProperty, "SelectedItem",
+                                                             "SelectionChanged").ApplyBinding =
+                (viewModelType, path, property, element, convention) =>
+                {
                     if (ConventionManager
-                        .GetElementConvention(typeof(ItemsControl))
+                        .GetElementConvention(typeof (ItemsControl))
                         .ApplyBinding(viewModelType, path, property, element, convention))
                     {
                         ConventionManager

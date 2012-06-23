@@ -54,27 +54,12 @@
         				</DiscreteObjectKeyFrame.Value>
         			</DiscreteObjectKeyFrame>
         		</ObjectAnimationUsingKeyFrames>
-        		<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(DynamicTextBlock.TextWrapping)" Storyboard.TargetName="From">
-        			<DiscreteObjectKeyFrame KeyTime="0:0:0.001">
-        				<DiscreteObjectKeyFrame.Value>
-        					<TextWrapping>Wrap</TextWrapping>
-        				</DiscreteObjectKeyFrame.Value>
-        			</DiscreteObjectKeyFrame>
-        		</ObjectAnimationUsingKeyFrames>
-        		<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(DynamicTextBlock.TextWrapping)" Storyboard.TargetName="To">
-        			<DiscreteObjectKeyFrame KeyTime="0:0:0.001">
-        				<DiscreteObjectKeyFrame.Value>
-        					<TextWrapping>Wrap</TextWrapping>
-        				</DiscreteObjectKeyFrame.Value>
-        			</DiscreteObjectKeyFrame>
-        		</ObjectAnimationUsingKeyFrames>
-        		<DoubleAnimation Duration="0" To="72" Storyboard.TargetProperty="(FrameworkElement.Height)" Storyboard.TargetName="grid" d:IsOptimized="True"/>
         	</Storyboard>
         </VisualState>
       </VisualStateGroup>
     </VisualStateManager.VisualStateGroups>
 
-    <Grid x:Name="grid" cal:Message.Attach="[Event Tap] = [Action Toggle()]" Background="Transparent" Height="48">
+    <Grid x:Name="grid" cal:Message.Attach="[Event Tap] = [Action Toggle()]" Background="Transparent">
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="48" />
         <ColumnDefinition />
@@ -109,7 +94,7 @@
     </Grid>
 
     <ItemsControl x:Name="TimeList" ItemsSource="{Binding Checkins}" Visibility="Collapsed"
-                  cal:Message.Attach="[Event Tap] = [Action TimeSelect($eventArgs)]" Margin="48,0,0,0">
+                  cal:Message.Attach="[Event Tap] = [Action TimeSelect($eventArgs)]" Margin="48,0,0,0" HorizontalAlignment="Left">
       <ItemsControl.ItemTemplate>
         <DataTemplate>
           <Grid Background="Transparent">
@@ -120,7 +105,7 @@
             </Grid.ColumnDefinitions>
 
             <TextBlock Text="{Binding DepartureTime, StringFormat=t}" Grid.Column="0"
-                                    VerticalAlignment="Center" HorizontalAlignment="Right" d:IsHidden="True" Margin="{StaticResource PhoneHorizontalMargin}"/>
+                                    VerticalAlignment="Center" d:IsHidden="True" Margin="{StaticResource PhoneHorizontalMargin}" TextAlignment="Right"/>
 
             <Image Grid.Column="1" Source="/TrainShareApp;component/icons/next-grey.png" RenderTransformOrigin="0.5,0.5">
               <Image.RenderTransform>
@@ -129,7 +114,7 @@
             </Image>
 
             <TextBlock Text="{Binding ArrivalTime, StringFormat=t}" Grid.Column="2"
-                                    VerticalAlignment="Center"/>
+                                    VerticalAlignment="Center" Width="80" TextAlignment="Right"/>
           </Grid>
         </DataTemplate>
       </ItemsControl.ItemTemplate>
