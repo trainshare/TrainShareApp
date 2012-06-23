@@ -147,6 +147,7 @@
     <Compile Include="Data\TrainshareClient.cs" />
     <Compile Include="Event\Dismiss.cs" />
     <Compile Include="Event\Republish.cs" />
+    <Compile Include="Extension\LinqToXaml.cs" />
     <Compile Include="Extension\StringExtensions.cs" />
     <Compile Include="Extension\TableExtensions.cs" />
     <Compile Include="Model\Checkin.cs" />
@@ -171,6 +172,7 @@
     <Compile Include="Model\Token.cs" />
     <Compile Include="Model\TrainshareOverlap.cs" />
     <Compile Include="ViewModels\HistoryControlViewModel.cs" />
+    <Compile Include="Views\DynamicTextBlock.cs" />
     <Compile Include="Views\HistoryControlView.xaml.cs">
       <DependentUpon>HistoryControlView.xaml</DependentUpon>
     </Compile>
@@ -265,6 +267,7 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\train.png" />
+    <Resource Include="icons\add-grey.png" />
     <Content Include="icons\add.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -293,12 +296,14 @@
     <Content Include="icons\i-white.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Resource Include="icons\next-grey.png" />
     <Content Include="icons\next.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="icons\right.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Resource Include="icons\subtract-grey.png" />
     <Content Include="icons\subtract.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

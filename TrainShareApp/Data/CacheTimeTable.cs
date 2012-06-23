@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestSharp;
 using TrainShareApp.Extension;
@@ -25,20 +26,22 @@ namespace TrainShareApp.Data
             if (!NetworkInterface.GetIsNetworkAvailable()) return Enumerable.Empty<Station>();
 
             // If nothing found in cache query sbb.ch
-            var client = new RestClient("http://transport.opendata.ch/v1/");
+            var client = new RestClient("http://sbb-cache.herokuapp.com/");
             var request =
-                new RestRequest("locations")
-                    .WithRootElement("stations")
-                    .WithFormat(DataFormat.Json)
-                    .AddParameter("query", locationName);
+                new RestRequest("location")
+                    .AddParameter("query", locationName, ParameterType.GetOrPost);
 
             try
             {
                 var result =
                     await
                     client
-                        .ExecutTaskAsync<List<Station>>(request)
-                        .ContinueWith(task => task.Result.Data);
+                        .ExecutTaskAsync(request)
+                        .ContinueWith(task =>
+                                      {
+                                          var res = JObject.Parse(task.Result.Content).Property("stations").Value;
+                                          return res.ToObject<List<Station>>();
+                                      });
 
                 UpdateCachedLocation(locationName, result);
 

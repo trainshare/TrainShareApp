@@ -61,8 +61,8 @@ namespace TrainShareApp.ViewModels
                         i =>
                         new Checkin
                         {
-                            DepartureStation = "Maienfeld",
-                            ArrivalStation = "Lausanne",
+                            DepartureStation = "Maienfeld, Post",
+                            ArrivalStation = "Zuerich, Herdernstrasse 12",
                             DepartureTime = DateTime.Now.AddHours(i),
                             ArrivalTime = DateTime.Now.AddHours(i + 1)
                         })
@@ -99,12 +99,11 @@ namespace TrainShareApp.ViewModels
                     .GroupBy(checkin => new {checkin.DepartureStation, checkin.ArrivalStation})
                     .Select(
                         grouping =>
-                        new HistoryControlViewModel
+                        new HistoryControlViewModel(_navigationService)
                         {
                             From = grouping.Key.DepartureStation,
                             To = grouping.Key.ArrivalStation,
-                            Checkins = grouping.ToList(),
-                            Expanded = true
+                            Checkins = grouping.ToList()
                         })
                     .ToList();
         }

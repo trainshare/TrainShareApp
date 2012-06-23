@@ -116,8 +116,11 @@ namespace TrainShareApp.ViewModels
             catch (Exception e)
             {
                 _logger.Error(e);
-                RadMessageBox.Show("Sorry, there was an unexpected error for your request. Please try again later.");
-                _navigationService.GoBack();
+                RadMessageBox.Show(title: "Error",
+                                   message:
+                                       "Sorry, we are at the moment unable to search for connections.\n" +
+                                       "We are deeply sorry and ask you to please try again later.",
+                                   closedHandler: ev => _navigationService.GoBack());
             }
             finally
             {

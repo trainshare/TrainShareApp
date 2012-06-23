@@ -10,8 +10,9 @@
                             xmlns:ec="clr-namespace:Microsoft.Expression.Interactivity.Core;assembly=Microsoft.Expression.Interactions"
                             xmlns:telerikCore="clr-namespace:Telerik.Windows.Controls;assembly=Telerik.Windows.Core"
                             xmlns:telerikPrimitives="clr-namespace:Telerik.Windows.Controls;assembly=Telerik.Windows.Controls.Primitives"
-                            xmlns:TrainShareApp="clr-namespace:TrainShareApp" x:Class="TrainShareApp.Views.MainView" mc:Ignorable="d" d:DesignWidth="480" d:DesignHeight="696"
-                            SupportedOrientations="Portrait" Orientation="Portrait" shell:SystemTray.IsVisible="True" cal:Bind.AtDesignTime="True"
+                            xmlns:TrainShareApp="clr-namespace:TrainShareApp" x:Class="TrainShareApp.Views.MainView" mc:Ignorable="d"
+                            d:DesignWidth="480" d:DesignHeight="696" SupportedOrientations="Portrait" Orientation="Portrait"
+                            shell:SystemTray.IsVisible="True" cal:Bind.AtDesignTime="True"
                             d:DataContext="{d:DesignInstance IsDesignTimeCreatable=True, Type=vm:MainViewModel}">
 
   <phone:PhoneApplicationPage.Resources>
@@ -131,8 +132,8 @@
             <telerikPrimitives:RadDataBoundListBox.ItemTemplate>
               <DataTemplate>
                 <StackPanel Orientation="Horizontal">
-                  <Image MaxHeight="60" MaxWidth="60" Source="{Binding UserImage}" Width="60"
-                         Height="60" Margin="{StaticResource PhoneHorizontalMargin}" />
+                  <Image MaxHeight="60" MaxWidth="60" Source="{Binding UserImage}" Width="60" Height="60"
+                         Margin="{StaticResource PhoneHorizontalMargin}" />
                   <StackPanel VerticalAlignment="Center">
                     <TextBlock Text="{Binding Name}" Style="{StaticResource PhoneTextLargeStyle}" />
                     <TextBlock Text="{Binding TrainshareOverlaps.DepartureStation, StringFormat=Travels from \{0\}}"
@@ -148,18 +149,18 @@
       </controls:PanoramaItem>
 
       <!-- History -->
-      <controls:PanoramaItem x:Name="historyItem" Header="history">
+      <controls:PanoramaItem x:Name="historyItem" Header="history" Orientation="Horizontal">
         <Grid>
-                    <telerikPrimitives:RadDataBoundListBox
-                                                 EmptyContent="You have not checked in yet"
-                                                 ItemsSource="{Binding GroupedHistory}">
-                        <telerikPrimitives:RadDataBoundListBox.ItemTemplate>
-                            <DataTemplate>
-                                <TrainShareApp:HistoryControlView />
-                            </DataTemplate>
-                        </telerikPrimitives:RadDataBoundListBox.ItemTemplate>
-                    </telerikPrimitives:RadDataBoundListBox>
-                </Grid>
+          <ScrollViewer>
+            <ItemsControl ItemsSource="{Binding GroupedHistory}" Width="480">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <TrainShareApp:HistoryControlView />
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </ScrollViewer>
+        </Grid>
       </controls:PanoramaItem>
     </controls:Panorama>
   </Grid>
